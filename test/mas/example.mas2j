@@ -1,0 +1,10 @@
+MAS room {
+
+	environment: env.RoomEnv
+	
+	agents: 
+		claustrophobe;
+		paranoid #2;
+			
+	aslSourcePath: "src/agt/";
+}
