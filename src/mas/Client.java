@@ -5,7 +5,13 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
+
+import mas.Command.Dir;
+
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 
 public class Client {
 
@@ -19,11 +25,52 @@ public class Client {
 	public Client(BufferedReader serverMessages) throws Exception {
 		// Read lines specifying colors
 		String line = serverMessages.readLine();
-		if (line.matches("^[a-z]+:\\s*[0-9A-Z](\\s*,\\s*[0-9A-Z])*\\s*$")) {
-			System.err.println("Error, client does not support colors.");
-			System.exit(1);
+		HashMap<String, Set<Integer>> agents = new HashMap<String, Set<Integer>>();
+		HashMap<String, List<Character>> boxesMap = new HashMap<String, List<Character>>();
+		
+		while (line.matches("^[a-z]+:\\s*[0-9A-Z](\\s*,\\s*[0-9A-Z])*\\s*$"))
+		{
+			int endColorIndex = line.indexOf(":");
+			String color = line.substring(0, endColorIndex );
+			Set<Integer> currentAgents = new HashSet<Integer>();
+			List<Character> currentBoxes = new ArrayList<>();
+			
+			// Read boxes and agents
+			for (int i = endColorIndex; i < line.length(); i++)
+			{
+				char chr = line.charAt(i);
+				
+				if ('0' <= chr && chr <= '9')
+					currentAgents.add(chr - 48);
+				else if ('A' <= chr && chr <= 'Z')
+					currentBoxes.add(chr);
+			}
+			
+			agents.put(color, currentAgents);
+			boxesMap.put(color, currentBoxes);
+			line = serverMessages.readLine();
 		}
-
+		
+//		for (Entry<String, Set<Integer>> entry : agents.entrySet())
+//		{
+//			System.err.print(entry.getKey() + ": ");
+//			for (int value : entry.getValue())
+//			{
+//				System.err.print(value + ", ");
+//			}
+//			System.err.println();
+//		}
+//		
+//		for (Entry<String, List<Character>> entry : boxesMap.entrySet())
+//		{
+//			System.err.print(entry.getKey() + ": ");
+//			for (char value : entry.getValue())
+//			{
+//				System.err.print(value + ", ");
+//			}
+//			System.err.println();
+//		}
+		
 		int row = 0;
 		this.initialState = new Node(null);
 
@@ -116,8 +163,13 @@ public class Client {
 
 	public LinkedList<Node> Search() throws IOException, Exception {
 		System.err.println("Search starting with strategy.\n");
-		Thread.sleep(10000);
-		throw new Exception("Not implemeted");
+		LinkedList<Node> solution = new LinkedList<Node>();
+		
+		initialState.action = new Command(Dir.S);
+		for (int i = 0; i < 10; i++)
+			solution.add(initialState);
+		
+		return solution;
 	}
 	
 	public static void main(String[] args) throws Exception {
@@ -145,7 +197,7 @@ public class Client {
 			System.err.println("Found solution of length " + solution.size());
 
 			for (Node n : solution) {
-				String act = n.action.toString();
+				String act = n.action.toActionString();
 				System.out.println(act);
 				String response = serverMessages.readLine();
 				if (response.contains("false")) {
