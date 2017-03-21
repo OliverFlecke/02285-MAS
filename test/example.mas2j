@@ -1,0 +1,10 @@
+MAS example { 
+	// environment: 
+	infrastructure: Centralised
+	
+  	agents: 
+  		hello_agent;		 
+  			 
+  	aslSourcePath: "src/agent";
+	
+}
