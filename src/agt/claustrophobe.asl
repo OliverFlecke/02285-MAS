@@ -1,0 +1,1 @@
++locked(door) : true <- unlock; .print("unlocking").
