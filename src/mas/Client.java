@@ -50,27 +50,7 @@ public class Client {
 			boxesMap.put(color, currentBoxes);
 			line = serverMessages.readLine();
 		}
-		
-//		for (Entry<String, Set<Integer>> entry : agents.entrySet())
-//		{
-//			System.err.print(entry.getKey() + ": ");
-//			for (int value : entry.getValue())
-//			{
-//				System.err.print(value + ", ");
-//			}
-//			System.err.println();
-//		}
-//		
-//		for (Entry<String, List<Character>> entry : boxesMap.entrySet())
-//		{
-//			System.err.print(entry.getKey() + ": ");
-//			for (char value : entry.getValue())
-//			{
-//				System.err.print(value + ", ");
-//			}
-//			System.err.println();
-//		}
-		
+	
 		int row = 0;
 		this.initialState = new Node(null);
 
@@ -95,11 +75,10 @@ public class Client {
 					boxesRow.add('\0');
 					goalsRow.add('\0');
 				} else if ('0' <= chr && chr <= '9') { // Agent.
-					this.initialState.agentRow = row;
-					this.initialState.agentCol = col;
+					this.initialState.agents.add(new Agent(chr, row, col));
 					wallsRow.add(false);
-					boxesRow.add('\0');
-					goalsRow.add('\0');
+					boxesRow.add(chr);
+					goalsRow.add(chr);
 				} else if ('A' <= chr && chr <= 'Z') { // Box.
 					wallsRow.add(false);
 					boxesRow.add(chr);
