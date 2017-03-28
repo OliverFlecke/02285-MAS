@@ -1,0 +1,4 @@
+BOX and GOAL characters
+Connecting Server to LevelParser and Environment
+Add directions as action arguments
+Static perception of walls and goals

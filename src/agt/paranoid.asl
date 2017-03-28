@@ -1,1 +1,0 @@
--locked(door) : true <- lock; .print("locking").
