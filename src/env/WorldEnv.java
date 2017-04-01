@@ -1,5 +1,8 @@
 package env;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.logging.Logger;
 
 import jason.asSyntax.ASSyntax;
@@ -8,12 +11,13 @@ import jason.asSyntax.Literal;
 import jason.asSyntax.Structure;
 import jason.asSyntax.Term;
 import jason.environment.TimeSteppedEnvironment;
-import jason.environment.grid.Location;
 
 public class WorldEnv extends TimeSteppedEnvironment {
 
     private static final Logger logger = Logger.getLogger(WorldEnv.class.getName());
 	
+    private BufferedReader serverMessages;
+    
     WorldModel model;
 
     Term move = Literal.parseLiteral("do(move)");
@@ -22,8 +26,23 @@ public class WorldEnv extends TimeSteppedEnvironment {
     Term skip = Literal.parseLiteral("do(skip)");
 
 	@Override
-	public void init(String[] args) {
-		// Initialize model
+	public void init(String[] args) 
+	{
+        super.init(new String[] { "1000" } ); // set step timeout
+        
+		try {
+			serverMessages = new BufferedReader(new InputStreamReader(System.in));
+			
+			model = new WorldModel(Level.parse(serverMessages));
+			
+			updateNumberOfAgents();	
+			
+			updateInitialAgsPercept();
+		} 
+		catch (IOException e) 
+		{
+			logger.warning("Exception: " + e + " at init: " + e.getMessage());
+		}
 	}
 	
 	@Override
@@ -36,7 +55,7 @@ public class WorldEnv extends TimeSteppedEnvironment {
 	{
 		logger.info(ag + " doing: " + action);
 		
-        int agId = getAgNbFromName(ag);
+        int agId = 0;
 
         if (action.equals(move)) {
             return model.move(WorldModel.Direction.N, agId);
@@ -52,16 +71,6 @@ public class WorldEnv extends TimeSteppedEnvironment {
 		return true;
 	}
 
-	private int getAgNbFromName(String ag) {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-    private String getAgNameFromID(int ag) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
     public static Atom aEMPTY    = new Atom("empty");
     public static Atom aAGENT    = new Atom("agent");
     public static Atom aOBSTACLE = new Atom("obstacle");
@@ -69,63 +78,53 @@ public class WorldEnv extends TimeSteppedEnvironment {
     public static Atom aBOX      = new Atom("box");
 
     @Override
-    public void updateAgsPercept() {
-        for (int i = 0; i < model.getNbOfAgs(); i++) {
-            updateAgPercept(i);
-        }
+    public void updateAgsPercept() 
+    {	
+    	clearAllPercepts();
+    	
+    	// Should probably use a common belief base for all agents
+    	// where walls and goals are static.
+    	updateInitialAgsPercept();
+    }
+    
+    private void updateInitialAgsPercept()
+    {
+    	for (int x = 0; x < model.getWidth(); x++)
+    	{
+    		for (int y = 0; y < model.getHeight(); y++)
+    		{
+    			addModelPercepts(x, y);
+    		}
+    	}
     }
 
-    private void updateAgPercept(int ag) {
-        updateAgPercept(getAgNameFromID(ag), ag);
-    }
-
-	private void updateAgPercept(String agName, int ag) 
-	{
-		// Keep wall and goal percepts?
-        clearPercepts(agName);
-
-        Location l = model.getAgPos(ag);
-        Literal p = ASSyntax.createLiteral("pos", 
-                        ASSyntax.createNumber(l.x), 
-                        ASSyntax.createNumber(l.y), 
-                        ASSyntax.createNumber(getStep()));
-        addPercept(agName, p);
-
-        // what's around
-        updateAgPercept(agName, ag, l.x - 1, l.y - 1);
-        updateAgPercept(agName, ag, l.x - 1, l.y);
-        updateAgPercept(agName, ag, l.x - 1, l.y + 1);
-        updateAgPercept(agName, ag, l.x, l.y - 1);
-        updateAgPercept(agName, ag, l.x, l.y);
-        updateAgPercept(agName, ag, l.x, l.y + 1);
-        updateAgPercept(agName, ag, l.x + 1, l.y - 1);
-        updateAgPercept(agName, ag, l.x + 1, l.y);
-        updateAgPercept(agName, ag, l.x + 1, l.y + 1);
-    }
-
-	private void updateAgPercept(String agName, int agId, int x, int y) 
+    /**
+     * Add percepts for a given location based on the model.
+     * A cell can have more than one object.
+     * @param x
+     * @param y
+     */
+	private void addModelPercepts(int x, int y) 
 	{
 		if (model.isFree(x, y))
 		{
-			addPercept(agName, createCellPerception(aEMPTY, x, y));
+			addPercept(createCellPerception(aEMPTY, x, y));
 		}
-//		// Walls should be static
-//		else if (model.hasObject(WorldModel.OBSTACLE, x, y)) 
-//        {
-//            addPercept(agName, createCellPerception(aOBSTACLE, x, y));
-//        }
-        else if (model.hasObject(WorldModel.AGENT, x, y))
+		if (model.hasObject(WorldModel.OBSTACLE, x, y)) 
         {
-            addPercept(agName, createCellPerception(aAGENT, x, y));
+            addPercept(createCellPerception(aOBSTACLE, x, y));
         }
-//		// Goals should be static
-//        else if (model.hasObject(WorldModel.GOAL, x, y))
-//        {
-//        	addPercept(agName, createCellPerception(aGOAL, x, y));
-//        }
-        else if (model.hasObject(WorldModel.BOX, x, y))
+        if (model.hasObject(WorldModel.AGENT, x, y))
         {
-        	addPercept(agName, createCellPerception(aBOX, x, y));
+            addPercept(createCellPerception(aAGENT, x, y));
+        }
+        if (model.hasObject(WorldModel.GOAL, x, y))
+        {
+        	addPercept(createCellPerception(aGOAL, x, y));
+        }
+        if (model.hasObject(WorldModel.BOX, x, y))
+        {
+        	addPercept(createCellPerception(aBOX, x, y));
         }
 	}
     

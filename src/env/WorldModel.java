@@ -10,37 +10,51 @@ public class WorldModel extends GridWorldModel {
 	private static final Logger logger = Logger.getLogger(WorldModel.class.getName());
 
 	// GridWorldModel uses bit flags to represent objects
-	//						CLEAN		=  0
-	//						AGENT		=  2
-	//						OBSTACLE 	=  4
-	public static final int	GOAL 		=  8;
-	public static final int	BOX 		= 16;
+	//						CLEAN		= 0
+	public static final int	GOAL 		= 1;
+	//						AGENT		= 2
+	//						OBSTACLE 	= 4
+	public static final int	BOX 		= 8;
 	
 	/**
-	 * Constructs a new GridWorldModel.
-	 * @param w - Width
-	 * @param h - Height
-	 * @param nbAgs - Number of agents
+	 * Constructs a new WorldModel based on a level.
+	 * @param level - Level object
 	 */
-	public WorldModel(int w, int h, int nbAgs) {
-		super(w, h, nbAgs); 
+	public WorldModel(Level level) 
+	{
+		super(level.width, level.height, level.nbAgs); 
+		
+		initData(level.data);
 	}
 	
 	/**
 	 * Initializes the grid with objects according to the 
-	 * character.
-	 * @param level - Two-dimensional char array
+	 * data.
+	 * @param data - Two-dimensional char array
 	 */
-	protected void init(char[][] level) 
-	{		
+	private void initData(char[][] data) 
+	{
+		// Print character representation of level
+		for (int i = 0; i < height; i++) 
+		{
+			for (int j = 0; j < width; j++) 
+			{
+				System.err.print(data[i][j]);
+			}
+			System.err.println();
+		}
+		
 		for (int i = 0; i < width; i++) 
 		{
 			for (int j = 0; j < height; j++) 
 			{
-				char ch = level[i][j];
+				char ch = data[j][i];
 				
 				if (Character.isDigit(ch)) 
+				{
+					add(AGENT, i, j);
 					agPos[Character.getNumericValue(ch)] = new Location(i, j);
+				}
 				
 				else if (ch == '+') add(OBSTACLE, i, j);
 				
@@ -50,13 +64,14 @@ public class WorldModel extends GridWorldModel {
 			}
 		}
 
-		for (int i = 0; i < width; i++) 
+		// Print integer representation of level
+		for (int i = 0; i < height; i++) 
 		{
-			for (int j = 0; j < height; j++) 
+			for (int j = 0; j < width; j++) 
 			{
-				System.out.print(level[i][j]);
+				System.err.print(this.data[j][i]);
 			}
-			System.out.println();
+			System.err.println();
 		}
 	}
 
@@ -127,7 +142,7 @@ public class WorldModel extends GridWorldModel {
      * @param agId - Agent ID
      * @return True if and only if action succeeds.
      */
-    synchronized public boolean move(Direction dir, int agId) 
+    public synchronized boolean move(Direction dir, int agId) 
     {        
         Location nAgLoc = newLocation(dir, agId);
         
@@ -147,7 +162,7 @@ public class WorldModel extends GridWorldModel {
      * @param agId - Agent ID
      * @return True if and only if the action succeeds.
      */
-    synchronized public boolean push(Direction dir1, Direction dir2, int agId)
+    public synchronized boolean push(Direction dir1, Direction dir2, int agId)
     {
     	Location nAgLoc = newLocation(dir1, agId);
     	
@@ -177,7 +192,7 @@ public class WorldModel extends GridWorldModel {
      * @param agId - Agent ID
      * @return True if and only if the action succeeds.
      */
-    synchronized public boolean pull(Direction dir1, Direction dir2, int agId)
+    public synchronized boolean pull(Direction dir1, Direction dir2, int agId)
     {    	
     	Location cAgLoc = getAgPos(agId);
     	

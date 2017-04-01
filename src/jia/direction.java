@@ -15,6 +15,7 @@ public class direction extends DefaultInternalAction {
 
 	private static final long serialVersionUID = 1L;
 
+	@SuppressWarnings("unused") // Avoid annoying warnings when exporting
 	@Override
 	public Object execute(TransitionSystem ts, Unifier un, Term[] terms) throws Exception
 	{

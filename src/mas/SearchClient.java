@@ -9,7 +9,7 @@ public class SearchClient {
 		
 		if (args.length == 0) 
 		{
-			args = new String[] { "test/mas/example.mas2j" };
+			args = new String[] { "src/mas/example.mas2j" };
 		}
 		
 		try {
