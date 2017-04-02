@@ -34,7 +34,7 @@ public class direction extends DefaultInternalAction {
 	         * Should the model be local to each agent, or static using the singleton pattern?
 	         */
 	        
-	        return WorldModel.Direction.N;
+	        return WorldModel.UP;
 		} 
 		catch (Throwable e) 
 		{

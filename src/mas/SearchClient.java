@@ -7,6 +7,8 @@ public class SearchClient {
 	
 	public static void main(String[] args) {
 		
+//		System.out.println("[Move(N)]");
+		
 		if (args.length == 0) 
 		{
 			args = new String[] { "src/mas/example.mas2j" };

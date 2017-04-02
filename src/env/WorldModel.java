@@ -2,6 +2,7 @@ package env;
 
 import java.util.logging.Logger;
 
+import jason.asSyntax.Term;
 import jason.environment.grid.GridWorldModel;
 import jason.environment.grid.Location;
 
@@ -86,55 +87,30 @@ public class WorldModel extends GridWorldModel {
 	/* 
 	 *  ACTIONS
 	 */
-    
-    public static enum Direction {
-        N, S, E, W
-    };
-    
-    /**
-     * Computes a new Location based on current direction 
-     * and location.
-     * @param dir - Direction
-     * @param l - Location
-     * @return The new Location.
-     */
-    public static Location newLocation(Direction dir, Location l)
-    {        
-        switch (dir) 
-        {
-        case N: return new Location(l.x, l.y - 1);
-        case S: return new Location(l.x, l.y + 1);
-        case E: return new Location(l.x + 1, l.y);
-        case W: return new Location(l.x - 1, l.y);
-        }        
-        return l;
-    }
-    
-    /**
-     * Computes a new Location based on current direction
-     * and the agent, doing proper error checks.
-     * @param dir - Direction
-     * @param agId - Agent ID
-     * @return The new Location
-     */
-    public Location newLocation(Direction dir, int agId)
-    {
-        if (agId < 0) 
-        {
-            logger.warning("** Unknown agent number: " + agId);            
-            return null;
-        }
-        
-        Location l = getAgPos(agId);
-        
-        if (l == null) 
-        {
-            logger.warning("** Lost the location of agent " + (agId + 1));            
-            return null;
-        }
-    	
-        return newLocation(dir, l);
-    }
+	
+	public static final String UP    = "up"   ;
+	public static final String DOWN  = "down" ;
+	public static final String LEFT  = "left" ;
+	public static final String RIGHT = "right";
+
+	/**
+	 * Computes a new Location based on current direction 
+	 * and location.
+	 * @param dir - Direction
+	 * @param l - Location
+	 * @return The new Location.
+	 */
+	public static Location newLocation(Term dir, Location l)
+	{        
+	    switch (dir.toString()) 
+	    {
+	    case UP   : return new Location(l.x, l.y - 1);
+	    case DOWN : return new Location(l.x, l.y + 1);
+	    case LEFT : return new Location(l.x + 1, l.y);
+	    case RIGHT: return new Location(l.x - 1, l.y);
+	    }        
+	    return null; // Could return l
+	}
 
     /**
      * Moves an agent based on the direction.
@@ -142,16 +118,38 @@ public class WorldModel extends GridWorldModel {
      * @param agId - Agent ID
      * @return True if and only if action succeeds.
      */
-    public synchronized boolean move(Direction dir, int agId) 
+    public synchronized boolean move(Term dir, int agId) 
     {        
-        Location nAgLoc = newLocation(dir, agId);
-        
-        if (nAgLoc != null && isFree(nAgLoc)) 
+        if (agId < 0) 
         {
-        	setAgPos(agId, nAgLoc);
-            return true;
+            logger.warning("** Invalid agent number: " + agId);            
+            return false;
         }
-        return false;
+    	
+        Location agLoc = getAgPos(agId);
+        
+        if (agLoc == null) 
+        {
+            logger.warning("** Lost the location of agent " + (agId + 1));            
+            return false;
+        }
+        
+        Location nAgLoc = newLocation(dir, agLoc);
+        
+        if (nAgLoc == null)
+        {
+            logger.warning("** Invalid direction: " + dir);
+            return false;
+        }
+        
+        if (!isFree(nAgLoc))
+        {
+            logger.warning("** Location not free: " + nAgLoc);   
+            return false;
+        }
+
+    	setAgPos(agId, nAgLoc);
+        return true;
     }	
     
     /**
@@ -162,26 +160,54 @@ public class WorldModel extends GridWorldModel {
      * @param agId - Agent ID
      * @return True if and only if the action succeeds.
      */
-    public synchronized boolean push(Direction dir1, Direction dir2, int agId)
+    public synchronized boolean push(Term dir1, Term dir2, int agId)
     {
-    	Location nAgLoc = newLocation(dir1, agId);
+        if (agId < 0) 
+        {
+            logger.warning("** Invalid agent number: " + agId);            
+            return false;
+        }
     	
-    	if (nAgLoc == null || !hasObject(BOX, nAgLoc))
+        Location agLoc = getAgPos(agId);
+        
+        if (agLoc == null) 
+        {
+            logger.warning("** Lost the location of agent " + (agId + 1));            
+            return false;
+        }
+        
+    	Location nAgLoc = newLocation(dir1, agLoc);
+        
+        if (nAgLoc == null)
+        {
+            logger.warning("** Invalid direction: " + dir1);
+            return false;
+        }
+    	
+    	if (!hasObject(BOX, nAgLoc))
     	{
-            logger.warning("** Trying to push unknown box!");            
+            logger.warning("** No box at: " + nAgLoc);            
             return false;
     	}
     	
     	Location nBoxLoc = newLocation(dir2, nAgLoc);
+        
+        if (nBoxLoc == null)
+        {
+            logger.warning("** Invalid direction: " + dir2);              
+            return false;
+        }
+        
+        if (!isFree(nBoxLoc))
+        {
+            logger.warning("** Location not free: " + nBoxLoc);   
+            return false;        	
+        }
     	
-    	if (nBoxLoc != null && isFree(nBoxLoc))
-    	{
-    		setAgPos(agId, nAgLoc);
-    		remove(BOX, nAgLoc);
-    		add(BOX, nBoxLoc);
-    		return true;
-    	}    	
-    	return false;
+		setAgPos(agId, nAgLoc);
+		remove(BOX, nAgLoc);
+		add(BOX, nBoxLoc);
+		return true;
     }
     
     /**
@@ -192,28 +218,54 @@ public class WorldModel extends GridWorldModel {
      * @param agId - Agent ID
      * @return True if and only if the action succeeds.
      */
-    public synchronized boolean pull(Direction dir1, Direction dir2, int agId)
+    public synchronized boolean pull(Term dir1, Term dir2, int agId)
     {    	
-    	Location cAgLoc = getAgPos(agId);
+        if (agId < 0) 
+        {
+            logger.warning("** Invalid agent number: " + agId);            
+            return false;
+        }
     	
-    	Location cBoxLoc = newLocation(dir2, cAgLoc);
+        Location agLoc = getAgPos(agId);
+        
+        if (agLoc == null) 
+        {
+            logger.warning("** Lost the location of agent " + (agId + 1));            
+            return false;
+        }
+        
+    	Location boxLoc = newLocation(dir2, agLoc);
     	
-    	if (cBoxLoc == null || !hasObject(BOX, cBoxLoc))
+    	if (boxLoc == null)
     	{
-            logger.warning("** Trying to pull unknown box!");            
+            logger.warning("** Invalid direction: " + dir2);              
             return false;
     	}
     	
-    	Location nAgLoc = newLocation(dir1, agId);
+    	if (!hasObject(BOX, boxLoc))
+    	{
+            logger.warning("** No box at: " + boxLoc);            
+            return false;
+    	}
     	
-    	if (nAgLoc != null && isFree(nAgLoc))
-    	{            
-    		setAgPos(agId, nAgLoc);
-    		remove(BOX, cBoxLoc);
-    		add(BOX, cAgLoc);
-            return true;
-    	}    	
-    	return false;
+    	Location nAgLoc = newLocation(dir1, agLoc);
+    	
+    	if (nAgLoc == null)
+    	{
+            logger.warning("** Invalid direction: " + dir1);              
+            return false;
+    	}
+    	
+    	if (!isFree(nAgLoc))
+    	{
+            logger.warning("** Location not free: " + nAgLoc);   
+            return false;        	
+    	}
+
+		setAgPos(agId, nAgLoc);
+		remove(BOX, boxLoc);
+		add(BOX, agLoc);
+        return true;
     }
     
 }
