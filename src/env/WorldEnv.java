@@ -26,7 +26,7 @@ public class WorldEnv extends ServerEnv {
     	super.init(args);
     	
 		try {
-			model = new WorldModel(Level.parse(serverMessages));
+			model = new WorldModel(Level.parse(serverIn));
 			
 			updateNumberOfAgents();
 			
@@ -122,6 +122,7 @@ public class WorldEnv extends ServerEnv {
                 ASSyntax.createNumber(y)); 
     }
 	
+    @Override
 	public String toString(Structure action)
 	{
 		switch(action.getFunctor())

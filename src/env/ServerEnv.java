@@ -22,18 +22,19 @@ public class ServerEnv extends Environment {
 	private int 						nbAgs;	  
 	private HashMap<String, ActRequest> requests;	
 	private String[] 					jointAction;
-	private boolean 					first = true;
 
-    protected BufferedReader 			serverMessages;  
+    protected BufferedReader 			serverIn;  
+	protected PrintStream				serverOut;
     
 	@Override
 	public void init(String[] args) 
 	{        
 		super.init(args);
-			
-		serverMessages = new BufferedReader(new InputStreamReader(System.in));		
 		
-		requests = new HashMap<String, ActRequest>();
+		requests	= new HashMap<String, ActRequest>();
+			
+		serverIn	= new BufferedReader(new InputStreamReader(System.in));		
+		serverOut	= new PrintStream(new FileOutputStream(FileDescriptor.out));
 	}
 	
 	public void setNbAgs(int n) {
@@ -75,28 +76,24 @@ public class ServerEnv extends Environment {
 			try {
 				if (requests.size() >= nbAgs)
 				{
-					if (first) 
-					{
-						// RunCentralisedMAS prints to System.out after environment init
-						System.setOut(new PrintStream(new FileOutputStream(FileDescriptor.out)));
-						first = false;
-					}
-					System.err.println(Arrays.toString(jointAction));
-					System.out.println(Arrays.toString(jointAction));
+					logger.info(Arrays.toString(jointAction));
 					
-					String response = serverMessages.readLine();
+					serverOut.println(Arrays.toString(jointAction));
+					
+					String response = serverIn.readLine();
+					
+					logger.info(response);
 					
 					if (response.contains("false"))
 					{
-						System.err.println(response);
 						// Error handling
 						logger.severe("Action failed on server");
 					}					
 	
 	                for (ActRequest a: requests.values()) 
 	                {
-                        a.success = executeAction(a.agName, a.action);
-                        getEnvironmentInfraTier().actionExecuted(a.agName, a.action, a.success, a.infraData);
+                        boolean success = executeAction(a.agName, a.action);
+                        getEnvironmentInfraTier().actionExecuted(a.agName, a.action, success, a.infraData);
 	                }
 				}
 			} 
@@ -107,24 +104,22 @@ public class ServerEnv extends Environment {
 		}
 	}
 	
+	@Override
+	public void stop() {
+		super.stop();
+		serverOut.close();
+	}
+	
 	class ActRequest {
+		
 		String agName;
 		Structure action;
 		Object infraData;
-		boolean success;
 		
-		public ActRequest(String ag, Structure act, Object data) {
-            agName = ag;
-            action = act;
-            infraData = data;
-        }
-		
-        public boolean equals(Object obj) {
-            return agName.equals(obj);
-        }
-        
-        public int hashCode() {
-            return agName.hashCode();
+		public ActRequest(String agName, Structure action, Object infraData) {
+            this.agName = agName;
+            this.action = action;
+            this.infraData = infraData;
         }
 	}
 }
