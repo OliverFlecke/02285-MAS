@@ -1,10 +1,6 @@
 package env;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.util.Arrays;
-import java.util.HashMap;
 import java.util.logging.Logger;
 
 import jason.asSyntax.ASSyntax;
@@ -12,41 +8,27 @@ import jason.asSyntax.Atom;
 import jason.asSyntax.Literal;
 import jason.asSyntax.Structure;
 import jason.asSyntax.Term;
-import jason.environment.Environment;
 
-/**
- * Derived from TimeSteppedEnvironment
- */
-public class WorldEnv extends Environment {
-	
+public class WorldEnv extends ServerEnv {
+
     private static final Logger logger = Logger.getLogger(WorldEnv.class.getName());
 
     private static final String MOVE = "move";
     private static final String PUSH = "push";
     private static final String PULL = "pull";
     private static final String SKIP = "skip";   
-
-    private BufferedReader 				serverMessages;  
+	
     private WorldModel 					model;
-	private int 						nbAgs;	  
-	private HashMap<String, ActRequest> requests;	
-	private String[] 					jointAction;	
     
-	@Override
-	public void init(String[] args) 
-	{        
-		super.init(args);
-		
-		try {			
-			serverMessages = new BufferedReader(new InputStreamReader(System.in));
-			
+    @Override
+    public void init(String[] args) 
+    {
+    	super.init(args);
+    	
+		try {
 			model = new WorldModel(Level.parse(serverMessages));
 			
-			nbAgs = model.getNbOfAgs();
-			
-			requests = new HashMap<String, ActRequest>();
-			
-			jointAction = new String[nbAgs];
+			updateNumberOfAgents();
 			
 			updateInitialAgsPercept();
 		} 
@@ -54,51 +36,16 @@ public class WorldEnv extends Environment {
 		{
 			logger.warning("Exception: " + e + " at init: " + e.getMessage());
 		}
-	}
+    }
+    
+    @Override
+    protected void updateNumberOfAgents() {
+		setNbAgs(model.getNbOfAgs());    	
+    }
 	
 	@Override
-	public void scheduleAction(final String agName, final Structure action, final Object infraData) 
-	{
-        int agId = getAgentIdByName(agName);
-        
-        synchronized (jointAction) 
-        {
-			jointAction[agId] = actionToCommand(action);
-		}
-        
-        ActRequest newRequest = new ActRequest(agName, action, infraData);
-        
-        synchronized (requests) 
-        {        	
-			requests.put(agName, newRequest);
-
-			try {
-				if (requests.size() >= nbAgs)
-				{
-//					System.err.println(Arrays.toString(jointAction));
-					System.out.println(Arrays.toString(jointAction));
-					
-//					String response = serverMessages.readLine();
-//					
-//					if (response.contains("false"))
-//					{
-//						System.err.println(response);
-//						// Error handling
-//						logger.severe("Action failed on server");
-//					}					
-	
-	                for (ActRequest a: requests.values()) 
-	                {
-                        a.success = executeAction(a.agName, a.action);
-                        getEnvironmentInfraTier().actionExecuted(a.agName, a.action, a.success, a.infraData);
-	                }
-				}
-			} 
-			catch (Exception e) 
-			{
-				e.printStackTrace();
-			}
-		}
+	protected int getAgentIdByName(String name) {
+		return 0;
 	}
 
 	@Override
@@ -118,10 +65,6 @@ public class WorldEnv extends Environment {
             logger.warning("** Action not implemented: " + action);
         	return true;
         }
-	}
-	
-	private int getAgentIdByName(String name) {
-		return 0;
 	}
 
     public static final Atom aEMPTY    = new Atom("empty");
@@ -179,20 +122,20 @@ public class WorldEnv extends Environment {
                 ASSyntax.createNumber(y)); 
     }
 	
-	public static String actionToCommand(Structure action)
+	public String toString(Structure action)
 	{
 		switch(action.getFunctor())
 		{
-		case MOVE: return "Move(" + dirToCommand(action.getTerm(0)) + ")";
-		case PUSH: return "Push(" + dirToCommand(action.getTerm(0)) + "," 
-								  + dirToCommand(action.getTerm(1)) + ")";
-		case PULL: return "Pull(" + dirToCommand(action.getTerm(0)) + "," 
-		  						  + dirToCommand(action.getTerm(1)) + ")";
+		case MOVE: return "Move(" + toString(action.getTerm(0)) + ")";
+		case PUSH: return "Push(" + toString(action.getTerm(0)) + "," 
+								  + toString(action.getTerm(1)) + ")";
+		case PULL: return "Pull(" + toString(action.getTerm(0)) + "," 
+		  						  + toString(action.getTerm(1)) + ")";
 		default  : return "NoOp";
 		}
 	}
 	
-	public static String dirToCommand(Term dir)
+	public static String toString(Term dir)
 	{
 		switch(dir.toString())
 		{
@@ -202,26 +145,5 @@ public class WorldEnv extends Environment {
 		case WorldModel.RIGHT: return "E";
 		}
 		return "";
-	}
-	
-	class ActRequest {
-		String agName;
-		Structure action;
-		Object infraData;
-		boolean success;
-		
-		public ActRequest(String ag, Structure act, Object data) {
-            agName = ag;
-            action = act;
-            infraData = data;
-        }
-		
-        public boolean equals(Object obj) {
-            return agName.equals(obj);
-        }
-        
-        public int hashCode() {
-            return agName.hashCode();
-        }
 	}
 }
