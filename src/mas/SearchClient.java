@@ -14,7 +14,6 @@ public class SearchClient {
 			args = new String[] { "src/mas/example.mas2j" };
 		}
 		
-		System.out.println("THis is a change");
 		try {
 			RunCentralisedMAS.main(args);
 		} 

@@ -1,6 +1,5 @@
 package env;
 
-import java.io.IOException;
 import java.util.logging.Logger;
 
 import jason.asSyntax.ASSyntax;
@@ -32,7 +31,7 @@ public class WorldEnv extends ServerEnv {
 			
 			updateInitialAgsPercept();
 		} 
-		catch (IOException e) 
+		catch (Exception e) 
 		{
 			logger.warning("Exception: " + e + " at init: " + e.getMessage());
 		}

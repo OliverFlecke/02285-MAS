@@ -4,15 +4,16 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.util.*;
 
+import mas.entity.*;
+
 public class Level {
 
 	int width, height, nbAgs;
 	char[][] data;
-	Map<String, Set<Integer>> agents;
-	Map<String, List<Character>> boxes;
+	List<Agent> agents;
+	List<Box> boxes;
 	
-	private Level(int width, int height, int nbAgs, char[][] data, 
-			Map<String, Set<Integer>> agents, Map<String, List<Character>> boxes) 
+	private Level(int width, int height, int nbAgs, char[][] data, List<Agent> agents, List<Box> boxes) 
 	{
 		this.width  = width;
 		this.height = height;
@@ -29,31 +30,48 @@ public class Level {
 	 * @return A new Level object.
 	 * @throws IOException
 	 */
-	public static Level parse(BufferedReader msg) throws IOException
+	public static Level parse(BufferedReader msg) throws IOException, Exception
 	{
 		int maxCol = -1, nbAgs = 0;
 		
-		Map<String, Set<Integer>> agents = new HashMap<String, Set<Integer>>();
-		Map<String, List<Character>> boxes = new HashMap<String, List<Character>>();
-		
+		List<Agent> agents = new ArrayList<Agent>();
+		List<Box> boxes = new ArrayList<Box>();		
 		List<List<Character>> dataList = new ArrayList<List<Character>>();
 		
-		for (String line = msg.readLine(); !line.equals(""); line = msg.readLine())
+		char rowNumber = 0;
+		String line;
+		while ((line = msg.readLine()) != null && !line.equals(""))
 		{
 			if (line.matches("^[a-z]+:\\s*[0-9A-Z](\\s*,\\s*[0-9A-Z])*\\s*$"))
 			{
 				readColor(agents, boxes, line);
 			}
 			else
-			{							
+			{					
 				List<Character> row = new ArrayList<Character>();
 				
+				char columNumber = 0;
 				for (char ch : line.toCharArray())
-				{					
+				{		
 					row.add(ch);
 					
-					if (Character.isDigit(ch)) nbAgs++;
-				}				
+					if (Character.isDigit(ch)) 
+					{
+						nbAgs++;
+						Agent agent = agents.stream().filter(a -> a.getId() == (ch - 48)).findFirst().get();
+						agent.col = columNumber;
+						agent.row = rowNumber;
+					}
+					else if (Character.isUpperCase(ch))
+					{
+						Box box = boxes.stream().filter(b -> b.getId() == ch).findFirst().get();
+						box.col = columNumber;
+						box.row = rowNumber;
+					}
+					columNumber++;
+				}		
+				rowNumber++;
+
 				dataList.add(row);
 				
 				if (row.size() > maxCol) maxCol = row.size();
@@ -78,14 +96,12 @@ public class Level {
 	 * @param agents
 	 * @param boxes
 	 * @param line to read the data from
+	 * @throws Exception 
 	 */
-	private static void readColor(Map<String, Set<Integer>> agents, 
-			Map<String, List<Character>> boxes, String line) 
+	private static void readColor(List<Agent> agents, List<Box> boxes, String line) throws Exception 
 	{
 		int endColorIndex = line.indexOf(":");
-		String color = line.substring(0, endColorIndex);
-		Set<Integer> currentAgents = new HashSet<Integer>();
-		List<Character> currentBoxes = new ArrayList<Character>();
+		Color color = Color.getColor(line.substring(0, endColorIndex));
 		
 		// Read boxes and agents
 		for (int i = endColorIndex; i < line.length(); i++)
@@ -93,12 +109,27 @@ public class Level {
 			char chr = line.charAt(i);
 			
 			if ('0' <= chr && chr <= '9')
-				currentAgents.add(chr - 48);
+				agents.add(new Agent((char) (chr - 48), color));
 			else if ('A' <= chr && chr <= 'Z')
-				currentBoxes.add(chr);
+				boxes.add(new Box(chr, color));
 		}
-		
-		agents.put(color, currentAgents);
-		boxes.put(color, currentBoxes);
 	}
+	
+    /**
+     * Get the location, color, and character of boxex
+     * @return The list of boxes in this level
+     */
+    public List<Box> getBoxes()
+    {
+    	return this.boxes;
+    }
+    
+    /**
+     * Get the location, color, and id of the agents
+     * @return The list of agents in this level
+     */
+    public List<Agent> getAgents()
+    {
+    	return this.agents;
+    }
 }
