@@ -2,24 +2,24 @@ package env;
 
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 public class Level {
 
 	int width, height, nbAgs;
 	char[][] data;
-	HashMap<Character,Integer> colors;
+	Map<String, Set<Integer>> agents;
+	Map<String, List<Character>> boxes;
 	
 	private Level(int width, int height, int nbAgs, char[][] data, 
-			HashMap<Character,Integer> colors) 
+			Map<String, Set<Integer>> agents, Map<String, List<Character>> boxes) 
 	{
 		this.width  = width;
 		this.height = height;
 		this.nbAgs  = nbAgs;
 		this.data   = data;
-		this.colors = colors;
+		this.agents = agents;
+		this.boxes = boxes;
 	}
 	
 	/**
@@ -33,27 +33,19 @@ public class Level {
 	{
 		int maxCol = -1, nbAgs = 0;
 		
-		HashMap<Character,Integer> colors = new HashMap<Character,Integer>();
+		Map<String, Set<Integer>> agents = new HashMap<String, Set<Integer>>();
+		Map<String, List<Character>> boxes = new HashMap<String, List<Character>>();
 		
 		List<List<Character>> dataList = new ArrayList<List<Character>>();
 		
 		for (String line = msg.readLine(); !line.equals(""); line = msg.readLine())
 		{
-			if (line.matches("^[a-z]"))
+			if (line.matches("^[a-z]+:\\s*[0-9A-Z](\\s*,\\s*[0-9A-Z])*\\s*$"))
 			{
-				line = line.substring(line.indexOf(" ") + 1);
-				
-				// Example of chars: { 0, 1, A, B, C }
-				char[] chars = line.replace(",", "").toCharArray();
-				
-				// Assuming only one agent on each line
-				for (int i = 1; i < chars.length; i++) 
-				{
-					colors.put(chars[i], Character.getNumericValue(chars[0]));
-				}			
+				readColor(agents, boxes, line);
 			}
 			else
-			{				
+			{							
 				List<Character> row = new ArrayList<Character>();
 				
 				for (char ch : line.toCharArray())
@@ -78,6 +70,35 @@ public class Level {
 				data[row][col] = dataList.get(row).get(col);
 			}
 		}		
-		return new Level(maxCol, maxRow, nbAgs, data, colors);
+		return new Level(maxCol, maxRow, nbAgs, data, agents, boxes);
+	}
+	
+	/**
+	 * Read the colors from the current line
+	 * @param agents
+	 * @param boxes
+	 * @param line to read the data from
+	 */
+	private static void readColor(Map<String, Set<Integer>> agents, 
+			Map<String, List<Character>> boxes, String line) 
+	{
+		int endColorIndex = line.indexOf(":");
+		String color = line.substring(0, endColorIndex);
+		Set<Integer> currentAgents = new HashSet<Integer>();
+		List<Character> currentBoxes = new ArrayList<Character>();
+		
+		// Read boxes and agents
+		for (int i = endColorIndex; i < line.length(); i++)
+		{
+			char chr = line.charAt(i);
+			
+			if ('0' <= chr && chr <= '9')
+				currentAgents.add(chr - 48);
+			else if ('A' <= chr && chr <= 'Z')
+				currentBoxes.add(chr);
+		}
+		
+		agents.put(color, currentAgents);
+		boxes.put(color, currentBoxes);
 	}
 }

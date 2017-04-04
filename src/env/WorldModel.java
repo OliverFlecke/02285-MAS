@@ -1,7 +1,9 @@
 package env;
 
-import java.util.logging.Logger;
+import mas.*;
 
+import java.util.logging.Logger;
+import java.util.*;
 import jason.asSyntax.Term;
 import jason.environment.grid.GridWorldModel;
 import jason.environment.grid.Location;
@@ -267,5 +269,21 @@ public class WorldModel extends GridWorldModel {
 		add(BOX, agLoc);
         return true;
     }
+    
+    // Get the location, color, and character of boxex
+    public List<Box> getBoxes()
+    {
+    	// TODO
+    	return null;
+    }
+    
+    // Get the location, color, and id of the agents
+    public List<Agent> getAgents()
+    {
+    	// TODO
+    	return null;
+    }
+    
+    
     
 }

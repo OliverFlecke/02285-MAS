@@ -24,7 +24,7 @@ public class WorldEnv extends ServerEnv {
     public void init(String[] args) 
     {
     	super.init(args);
-    	
+
 		try {
 			model = new WorldModel(Level.parse(serverIn));
 			
