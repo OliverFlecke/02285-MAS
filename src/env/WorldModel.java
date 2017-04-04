@@ -1,7 +1,6 @@
 package env;
 
 import java.util.logging.Logger;
-
 import jason.asSyntax.Term;
 import jason.environment.grid.GridWorldModel;
 import jason.environment.grid.Location;
@@ -281,6 +280,5 @@ public class WorldModel extends GridWorldModel {
 		remove(BOX, boxLoc);
 		add(BOX, agLoc);
         return true;
-    }
-    
+    }    
 }

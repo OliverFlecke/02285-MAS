@@ -1,6 +1,5 @@
 package env;
 
-import java.io.IOException;
 import java.util.logging.Logger;
 
 import jason.asSyntax.ASSyntax;
@@ -24,7 +23,7 @@ public class WorldEnv extends ServerEnv {
     public void init(String[] args) 
     {
     	super.init(args);
-    	
+
 		try {
 			model = new WorldModel(Level.parse(serverIn));
 			
@@ -34,7 +33,7 @@ public class WorldEnv extends ServerEnv {
 			
 //			executeAction("agent", Structure.parse(PUSH + "(right,right)"));
 		} 
-		catch (IOException e) 
+		catch (Exception e) 
 		{
 			logger.warning("Exception: " + e + " at init: " + e.getMessage());
 		}
