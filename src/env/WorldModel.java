@@ -9,6 +9,8 @@ import jason.environment.grid.Location;
 public class WorldModel extends GridWorldModel {
 	
 	private static final Logger logger = Logger.getLogger(WorldModel.class.getName());
+	
+	private static WorldModel instance;
 
 	// GridWorldModel uses bit flags to represent objects
 	//						CLEAN		= 0
@@ -23,9 +25,15 @@ public class WorldModel extends GridWorldModel {
 	 */
 	public WorldModel(Level level) 
 	{
-		super(level.width, level.height, level.nbAgs); 
+		super(level.width, level.height, level.nbAgs);
 		
 		initData(level.data);
+		
+		instance = this;
+	}
+	
+	public static WorldModel getInstance() {
+		return instance;
 	}
 	
 	/**
@@ -92,6 +100,9 @@ public class WorldModel extends GridWorldModel {
 	public static final String DOWN  = "down" ;
 	public static final String LEFT  = "left" ;
 	public static final String RIGHT = "right";
+	public static final String[] DIRECTIONS = {
+			UP, DOWN, LEFT, RIGHT
+	};
 
 	/**
 	 * Computes a new Location based on current direction 
@@ -100,16 +111,20 @@ public class WorldModel extends GridWorldModel {
 	 * @param l - Location
 	 * @return The new Location.
 	 */
-	public static Location newLocation(Term dir, Location l)
+	public static Location newLocation(String dir, Location l)
 	{        
-	    switch (dir.toString()) 
+	    switch (dir) 
 	    {
 	    case UP   : return new Location(l.x, l.y - 1);
 	    case DOWN : return new Location(l.x, l.y + 1);
-	    case LEFT : return new Location(l.x + 1, l.y);
-	    case RIGHT: return new Location(l.x - 1, l.y);
+	    case LEFT : return new Location(l.x - 1, l.y);
+	    case RIGHT: return new Location(l.x + 1, l.y);
 	    }        
 	    return null; // Could return l
+	}
+	
+	public static Location newLocation(Term dir, Location l) {
+		return newLocation(dir.toString(), l);
 	}
 
     /**

@@ -31,6 +31,8 @@ public class WorldEnv extends ServerEnv {
 			updateNumberOfAgents();
 			
 			updateInitialAgsPercept();
+			
+//			executeAction("agent", Structure.parse(PUSH + "(right,right)"));
 		} 
 		catch (IOException e) 
 		{
