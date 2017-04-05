@@ -28,7 +28,7 @@ public class directions extends DefaultInternalAction {
 	        
 	        ListTermImpl directions = new ListTermImpl();
 	        
-	        for (String dir : AStar.search(from, to))
+	        for (String dir : AStar.search(from, to, 1))
 	        {
 	        	directions.add(Literal.parseLiteral(dir));
 	        }	        
