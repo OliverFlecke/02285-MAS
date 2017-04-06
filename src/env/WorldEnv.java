@@ -31,6 +31,8 @@ public class WorldEnv extends ServerEnv {
 			
 			updateInitialAgsPercept();
 			
+//			addPercept("started");
+			
 //			executeAction("agent", Structure.parse(PUSH + "(right,right)"));
 		} 
 		catch (Exception e) 
@@ -43,6 +45,14 @@ public class WorldEnv extends ServerEnv {
     protected void updateNumberOfAgents() {
 		setNbAgs(model.getNbOfAgs());    	
     }
+    
+    @Override
+    protected void updateAgsPercept() 
+    {	
+    	clearAllPercepts();
+    	
+    	updateInitialAgsPercept();
+    }
 	
 	@Override
 	protected int getAgentIdByName(String name) {
@@ -52,7 +62,7 @@ public class WorldEnv extends ServerEnv {
 	@Override
 	public boolean executeAction(String ag, Structure action) 
 	{
-		logger.info(ag + " doing: " + action);
+//		logger.info(ag + " doing: " + action);
 		
         int agId = 0;
         
@@ -93,32 +103,39 @@ public class WorldEnv extends ServerEnv {
      */
 	private void addModelPercepts(int x, int y) 
 	{
-		// TODO: Can be optimized
-		if (model.isFree(x, y))
-		{
-			addPercept(createCellPerception(aEMPTY, x, y));
-		}
-		if (model.hasObject(WorldModel.OBSTACLE, x, y)) 
+		if (model.hasObject(WorldModel.GOAL, x, y))
         {
-            addPercept(createCellPerception(aOBSTACLE, x, y));
+        	addPercept(createGoalPerception(x, y));
         }
         if (model.hasObject(WorldModel.AGENT, x, y))
         {
-            addPercept(createCellPerception(aAGENT, x, y));
+            addPercept(createAgentPerception(x, y));
         }
-        if (model.hasObject(WorldModel.GOAL, x, y))
+        else if (model.hasObject(WorldModel.BOX, x, y))
         {
-        	addPercept(createCellPerception(aGOAL, x, y));
-        }
-        if (model.hasObject(WorldModel.BOX, x, y))
-        {
-        	addPercept(createCellPerception(aBOX, x, y));
+        	addPercept(createBoxPerception(x, y));
         }
 	}
     
-    public static Literal createCellPerception(Atom obj, int x, int y) 
+    public static Literal createBoxPerception(int x, int y)
     {
-        return ASSyntax.createLiteral("cell", obj,
+    	return ASSyntax.createLiteral("box", 
+    			new Atom("blue"), new Atom("a"),
+                ASSyntax.createNumber(x),
+                ASSyntax.createNumber(y)); 
+    }
+    
+    public static Literal createGoalPerception(int x, int y)
+    {
+    	return ASSyntax.createLiteral("goal", 
+    			new Atom("a"),
+                ASSyntax.createNumber(x),
+                ASSyntax.createNumber(y)); 
+    }
+    
+    public static Literal createAgentPerception(int x, int y)
+    {
+    	return ASSyntax.createLiteral("pos",
                 ASSyntax.createNumber(x),
                 ASSyntax.createNumber(y)); 
     }

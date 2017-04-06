@@ -48,6 +48,11 @@ public class ServerEnv extends Environment {
 	}
 	
 	// Override
+	protected void updateAgsPercept() {
+		
+	}
+	
+	// Override
 	protected int getAgentIdByName(String name) {
 		return 0;
 	}
@@ -76,13 +81,13 @@ public class ServerEnv extends Environment {
 			try {
 				if (requests.size() >= nbAgs)
 				{
-					logger.info(Arrays.toString(jointAction));
+//					logger.info(Arrays.toString(jointAction));
 					
 					serverOut.println(Arrays.toString(jointAction));
 					
 					String response = serverIn.readLine();
 					
-					logger.info(response);
+//					logger.info(response);
 					
 					if (response.contains("false"))
 					{
@@ -95,6 +100,8 @@ public class ServerEnv extends Environment {
                         boolean success = executeAction(a.agName, a.action);
                         getEnvironmentInfraTier().actionExecuted(a.agName, a.action, success, a.infraData);
 	                }
+	                
+	                updateAgsPercept();
 				}
 			} 
 			catch (Exception e) 
