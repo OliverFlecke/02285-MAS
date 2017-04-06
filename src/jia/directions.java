@@ -1,5 +1,6 @@
 package jia;
 
+import java.util.LinkedList;
 import java.util.logging.Level;
 
 import jason.asSemantics.*;
@@ -24,15 +25,24 @@ public class directions extends DefaultInternalAction {
 	        int toY = (int) ((NumberTerm) args[3]).solve();
 	        
 	        Location from = new Location(agX, agY);
-	        Location to   = new Location(toX, toY);
+	        Location to   = new Location(toX, toY);	        
+	        int proximity = (int) ((NumberTerm) args[4]).solve();
 	        
 	        ListTermImpl directions = new ListTermImpl();
 	        
-	        for (String dir : AStar.search(from, to, 1))
+	        LinkedList<String> path = AStar.search(from, to, proximity);
+	        
+	        if (path == null)
+	        {
+	        	ts.getLogger().warning("Unable to find path from (" + agX + "," + agY + ") to (" + toX + "," + toY + ")");
+	        	return false;
+	        }
+	        
+	        for (String dir : path)
 	        {
 	        	directions.add(Literal.parseLiteral(dir));
 	        }	        
-	        return un.unifies(args[4], directions); 
+	        return un.unifies(args[5], directions); 
 		} 
 		catch (Throwable e) 
 		{
