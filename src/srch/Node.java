@@ -38,7 +38,7 @@ public class Node {
 		{
 			Location loc = WorldModel.newLocation(dir, location);
 					
-			if (WorldModel.getInstance().isFree(loc))
+			if (WorldModel.getInstance().noWallsOrBoxes(loc))
 			{
 				expandedNodes.add(new Node(this, dir, loc));
 			}

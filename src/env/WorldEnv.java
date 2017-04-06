@@ -107,7 +107,11 @@ public class WorldEnv extends ServerEnv {
         {
         	addPercept(createGoalPerception(x, y));
         }
-        if (model.hasObject(WorldModel.AGENT, x, y))
+		if (model.isFree(x, y))
+		{
+        	addPercept(createFreePerception(x, y));
+		}
+		else if (model.hasObject(WorldModel.AGENT, x, y))
         {
             addPercept(createAgentPerception(x, y));
         }
@@ -136,6 +140,13 @@ public class WorldEnv extends ServerEnv {
     public static Literal createAgentPerception(int x, int y)
     {
     	return ASSyntax.createLiteral("pos",
+                ASSyntax.createNumber(x),
+                ASSyntax.createNumber(y)); 
+    }
+    
+    public static Literal createFreePerception(int x, int y)
+    {
+    	return ASSyntax.createLiteral("free",
                 ASSyntax.createNumber(x),
                 ASSyntax.createNumber(y)); 
     }

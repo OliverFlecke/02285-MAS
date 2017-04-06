@@ -95,6 +95,13 @@ public class WorldModel extends GridWorldModel {
         return super.isFree(x, y) && !hasObject(BOX, x, y);
     }
 	
+	/**
+	 * Should agents be considered?
+	 */
+	public boolean noWallsOrBoxes(Location l) {
+		return inGrid(l) && isFree(OBSTACLE, l) && isFree(BOX, l);
+	}
+	
 	/* 
 	 *  ACTIONS
 	 */

@@ -50,7 +50,7 @@ public class AStar implements Comparator<Node> {
 		{
 			Node leaf = getAndRemoveLeaf();
 			
-			if (isAdjacentToGoal(leaf))
+			if (isWithinGoalDistance(leaf))
 			{
 				return leaf.extractPlan();
 			}
@@ -91,7 +91,7 @@ public class AStar implements Comparator<Node> {
 		return explored.contains(n);
 	}
 	
-	private boolean isAdjacentToGoal(Node n) {
+	private boolean isWithinGoalDistance(Node n) {
 		return n.location.distance(goalLocation) == goalDistance;
 	}
 	
