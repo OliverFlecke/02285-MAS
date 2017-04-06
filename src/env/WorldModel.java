@@ -71,7 +71,11 @@ public class WorldModel extends GridWorldModel {
 				else if (Character.isLowerCase(ch)) add(GOAL, i, j);
 			}
 		}
-
+		printLevel();
+	}
+	
+	public void printLevel()
+	{
 		// Print integer representation of level
 		for (int i = 0; i < height; i++) 
 		{
