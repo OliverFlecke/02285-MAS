@@ -42,6 +42,7 @@ public class Level {
 		String line;
 		while ((line = msg.readLine()) != null && !line.equals(""))
 		{
+			System.out.println(line);
 			if (line.matches("^[a-z]+:\\s*[0-9A-Z](\\s*,\\s*[0-9A-Z])*\\s*$"))
 			{
 				readColor(agents, boxes, line);
@@ -57,14 +58,32 @@ public class Level {
 					
 					if (Character.isDigit(ch)) 
 					{
+						Agent agent;
+						try 
+						{
+							agent = agents.stream().filter(a -> a.getId() == (ch - 48)).findFirst().get();
+						} 
+						catch (Exception ex)
+						{
+							agent = new Agent(ch, Color.Blue);
+							agents.add(agent);
+						}
 						nbAgs++;
-						Agent agent = agents.stream().filter(a -> a.getId() == (ch - 48)).findFirst().get();
 						agent.col = columNumber;
-						agent.row = rowNumber;
+						agent.row = rowNumber;								
 					}
 					else if (Character.isUpperCase(ch))
 					{
-						Box box = boxes.stream().filter(b -> b.getId() == ch).findFirst().get();
+						Box box;
+						try 
+						{
+							box = boxes.stream().filter(b -> b.getId() == ch).findFirst().get();
+						}
+						catch (Exception ex) 
+						{
+							box = new Box(ch, Color.Blue);
+							boxes.add(box);
+						}
 						box.col = columNumber;
 						box.row = rowNumber;
 					}
