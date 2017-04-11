@@ -2,19 +2,18 @@
 
 package jia;
 
-import java.util.List;
-
 import env.*;
 
 import env.WorldModel;
-import jason.*;
 import jason.asSemantics.*;
 import jason.asSyntax.*;
 import mas.entity.*;
 
 public class select_box extends DefaultInternalAction {
 
-    @Override
+	private static final long serialVersionUID = 1L;
+
+	@Override
     public Object execute(TransitionSystem ts, Unifier un, Term[] terms) throws Exception {
         // execute the internal action
         ts.getAg().getLogger().info("executing internal action 'jia.select_box'");
@@ -47,10 +46,8 @@ public class select_box extends DefaultInternalAction {
         catch (Throwable e)
         {
         	ts.getLogger().log(java.util.logging.Level.SEVERE, "select box error: " + e, e);
+            return false;
         }
-        
-        // everything ok, so returns true
-        return false;
     }
     
     private int manhattanDistance(int x0, int y0, int x1, int y1) 
