@@ -1,17 +1,28 @@
 
 color(blue).
 
+manhattan(X0, Y0, X1, Y1, D) :- .print("called") & D = math.abs(X0 - X1) + math.abs(Y0 - Y1).
+
+select_box(C, A, GoalX, GoalY, X, Y) :- jia.select_box(C, A, GoalX, GoalY, X, Y).
+select_box(C, A, _, _, X, Y) :- box(C, A, X, Y).
+
+// Initial goal
 !solve_level.
 
 +!solve_level <-
-	for ( goal(A, GoalX, GoalY) ) {
-		.print("goal(", A, ", ", GoalX, ", ", GoalY, ")");
-		!solve_goal(A, GoalX, GoalY);
+	while (goal(A, X, Y) & not box(_, A, X, Y)) // Change this to goal selection function
+	{
+		.print("goal(", A, ", ", X, ", ", Y, ")");
+		!solve_goal(A, X, Y);
 	}.
+//	for ( goal(A, GoalX, GoalY) ) {
+//		.print("goal(", A, ", ", GoalX, ", ", GoalY, ")");
+//		!solve_goal(A, GoalX, GoalY);
+//	}.
 	
 +!solve_goal(A, X, Y) : box(_, A, X, Y) <- .print("Box on goal").
 
-+!solve_goal(A, X, Y) : color(C) & box(C, A, BoxX, BoxY) & not goal(A, BoxX, BoxY) <-
++!solve_goal(A, X, Y) : color(C) & select_box(C, A, X, Y, BoxX, BoxY) & not goal(A, BoxX, BoxY) <-
 	.print("solve_goal(", A, ", ", X, ", ", Y, ") with box at ", BoxX, ",", BoxY);
 	!move_adjacent(BoxX, BoxY);
 	!move_box(BoxX, BoxY, X, Y).	

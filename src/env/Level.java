@@ -74,16 +74,14 @@ public class Level {
 					}
 					else if (Character.isUpperCase(ch))
 					{
-						Box box;
+						Color color = null;
 						try 
 						{
-							box = boxes.stream().filter(b -> b.getId() == ch).findFirst().get();
+							color = boxes.stream().filter(b -> b.getId() == ch).findFirst().get().color;
 						}
-						catch (Exception ex) 
-						{
-							box = new Box(ch, Color.Blue);
-							boxes.add(box);
-						}
+						catch (Exception ex) {}
+						Box box = new Box(ch, color);
+						boxes.add(box);
 						box.col = columNumber;
 						box.row = rowNumber;
 					}
@@ -107,6 +105,7 @@ public class Level {
 				data[row][col] = dataList.get(row).get(col);
 			}
 		}		
+		System.out.println(boxes.size());
 		return new Level(maxCol, maxRow, nbAgs, data, agents, boxes);
 	}
 	

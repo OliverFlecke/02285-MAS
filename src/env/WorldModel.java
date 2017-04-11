@@ -10,6 +10,7 @@ public class WorldModel extends GridWorldModel {
 	private static final Logger logger = Logger.getLogger(WorldModel.class.getName());
 	
 	private static WorldModel instance;
+	private static Level level;
 
 	// GridWorldModel uses bit flags to represent objects
 	//						CLEAN		= 0
@@ -29,10 +30,16 @@ public class WorldModel extends GridWorldModel {
 		initData(level.data);
 		
 		instance = this;
+		WorldModel.level = level;
 	}
 	
 	public static WorldModel getInstance() {
 		return instance;
+	}
+	
+	public static Level getLevel()
+	{
+		return level;
 	}
 	
 	/**

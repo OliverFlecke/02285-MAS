@@ -29,6 +29,7 @@ public abstract class WorldObject {
 	 * @param color of the object
 	 */
 	public WorldObject(char id, Color color) {
+		if (color == null) color = Color.Blue;
 		this.id = id;
 		this.color = color;
 	}
