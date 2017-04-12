@@ -1,6 +1,11 @@
 
 color(blue).
 
+pos(right) :- box(BoxX, BoxY) & pos(BoxX+1, BoxY).
+pos(left ) :- box(BoxX, BoxY) & pos(BoxX-1, BoxY).
+pos(above) :- box(BoxX, BoxY) & pos(BoxX, BoxY-1).
+pos(below) :- box(BoxX, BoxY) & pos(BoxX, BoxY+1).
+
 manhattan(X0, Y0, X1, Y1, D) :- .print("called") & D = math.abs(X0 - X1) + math.abs(Y0 - Y1).
 
 select_box(C, A, GoalX, GoalY, X, Y) :- jia.select_box(C, A, GoalX, GoalY, X, Y).
@@ -35,9 +40,10 @@ select_box(C, A, _, _, X, Y) :- box(C, A, X, Y).
 	.print("move_to(", AgX, ", ", AgY, ", ", ToX, ", ", ToY, ")");
 	jia.directions(AgX, AgY, ToX, ToY, 1, Directions);
 	.print("Move to directions: ", Directions);
-	for ( .member(Dir, Directions) ) {
-		move(Dir);
-	}.
+	!move(Directions).
+	
++!move([]).
++!move([Dir|Directions]) <- move(Dir); !move(Directions).
 	
 +!move_box(BoxX, BoxY, GoalX, GoalY) : BoxX == GoalX & BoxY == GoalY.
 
@@ -141,8 +147,6 @@ select_box(C, A, _, _, X, Y) :- box(C, A, X, Y).
 +!move_box(down ) : box(BoxX, BoxY) & pos(BoxX+1, BoxY) & free(BoxX  , BoxY+1) <- push(left , down ); -+box(BoxX, BoxY+1).
 //                  Agent to the left of box              Space at new box pos
 +!move_box(down ) : box(BoxX, BoxY) & pos(BoxX-1, BoxY) & free(BoxX  , BoxY+1) <- push(right, down ); -+box(BoxX, BoxY+1).
-	
-
 	
 	
 	
