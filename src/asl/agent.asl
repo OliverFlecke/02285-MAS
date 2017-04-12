@@ -60,7 +60,7 @@ select_box(C, A, _, _, X, Y) :- box(C, A, X, Y).
 
 +!move_box([]).
 +!move_box([Dir1,Dir2|Directions]) <- !move_box(Dir1,Dir2); !move_box([Dir2|Directions]).
--!move_box([Dir		 |Directions]) <- !move_box(Dir); 		!move_box(Directions).
++!move_box([Dir		 |Directions]) <- !move_box(Dir); 		!move_box(Directions).
 
 // To make sure that the agent does not block his own path, he should always try to pull other directions than Dir2 first
 
@@ -103,6 +103,9 @@ select_box(C, A, _, _, X, Y) :- box(C, A, X, Y).
 // Pulling down followed down
 +!move_box(down , down ) : box(BoxX, BoxY) & pos(BoxX, BoxY+1) & free(BoxX+1, BoxY+1) <- pull(right, up   ); -+box(BoxX, BoxY+1).
 +!move_box(down , down ) : box(BoxX, BoxY) & pos(BoxX, BoxY+1) & free(BoxX-1, BoxY+1) <- pull(left , up   ); -+box(BoxX, BoxY+1).
+
+// Do move_box/1 if no plans succeed.
++!move_box(Dir  , _    ) <- !move_box(Dir).
 
 //                  Agent to the right of box             Space at new agent pos
 +!move_box(right) : box(BoxX, BoxY) & pos(BoxX+1, BoxY) & free(BoxX+1, BoxY+1) <- pull(down , left ); -+box(BoxX+1, BoxY).
