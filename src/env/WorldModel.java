@@ -66,6 +66,11 @@ public class WorldModel extends GridWorldModel {
 		move(AGENT, agents.get(agId).getLocation(), l);
 	}
 	
+	public Map<Integer, Agent> getAgents()
+	{
+		return this.agents;
+	}
+	
 	/**
 	 * @return The data in this world model
 	 */

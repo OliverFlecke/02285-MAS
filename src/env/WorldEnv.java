@@ -1,8 +1,11 @@
 package env;
 
+
 import java.util.logging.Logger;
 
 import jason.asSyntax.*;
+import lvl.Agent;
+import lvl.Color;
 
 public class WorldEnv extends ServerEnv {
 
@@ -82,8 +85,18 @@ public class WorldEnv extends ServerEnv {
     	{
     		for (int y = 0; y < model.getHeight(); y++)
     		{
-    			addModelPercepts(x, y);
+    			if ((model.getData()[x][y] & WorldModel.AGENT) != WorldModel.AGENT)
+    				addModelPercepts(x, y);
     		}
+    	}
+
+    	// Add agent specific information to each agent
+    	for (Agent agent : model.getAgents().values())
+    	{
+    		addPercept("initializer", Literal.parseLiteral("create_agent(" + agent.getName() + ")"));
+    		
+    		addPercept(agent.getName(), createAgentPerception(agent.getLocation().x, agent.getLocation().y));
+    		addPercept(agent.getName(), createColorPerception(agent.getColor()));
     	}
     }
 
@@ -103,10 +116,10 @@ public class WorldEnv extends ServerEnv {
 		{
         	addPercept(createFreePerception(x, y));
 		}
-		else if (model.hasObject(WorldModel.AGENT, x, y))
-        {
-            addPercept(createAgentPerception(x, y));
-        }
+//		else if (model.hasObject(WorldModel.AGENT, x, y))
+//        {
+//            addPercept(createAgentPerception(x, y));
+//        }
         else if (model.hasObject(WorldModel.BOX, x, y))
         {
         	addPercept(createBoxPerception(x, y));
@@ -134,6 +147,11 @@ public class WorldEnv extends ServerEnv {
     	return ASSyntax.createLiteral("pos",
                 ASSyntax.createNumber(x),
                 ASSyntax.createNumber(y)); 
+    }
+    
+    public static Literal createColorPerception(Color color)
+    {
+    	return ASSyntax.createLiteral("color", ASSyntax.createAtom(color.toString().toLowerCase()));
     }
     
     public static Literal createFreePerception(int x, int y)

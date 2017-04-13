@@ -1,13 +1,11 @@
 
-color(blue).
-
 pos(right) :- box(BoxX, BoxY) & pos(BoxX+1, BoxY).
 pos(left ) :- box(BoxX, BoxY) & pos(BoxX-1, BoxY).
 pos(above) :- box(BoxX, BoxY) & pos(BoxX, BoxY-1).
 pos(below) :- box(BoxX, BoxY) & pos(BoxX, BoxY+1).
 
 select_box(C, A, GoalX, GoalY, X, Y) :- jia.select_box(C, A, GoalX, GoalY, X, Y).
-select_box(C, A, _, _, X, Y) :- box(C, A, X, Y).
+select_box(C, A, _, _, X, Y) :- box(C, A, X, Y) & not goal(A, X, Y).
 
 select_goal(Letter, X, Y) :- pos(AgentX, AgentY) & jia.select_goal(Letter, AgentX, AgentY, X, Y).
 select_goal(Letter, X, Y) :- goal(Letter, X, Y) & not box(_, Letter, X, Y).
@@ -28,7 +26,7 @@ select_goal(Letter, X, Y) :- goal(Letter, X, Y) & not box(_, Letter, X, Y).
 	
 +!solve_goal(A, X, Y) : box(_, A, X, Y) <- .print("Box on goal").
 
-+!solve_goal(A, X, Y) : color(C) & select_box(C, A, X, Y, BoxX, BoxY) & not goal(A, BoxX, BoxY) <-
++!solve_goal(A, X, Y) : color(C) & select_box(C, A, X, Y, BoxX, BoxY) <-
 //+!solve_goal(A, X, Y) : color(C) & box(C, A, BoxX, BoxY) & not goal(A, BoxX, BoxY) <-
 	.print("solve_goal(", A, ", ", X, ", ", Y, ") with box at ", BoxX, ",", BoxY);
 	!move_adjacent(BoxX, BoxY);

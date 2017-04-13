@@ -2,8 +2,8 @@ MAS room {
 
 	environment: env.WorldEnv
 	
-	agents: 
-		agent;
+	agents:
+		initializer;
 			
 	aslSourcePath: "src/asl/";
 }
