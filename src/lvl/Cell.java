@@ -2,7 +2,7 @@ package lvl;
 
 import jason.environment.grid.Location;
 
-public class Cell {
+public abstract class Cell {
 	
 	private Location location;
 	

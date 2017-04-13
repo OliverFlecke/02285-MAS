@@ -1,6 +1,6 @@
 package lvl;
 
-public class Colored extends Cell {
+public abstract class Colored extends Cell {
 
 	private String color;
 	
