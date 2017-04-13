@@ -6,8 +6,6 @@ pos(left ) :- box(BoxX, BoxY) & pos(BoxX-1, BoxY).
 pos(above) :- box(BoxX, BoxY) & pos(BoxX, BoxY-1).
 pos(below) :- box(BoxX, BoxY) & pos(BoxX, BoxY+1).
 
-manhattan(X0, Y0, X1, Y1, D) :- .print("called") & D = math.abs(X0 - X1) + math.abs(Y0 - Y1).
-
 select_box(C, A, GoalX, GoalY, X, Y) :- jia.select_box(C, A, GoalX, GoalY, X, Y).
 select_box(C, A, _, _, X, Y) :- box(C, A, X, Y).
 

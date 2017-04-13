@@ -68,10 +68,20 @@ public class WorldModel extends GridWorldModel {
 	
 	public void move(int value, Location fr, Location to)
 	{
+		System.out.println(value + " from: " + fr + " to: " + to );
+		System.out.println(agentArray[fr.x][fr.y]);
 		switch (value)
 		{
-		case AGENT: agentArray[fr.x][fr.y].setLocation(to); break;
-		case BOX:	boxArray  [fr.x][fr.y].setLocation(to); break;
+		case AGENT: 
+			agentArray[fr.x][fr.y].setLocation(to); 
+			agentArray[to.x][to.y] = agentArray[fr.x][fr.y];
+			agentArray[fr.x][fr.y] = null;
+			break;
+		case BOX:	
+			boxArray  [fr.x][fr.y].setLocation(to); 
+			boxArray  [to.x][to.y] = boxArray[fr.x][fr.y];
+			boxArray  [fr.x][fr.y] = null;
+			break;
 		default: 	return;
 		}
 
@@ -123,6 +133,7 @@ public class WorldModel extends GridWorldModel {
 					
 					add(AGENT, x, y);			// Add to integer representation
 					agents.put(number, agent);	// Add to map for quick lookup
+					agentArray[x][y] = agent;
 				}
 				
 				else if (ch == '+') add(OBSTACLE, x, y);
