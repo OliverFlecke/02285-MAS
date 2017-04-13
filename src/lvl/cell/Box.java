@@ -1,20 +1,12 @@
-package lvl;
+package lvl.cell;
 
 import env.WorldModel;
 
 public class Box extends Colored {
 
-	private char character;
-
-	public Box(int x, int y, char character, String color)
+	public Box(int x, int y, char letter, String color)
 	{
-		super(x, y, color);
-		
-		this.character = character;
-	}
-
-	public char getCharacter() {
-		return character;
+		super(x, y, letter, color);
 	}
 	
 	/**
@@ -24,7 +16,7 @@ public class Box extends Colored {
 	{
 		Goal goal = WorldModel.getInstance().getGoalsArray()[this.getLocation().x][this.getLocation().y];
 		if (goal != null)
-			return goal.getCharacter() == this.getCharacter();
+			return goal.getLetter() == this.getLetter();
 		else
 			return false;
 	}

@@ -7,7 +7,7 @@ import java.util.stream.Collectors;
 import jason.asSyntax.Term;
 import jason.environment.grid.GridWorldModel;
 import jason.environment.grid.Location;
-import lvl.*;
+import lvl.cell.*;
 
 public class WorldModel extends GridWorldModel {
 	
@@ -15,7 +15,7 @@ public class WorldModel extends GridWorldModel {
 	
 	private static WorldModel instance;
 	
-	private Map<Integer, Agent> agents	= new HashMap<>();
+	private Agent[]				agents;
 	private Set<Box>			boxes	= new HashSet<>();
 	private Set<Goal>			goals	= new HashSet<>();
 	
@@ -36,13 +36,15 @@ public class WorldModel extends GridWorldModel {
 	 */
 	public WorldModel(lvl.Level level) 
 	{		
-		super(level.width, level.height, 0);
+		super(level.width, level.height, level.nbAgs);
 
+		agents 		= new Agent[level.nbAgs];
+		
 		agentArray 	= new Agent[width][height];
 		boxArray  	= new Box  [width][height];
 		goalArray 	= new Goal [width][height];
 		
-		initData	(level.data, level.colors);
+		initData(level.data, level.colors);
 		
 		instance = this;
 	}
@@ -53,20 +55,20 @@ public class WorldModel extends GridWorldModel {
 
 	@Override
     public int getNbOfAgs() {
-        return agents.size();
+        return agents.length;
     }
 	
 	@Override
 	public Location getAgPos(int agId) {
-		return agents.get(agId).getLocation();
+		return agents[agId].getLocation();
 	}
 	
 	@Override
 	public void setAgPos(int agId, Location l) {
-		move(AGENT, agents.get(agId).getLocation(), l);
+		move(AGENT, agents[agId].getLocation(), l);
 	}
 	
-	public Map<Integer, Agent> getAgents()
+	public Agent[] getAgents()
 	{
 		return this.agents;
 	}
@@ -165,10 +167,10 @@ public class WorldModel extends GridWorldModel {
 				if (Character.isDigit(ch)) 
 				{
 					int number = Character.getNumericValue(ch);
-					Agent agent = new Agent(x, y, ch, number, colors.getOrDefault(ch, ""));
-					
+					Agent agent = new Agent(x, y, ch, colors.getOrDefault(ch, ""));
+
 					add(AGENT, x, y);			// Add to integer representation
-					agents.put(number, agent);	// Add to map for quick lookup
+					agents[number] = agent;		// Add to map for quick lookup
 					agentArray[x][y] = agent;	// Add to array for quick lookup
 				}
 				

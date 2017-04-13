@@ -6,7 +6,7 @@ import env.WorldModel;
 import jason.asSemantics.*;
 import jason.asSyntax.*;
 import jason.environment.grid.Location;
-import lvl.Goal;
+import lvl.cell.Goal;
 
 public class select_goal extends DefaultInternalAction {
 	
@@ -39,7 +39,7 @@ public class select_goal extends DefaultInternalAction {
         	}
         	if (bestGoal == null) return false;
         	
-        	return un.unifies(terms[0], new LiteralImpl(Character.toString(Character.toLowerCase(bestGoal.getCharacter())))) && 
+        	return un.unifies(terms[0], new LiteralImpl(Character.toString(Character.toLowerCase(bestGoal.getLetter())))) && 
         			un.unifies(terms[3], new NumberTermImpl(best.x)) && 
         			un.unifies(terms[4], new NumberTermImpl(best.y));
         }

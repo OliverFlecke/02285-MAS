@@ -6,8 +6,8 @@ import env.*;
 import jason.asSemantics.*;
 import jason.asSyntax.*;
 import jason.environment.grid.Location;
-import lvl.Box;
 import lvl.Color;
+import lvl.cell.Box;
 
 public class select_box extends DefaultInternalAction {
 
@@ -31,7 +31,7 @@ public class select_box extends DefaultInternalAction {
         	int bestDistance = Integer.MAX_VALUE;
         	for (Box box : WorldModel.getInstance().getBoxesNotOnGoal())
         	{
-        		if (box.getColor() == color && Character.toLowerCase(box.getCharacter()) == letter)
+        		if (box.getColor() == color && Character.toLowerCase(box.getLetter()) == letter)
         		{
         			int distance = box.getLocation().distanceManhattan(goal);
         			if (bestDistance > distance)

@@ -4,9 +4,9 @@ package env;
 import java.util.logging.Logger;
 
 import jason.asSyntax.*;
-import lvl.Agent;
+import lvl.cell.Agent;
 import lvl.Color;
-
+import lvl.Level;
 public class WorldEnv extends ServerEnv {
 
     private static final Logger logger = Logger.getLogger(WorldEnv.class.getName());
@@ -24,7 +24,7 @@ public class WorldEnv extends ServerEnv {
     	super.init(args);
 
 		try {
-			model = new WorldModel(lvl.Level.parse(serverIn));
+			model = new WorldModel(Level.parse(serverIn));
 
 			updateNumberOfAgents();
 
@@ -91,7 +91,7 @@ public class WorldEnv extends ServerEnv {
     	}
 
     	// Add agent specific information to each agent
-    	for (Agent agent : model.getAgents().values())
+    	for (Agent agent : model.getAgents())
     	{
     		addPercept("initializer", Literal.parseLiteral("create_agent(" + agent.getName() + ")"));
     		
