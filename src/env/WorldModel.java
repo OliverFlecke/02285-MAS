@@ -2,6 +2,8 @@ package env;
 
 import java.util.*;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
+
 import jason.asSyntax.Term;
 import jason.environment.grid.GridWorldModel;
 import jason.environment.grid.Location;
@@ -38,8 +40,7 @@ public class WorldModel extends GridWorldModel {
 		boxArray  = new Box [width][height];
 		goalArray = new Goal[width][height];
 		
-		initData	(level.data);
-		initColors	(level.colors);
+		initData	(level.data, level.colors);
 		
 		instance = this;
 	}
@@ -69,11 +70,35 @@ public class WorldModel extends GridWorldModel {
 	}
 	
 	/**
+	 * @return The goals in the world model
+	 */
+	public Set<Goal> getGoals()
+	{
+		return this.goals;
+	}
+	
+	/**
+	 * @return The boxes in the world
+	 */
+	public Set<Box> getBoxes()
+	{
+		return this.boxes;
+	}
+	
+	/**
+	 * @return All the boxes in the world, which is not already on a goal
+	 */
+	public Set<Box> getBoxesNotOnGoal()
+	{
+		return boxes.stream().filter(box -> !box.onGoal()).collect(Collectors.toSet());
+	}
+	
+	/**
 	 * Initializes the grid with objects according to the 
 	 * data.
 	 * @param data - Two-dimensional char array
 	 */
-	private void initData(char[][] data) 
+	private void initData(char[][] data, Map<Character, String> colors) 
 	{		
 		for (int x = 0; x < width; x++) 
 		{
@@ -84,8 +109,7 @@ public class WorldModel extends GridWorldModel {
 				if (Character.isDigit(ch)) 
 				{
 					int number = Character.getNumericValue(ch);
-					
-					Agent agent = new Agent(x, y, ch, number);
+					Agent agent = new Agent(x, y, ch, number, colors.getOrDefault(ch, ""));
 					
 					add(AGENT, x, y);			// Add to integer representation
 					agents.put(number, agent);	// Add to map for quick lookup
@@ -95,7 +119,7 @@ public class WorldModel extends GridWorldModel {
 				
 				else if (Character.isUpperCase(ch)) 
 				{
-					Box box = new Box(x, y, ch);
+					Box box = new Box(x, y, ch, colors.getOrDefault(ch, ""));
 					
 					add(BOX, x, y);				// Add to integer representation
 					boxes.add(box);             // Add to set to easily get all
@@ -113,19 +137,6 @@ public class WorldModel extends GridWorldModel {
 			}
 		}
 		printLevel();
-	}
-	
-	private void initColors(Map<Character, String> colors)
-	{		
-		for (Agent agent : agents.values())
-		{
-			agent.setColor(colors.get(agent.getCharacter()));
-		}
-		
-		for (Box box : boxes)
-		{
-			box.setColor(colors.get(box.getCharacter()));
-		}
 	}
 	
 	public void printLevel()
