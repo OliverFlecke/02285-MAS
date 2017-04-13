@@ -99,6 +99,7 @@ public class WorldModel extends GridWorldModel {
 					
 					add(AGENT, x, y);			// Add to integer representation
 					agents.put(number, agent);	// Add to map for quick lookup
+					agentArray[x][y] = agent;	// Add to array for quick lookup
 				}
 				
 				else if (ch == '+') add(OBSTACLE, x, y);
