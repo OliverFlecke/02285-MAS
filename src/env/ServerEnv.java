@@ -1,8 +1,11 @@
 package env;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileDescriptor;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
 import java.util.Arrays;
@@ -18,6 +21,8 @@ import jason.environment.Environment;
 public class ServerEnv extends Environment {
 	
     private static final Logger logger = Logger.getLogger(ServerEnv.class.getName());
+    
+    private static final boolean TEST = true;
 
 	private int 						nbAgs;	  
 	private HashMap<String, ActRequest> requests;	
@@ -35,6 +40,15 @@ public class ServerEnv extends Environment {
 			
 		serverIn	= new BufferedReader(new InputStreamReader(System.in));		
 		serverOut	= new PrintStream(new FileOutputStream(FileDescriptor.out));
+		
+		if (TEST)
+		{
+			try {
+				serverIn = new BufferedReader(new FileReader(new File("levels\\single_agent\\sokoban\\SAsoko3_12.lvl")));
+			} catch (FileNotFoundException e) {
+				e.printStackTrace();
+			}
+		}
 	}
 	
 	public void setNbAgs(int n) {
@@ -85,15 +99,18 @@ public class ServerEnv extends Environment {
 					
 					serverOut.println(Arrays.toString(jointAction));
 					
-					String response = serverIn.readLine();
-					
-//					logger.info(response);
-					
-					if (response.contains("false"))
+					if (!TEST)
 					{
-						// Error handling
-						logger.severe("Action failed on server");
-					}					
+						String response = serverIn.readLine();
+						
+//						logger.info(response);
+						
+						if (response.contains("false"))
+						{
+							// Error handling
+							logger.severe("Action failed on server");
+						}
+					}
 	
 	                for (ActRequest a: requests.values()) 
 	                {

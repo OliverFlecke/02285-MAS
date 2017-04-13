@@ -3,6 +3,7 @@ package env;
 import java.util.logging.Logger;
 
 import jason.asSyntax.*;
+import lvl.Level;
 
 public class WorldEnv extends ServerEnv {
 
@@ -21,7 +22,7 @@ public class WorldEnv extends ServerEnv {
     	super.init(args);
 
 		try {
-			model = new WorldModel(lvl.Level.parse(serverIn));
+			model = new WorldModel(Level.parse(serverIn));
 
 			updateNumberOfAgents();
 
