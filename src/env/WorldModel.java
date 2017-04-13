@@ -1,16 +1,24 @@
 package env;
 
+import java.util.*;
 import java.util.logging.Logger;
 import jason.asSyntax.Term;
 import jason.environment.grid.GridWorldModel;
 import jason.environment.grid.Location;
+import lvl.*;
 
 public class WorldModel extends GridWorldModel {
 	
 	private static final Logger logger = Logger.getLogger(WorldModel.class.getName());
 	
 	private static WorldModel instance;
-	private static Level level;
+	
+	private Map<Integer, Agent> agents	= new HashMap<>();
+	private Set<Box>			boxes	= new HashSet<>();
+	private Set<Goal>			goals	= new HashSet<>();
+	
+	private Box[][]				boxArray;
+	private Goal[][]			goalArray;
 
 	// GridWorldModel uses bit flags to represent objects
 	//						CLEAN		= 0
@@ -23,23 +31,41 @@ public class WorldModel extends GridWorldModel {
 	 * Constructs a new WorldModel based on a level.
 	 * @param level - Level object
 	 */
-	public WorldModel(Level level) 
-	{
-		super(level.width, level.height, level.nbAgs);
+	public WorldModel(lvl.Level level) 
+	{		
+		super(level.width, level.height, 0);
+
+		boxArray  = new Box [width][height];
+		goalArray = new Goal[width][height];
 		
-		initData(level.data);
+		initData	(level.data);
+		initColors	(level.colors);
 		
 		instance = this;
-		WorldModel.level = level;
 	}
 	
 	public static WorldModel getInstance() {
 		return instance;
 	}
+
+	@Override
+    public int getNbOfAgs() {
+        return agents.size();
+    }
 	
-	public static Level getLevel()
-	{
-		return level;
+	@Override
+	public Location getAgPos(int agId) {
+		return agents.get(agId).getLocation();
+	}
+	
+	@Override
+	public void setAgPos(int agId, Location l) {
+		Agent agent = agents.get(agId);
+		Location old = agent.getLocation();
+		
+		
+		
+		agent.setLocation(l);
 	}
 	
 	/**
@@ -48,47 +74,68 @@ public class WorldModel extends GridWorldModel {
 	 * @param data - Two-dimensional char array
 	 */
 	private void initData(char[][] data) 
-	{
-		// Print character representation of level
-		for (int i = 0; i < height; i++) 
+	{		
+		for (int x = 0; x < width; x++) 
 		{
-			for (int j = 0; j < width; j++) 
+			for (int y = 0; y < height; y++) 
 			{
-				System.err.print(data[i][j]);
-			}
-			System.err.println();
-		}
-		
-		for (int i = 0; i < width; i++) 
-		{
-			for (int j = 0; j < height; j++) 
-			{
-				char ch = data[j][i];
+				char ch = data[x][y];
 				
 				if (Character.isDigit(ch)) 
 				{
-					add(AGENT, i, j);
-					agPos[Character.getNumericValue(ch)] = new Location(i, j);
+					int number = Character.getNumericValue(ch);
+					
+					Agent agent = new Agent(x, y, ch, number);
+					
+					add(AGENT, x, y);			// Add to integer representation
+					agents.put(number, agent);	// Add to map for quick lookup
 				}
 				
-				else if (ch == '+') add(OBSTACLE, i, j);
+				else if (ch == '+') add(OBSTACLE, x, y);
 				
-				else if (Character.isUpperCase(ch)) add(BOX , i, j);
+				else if (Character.isUpperCase(ch)) 
+				{
+					Box box = new Box(x, y, ch);
+					
+					add(BOX, x, y);				// Add to integer representation
+					boxes.add(box);             // Add to set to easily get all
+					boxArray[x][y] = box;		// Add to array for quick lookup
+				}
 				
-				else if (Character.isLowerCase(ch)) add(GOAL, i, j);
+				else if (Character.isLowerCase(ch)) 
+				{
+					Goal goal = new Goal(x, y, ch);
+					
+					add(GOAL, x, y);			// Add to integer representation
+					goals.add(goal);            // Add to set to easily get all 
+					goalArray[x][y] = goal;		// Add to array for quick lookup
+				}
 			}
 		}
 		printLevel();
 	}
 	
+	private void initColors(Map<Character, String> colors)
+	{		
+		for (Agent agent : agents.values())
+		{
+			agent.setColor(colors.get(agent.getCharacter()));
+		}
+		
+		for (Box box : boxes)
+		{
+			box.setColor(colors.get(box.getCharacter()));
+		}
+	}
+	
 	public void printLevel()
 	{
 		// Print integer representation of level
-		for (int i = 0; i < height; i++) 
+		for (int y = 0; y < height; y++) 
 		{
-			for (int j = 0; j < width; j++) 
+			for (int x = 0; x < width; x++) 
 			{
-				System.err.print(this.data[j][i]);
+				System.err.print(data[x][y]);
 			}
 			System.err.println();
 		}

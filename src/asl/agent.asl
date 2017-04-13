@@ -27,7 +27,8 @@ select_box(C, A, _, _, X, Y) :- box(C, A, X, Y).
 	
 +!solve_goal(A, X, Y) : box(_, A, X, Y) <- .print("Box on goal").
 
-+!solve_goal(A, X, Y) : color(C) & select_box(C, A, X, Y, BoxX, BoxY) & not goal(A, BoxX, BoxY) <-
+//+!solve_goal(A, X, Y) : color(C) & select_box(C, A, X, Y, BoxX, BoxY) & not goal(A, BoxX, BoxY) <-
++!solve_goal(A, X, Y) : color(C) & box(C, A, BoxX, BoxY) & not goal(A, BoxX, BoxY) <-
 	.print("solve_goal(", A, ", ", X, ", ", Y, ") with box at ", BoxX, ",", BoxY);
 	!move_adjacent(BoxX, BoxY);
 	!move_box(BoxX, BoxY, X, Y).	

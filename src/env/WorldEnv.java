@@ -2,11 +2,7 @@ package env;
 
 import java.util.logging.Logger;
 
-import jason.asSyntax.ASSyntax;
-import jason.asSyntax.Atom;
-import jason.asSyntax.Literal;
-import jason.asSyntax.Structure;
-import jason.asSyntax.Term;
+import jason.asSyntax.*;
 
 public class WorldEnv extends ServerEnv {
 
@@ -25,15 +21,11 @@ public class WorldEnv extends ServerEnv {
     	super.init(args);
 
 		try {
-			model = new WorldModel(Level.parse(serverIn));
-			
+			model = new WorldModel(lvl.Level.parse(serverIn));
+
 			updateNumberOfAgents();
-			
+
 			updateInitialAgsPercept();
-			
-//			addPercept("started");
-			
-//			executeAction("agent", Structure.parse(PUSH + "(right,right)"));
 		} 
 		catch (Exception e) 
 		{
@@ -43,7 +35,7 @@ public class WorldEnv extends ServerEnv {
     
     @Override
     protected void updateNumberOfAgents() {
-		setNbAgs(model.getNbOfAgs());    	
+		setNbAgs(model.getNbOfAgs());
     }
     
     @Override
