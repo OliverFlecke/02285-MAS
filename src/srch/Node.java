@@ -3,61 +3,43 @@ package srch;
 import java.util.ArrayList;
 import java.util.LinkedList;
 
-import env.WorldModel;
 import jason.environment.grid.Location;
 
-public class Node {
+public abstract class Node {
 	
-	Node parent;
-	String direction;
-	Location location;
-	
-	int g;
+	private Node parent;
+	private Location location;	
+	private int g;
 	
 	public Node(Location initial)
 	{
 		parent = null;
-		direction = null;
 		location = initial;
 		g = 0;
 	}
 	
-	private Node(Node parent, String direction, Location location) 
+	public Node(Node parent, Location location) 
 	{
 		this.parent    = parent;
-		this.direction = direction;	
 		this.location  = location;	
 		this.g         = parent.g + 1;
 	}
-
-	public ArrayList<Node> GetExpandedNodes() 
-	{
-		ArrayList<Node> expandedNodes = new ArrayList<Node>(WorldModel.DIRECTIONS.length);
-		
-		for (String dir : WorldModel.DIRECTIONS)
-		{
-			Location loc = WorldModel.newLocation(dir, location);
-					
-			if (WorldModel.getInstance().noWallsOrBoxes(loc))
-			{
-				expandedNodes.add(new Node(this, dir, loc));
-			}
-		}		
-		
-		return expandedNodes;
+	
+	public Node getParent() {
+		return parent;
+	}
+	
+	public Location getLocation() {
+		return location;
+	}
+	
+	public int g() {
+		return g;
 	}
 
-	public LinkedList<String> extractPlan() 
-	{
-		LinkedList<String> plan = new LinkedList<String>();
-		
-		for (Node n = this; n.direction != null; n = n.parent) 
-		{
-			plan.addFirst(n.direction);
-		}		
-		
-		return plan;
-	}
+	public abstract ArrayList<Node> GetExpandedNodes();
+
+	public abstract LinkedList<String> extractPlan();
 
 	@Override
 	public int hashCode() {

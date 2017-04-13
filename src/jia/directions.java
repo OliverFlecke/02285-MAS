@@ -6,7 +6,7 @@ import java.util.logging.Level;
 import jason.asSemantics.*;
 import jason.asSyntax.*;
 import jason.environment.grid.Location;
-import srch.AStar;
+import srch.dir.DirSearch;
 
 /**
  * Gets a sequence of directions towards some location using A*.
@@ -30,7 +30,7 @@ public class directions extends DefaultInternalAction {
 	        
 	        ListTermImpl directions = new ListTermImpl();
 	        
-	        LinkedList<String> path = AStar.search(from, to, proximity);
+	        LinkedList<String> path = DirSearch.search(from, to, proximity);
 	        
 	        if (path == null)
 	        {
