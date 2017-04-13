@@ -1,9 +1,4 @@
 
-pos(right) :- box(BoxX, BoxY) & pos(BoxX+1, BoxY).
-pos(left ) :- box(BoxX, BoxY) & pos(BoxX-1, BoxY).
-pos(above) :- box(BoxX, BoxY) & pos(BoxX, BoxY-1).
-pos(below) :- box(BoxX, BoxY) & pos(BoxX, BoxY+1).
-
 select_box(C, A, GoalX, GoalY, X, Y) :- jia.select_box(C, A, GoalX, GoalY, X, Y).
 select_box(C, A, _, _, X, Y) :- box(C, A, X, Y) & not goal(A, X, Y).
 

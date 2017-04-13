@@ -6,7 +6,7 @@ public class Box extends Colored {
 
 	public Box(int x, int y, char letter, String color)
 	{
-		super(x, y, letter, color);
+		super(x, y, Character.toLowerCase(letter), color);
 	}
 	
 	/**

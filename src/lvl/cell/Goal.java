@@ -6,7 +6,7 @@ public class Goal extends Lettered {
 	
 	public Goal(int x, int y, char letter)
 	{
-		super(x, y, Character.toUpperCase(letter));
+		super(x, y, letter);
 	}
 	
 	public boolean isSolved()

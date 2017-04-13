@@ -24,13 +24,13 @@ public class DirSearch extends Search {
 	 * @return Ordered list of directions leading to the goal.
 	 */
 	public static LinkedList<String> search(Location from, Location to, int proximity) {
-		return new DirSearch(from, to, proximity).search(new DirNode(from));
+		return new DirSearch(to, proximity).search(new DirNode(from));
 	}
 	
 	private Location goalLocation;
 	private int 	 goalDistance;
 	
-	public DirSearch(Location from, Location to, int proximity)
+	public DirSearch(Location to, int proximity)
 	{
 		this.setStrategy(new BestFirst(new AStar(heuristic)));
 		
