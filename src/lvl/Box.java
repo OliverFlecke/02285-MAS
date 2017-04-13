@@ -22,9 +22,10 @@ public class Box extends Colored {
 	 */
 	public boolean onGoal()
 	{
-		for (Goal goal : WorldModel.getInstance().getGoals())
-			if (goal.getLocation() == this.getLocation())
-				return true;
-		return false;
+		Goal goal = WorldModel.getInstance().getGoalsArray()[this.getLocation().x][this.getLocation().y];
+		if (goal != null)
+			return goal.getCharacter() == this.getCharacter();
+		else
+			return false;
 	}
 }

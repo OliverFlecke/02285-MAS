@@ -66,10 +66,64 @@ public class WorldModel extends GridWorldModel {
 		move(AGENT, agents.get(agId).getLocation(), l);
 	}
 	
+	/**
+	 * @return The data in this world model
+	 */
+	public int[][] getData()
+	{
+		return this.data;
+	}
+	
+	/**
+	 * @return The array of all the goals
+	 */
+	public Goal[][] getGoalsArray()
+	{
+		return this.goalArray;
+	}
+	
+	/**
+	 * @return The goals in the world model
+	 */
+	public Set<Goal> getGoals()
+	{
+		return this.goals;
+	}
+	
+	/**
+	 * @return The box array in the world model
+	 */
+	public Box[][] getBoxArray()
+	{
+		return this.boxArray;
+	}
+	
+	/**
+	 * @return The boxes in the world
+	 */
+	public Set<Box> getBoxes()
+	{
+		return this.boxes;
+	}
+	
+	/**
+	 * @return All the boxes in the world, which is not already on a goal
+	 */
+	public Set<Box> getBoxesNotOnGoal()
+	{
+		return boxes.stream().filter(box -> !box.onGoal()).collect(Collectors.toSet());
+	}
+	
+	/**
+	 * @return Get all the goals that has not been solved yet
+	 */
+	public Set<Goal> getUnsolvedGoals()
+	{
+		return goals.stream().filter(goal -> !goal.isSolved()).collect(Collectors.toSet());
+	}
+	
 	public void move(int value, Location fr, Location to)
 	{
-		System.out.println(value + " from: " + fr + " to: " + to );
-		System.out.println(agentArray[fr.x][fr.y]);
 		switch (value)
 		{
 		case AGENT: 
@@ -89,29 +143,6 @@ public class WorldModel extends GridWorldModel {
 		add		(value, to);
 	}
 	
-	/**
-	 * @return The goals in the world model
-	 */
-	public Set<Goal> getGoals()
-	{
-		return this.goals;
-	}
-	
-	/**
-	 * @return The boxes in the world
-	 */
-	public Set<Box> getBoxes()
-	{
-		return this.boxes;
-	}
-	
-	/**
-	 * @return All the boxes in the world, which is not already on a goal
-	 */
-	public Set<Box> getBoxesNotOnGoal()
-	{
-		return boxes.stream().filter(box -> !box.onGoal()).collect(Collectors.toSet());
-	}
 	
 	/**
 	 * Initializes the grid with objects according to the 
