@@ -15,4 +15,12 @@ public class Agent extends Colored {
 	{
 		return number;
 	}
+	
+	/**
+	 * @return The name of the agent, which is 'agent{id}'
+	 */
+	public String getName()
+	{
+		return "agent" + number;
+	}
 }
