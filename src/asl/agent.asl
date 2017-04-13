@@ -9,7 +9,7 @@ pos(below) :- box(BoxX, BoxY) & pos(BoxX, BoxY+1).
 select_box(C, A, GoalX, GoalY, X, Y) :- jia.select_box(C, A, GoalX, GoalY, X, Y).
 select_box(C, A, _, _, X, Y) :- box(C, A, X, Y).
 
-select_goal(Letter, X, Y) :- pos(AgentX, AgentY) & jia.select_goal(Letter, AgentY , AgentX, X, Y).
+select_goal(Letter, X, Y) :- pos(AgentX, AgentY) & jia.select_goal(Letter, AgentX, AgentY, X, Y).
 select_goal(Letter, X, Y) :- goal(Letter, X, Y) & not box(_, Letter, X, Y).
 
 // Initial goal

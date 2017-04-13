@@ -16,7 +16,7 @@ public class select_box extends DefaultInternalAction {
 	@Override
     public Object execute(TransitionSystem ts, Unifier un, Term[] terms) throws Exception {
         // execute the internal action
-        ts.getAg().getLogger().info("executing internal action 'jia.select_box'");
+//        ts.getAg().getLogger().info("executing internal action 'jia.select_box'");
         
         try 
         {

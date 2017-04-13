@@ -15,7 +15,7 @@ public class select_goal extends DefaultInternalAction {
 	@Override
     public Object execute(TransitionSystem ts, Unifier un, Term[] terms) throws Exception {
         // execute the internal action
-        ts.getAg().getLogger().info("executing internal action 'jia.select_goal'");
+//        ts.getAg().getLogger().info("executing internal action 'jia.select_goal'");
         
         try 
         {
@@ -37,6 +37,7 @@ public class select_goal extends DefaultInternalAction {
         			bestGoal = goal;
         		}
         	}
+        	if (bestGoal == null) return false;
         	
         	return un.unifies(terms[0], new LiteralImpl(Character.toString(Character.toLowerCase(bestGoal.getCharacter())))) && 
         			un.unifies(terms[3], new NumberTermImpl(best.x)) && 
@@ -44,7 +45,7 @@ public class select_goal extends DefaultInternalAction {
         }
         catch (Throwable e)
         {
-//        	ts.getLogger().log(java.util.logging.Level.SEVERE, "select box error: " + e, e);
+        	ts.getLogger().log(java.util.logging.Level.SEVERE, "select box error: " + e, e);
             return false;
         }
     }
