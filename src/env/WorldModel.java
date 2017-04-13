@@ -19,6 +19,7 @@ public class WorldModel extends GridWorldModel {
 	private Set<Box>			boxes	= new HashSet<>();
 	private Set<Goal>			goals	= new HashSet<>();
 	
+	private Agent[][]			agentArray;
 	private Box[][]				boxArray;
 	private Goal[][]			goalArray;
 
@@ -37,8 +38,9 @@ public class WorldModel extends GridWorldModel {
 	{		
 		super(level.width, level.height, 0);
 
-		boxArray  = new Box [width][height];
-		goalArray = new Goal[width][height];
+		agentArray 	= new Agent[width][height];
+		boxArray  	= new Box  [width][height];
+		goalArray 	= new Goal [width][height];
 		
 		initData	(level.data, level.colors);
 		
@@ -61,12 +63,20 @@ public class WorldModel extends GridWorldModel {
 	
 	@Override
 	public void setAgPos(int agId, Location l) {
-		Agent agent = agents.get(agId);
-		Location old = agent.getLocation();
-		
-		
-		
-		agent.setLocation(l);
+		move(AGENT, agents.get(agId).getLocation(), l);
+	}
+	
+	public void move(int value, Location fr, Location to)
+	{
+		switch (value)
+		{
+		case AGENT: agentArray[fr.x][fr.y].setLocation(to); break;
+		case BOX:	boxArray  [fr.x][fr.y].setLocation(to); break;
+		default: 	return;
+		}
+
+		remove	(value, fr);
+		add		(value, to);
 	}
 	
 	/**
@@ -238,7 +248,7 @@ public class WorldModel extends GridWorldModel {
             return false;
         }
 
-    	setAgPos(agId, nAgLoc);
+        move(AGENT, agLoc, nAgLoc);
         return true;
     }	
     
@@ -294,9 +304,8 @@ public class WorldModel extends GridWorldModel {
             return false;        	
         }
     	
-		setAgPos(agId, nAgLoc);
-		remove(BOX, nAgLoc);
-		add(BOX, nBoxLoc);
+        move(AGENT, agLoc, nAgLoc);
+        move(BOX, nAgLoc, nBoxLoc);
 		return true;
     }
     
@@ -352,9 +361,8 @@ public class WorldModel extends GridWorldModel {
             return false;        	
     	}
 
-		setAgPos(agId, nAgLoc);
-		remove(BOX, boxLoc);
-		add(BOX, agLoc);
+    	move(AGENT, agLoc, nAgLoc);
+    	move(BOX, boxLoc, agLoc);
         return true;
     }    
 }
