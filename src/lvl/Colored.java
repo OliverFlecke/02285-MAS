@@ -2,18 +2,18 @@ package lvl;
 
 public abstract class Colored extends Cell {
 
-	private String color;
+	private Color color;
 	
-	public Colored(int x, int y) {
+	public Colored(int x, int y, String color) {
 		super(x, y);
-	}
-
-	public String getColor() {
-		return color;
-	}
-
-	public void setColor(String color) {
-		this.color = color == null ? "blue" : color;
+		this.color = Color.getColor(color);
 	}
 	
+	/**
+	 * @return The color of this object
+	 */
+	public Color getColor()
+	{
+		return this.color;
+	}
 }

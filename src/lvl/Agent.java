@@ -5,9 +5,9 @@ public class Agent extends Colored {
 	private char character;
 	private int number;
 	
-	public Agent(int x, int y, char character, int number)
+	public Agent(int x, int y, char character, int number, String color)
 	{
-		super(x, y);
+		super(x, y, color);
 		
 		this.character = character;
 		this.number = number;

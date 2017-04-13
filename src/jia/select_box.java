@@ -5,6 +5,9 @@ package jia;
 import env.*;
 import jason.asSemantics.*;
 import jason.asSyntax.*;
+import jason.environment.grid.Location;
+import lvl.Box;
+import lvl.Color;
 
 public class select_box extends DefaultInternalAction {
 
@@ -17,38 +20,34 @@ public class select_box extends DefaultInternalAction {
         
         try 
         {
-//        	Color color = Color.getColor(((Atom) terms[0]).getFunctor());
+        	Color color = Color.getColor(((Atom) terms[0]).getFunctor());
         	char letter = ((Atom) terms[1]).getFunctor().charAt(0);
-        	int x = (int) ((NumberTerm) terms[2]).solve();
-        	int y = (int) ((NumberTerm) terms[3]).solve();
-//        	Level level = WorldModel.getLevel();
+        	int goalX = (int) ((NumberTerm) terms[2]).solve();
+        	int goalY = (int) ((NumberTerm) terms[3]).solve();
         	
         	// Not using max int, as I need to add them and don't want overflow. 
-        	int bestX = 1000;
-        	int bestY = 1000;
-//        	for (Box box : level.getBoxes())
-//        	{
-//        		if (box.color == color && Character.toLowerCase(box.getId()) == letter)
-//        		{
-//        			if (manhattanDistance(bestX, bestY, x, y) > manhattanDistance(box.col, box.row, x, y))
-//        			{
-//        				bestX = box.col;
-//        				bestY = box.row;
-//        			}
-//        		}
-//        	}
+        	Location best = new Location(1000, 1000);
+        	Location goal = new Location(goalX, goalY);
+        	int bestDistance = Integer.MAX_VALUE;
+        	for (Box box : WorldModel.getInstance().getBoxesNotOnGoal())
+        	{
+        		if (box.getColor() == color && Character.toLowerCase(box.getCharacter()) == letter)
+        		{
+        			int distance = box.getLocation().distanceManhattan(goal);
+        			if (bestDistance > distance)
+        			{
+        				best = box.getLocation();
+        				bestDistance = distance;
+        			}
+        		}
+        	}
 //        	ts.getAg().getLogger().info("Best box at: " + bestX + ":" + bestY);
-        	return un.unifies(terms[4], new NumberTermImpl(bestX)) && un.unifies(terms[5], new NumberTermImpl(bestY));
+        	return un.unifies(terms[4], new NumberTermImpl(best.x)) && un.unifies(terms[5], new NumberTermImpl(best.y));
         }
         catch (Throwable e)
         {
         	ts.getLogger().log(java.util.logging.Level.SEVERE, "select box error: " + e, e);
             return false;
         }
-    }
-    
-    private int manhattanDistance(int x0, int y0, int x1, int y1) 
-    {
-    	return Math.abs(x0 - x1) + Math.abs(y0 - y1);
     }
 }
