@@ -98,6 +98,8 @@ public class WorldEnv extends ServerEnv {
     		addPercept(agent.getName(), createAgentPerception(agent.getLocation().x, agent.getLocation().y));
     		addPercept(agent.getName(), createColorPerception(agent.getColor()));
     	}
+    	
+    	setNbAgs(model.getAgents().length);
     }
 
     /**
@@ -174,7 +176,7 @@ public class WorldEnv extends ServerEnv {
 		default  : return "NoOp";
 		}
 	}
-	
+
 	public static String toString(Term dir)
 	{
 		switch(dir.toString())

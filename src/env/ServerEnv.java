@@ -22,7 +22,7 @@ public class ServerEnv extends Environment {
 	
     private static final Logger logger = Logger.getLogger(ServerEnv.class.getName());
     
-    private static final boolean TEST = true;
+    private static final boolean TEST = false;
 
 	private int 						nbAgs;	  
 	private HashMap<String, ActRequest> requests;	
@@ -91,13 +91,25 @@ public class ServerEnv extends Environment {
         synchronized (requests) 
         {        	
 			requests.put(agName, newRequest);
-
 			try {
 				if (requests.size() >= nbAgs)
-				{
+				{			
 //					logger.info(Arrays.toString(jointAction));
 					
+					int i = 0; // Can we get the id of the agent, so we are sure their actions are in the correct position?
+					for (ActRequest a: requests.values()) 
+					{
+//	                	System.out.println(a.agName + " " + a.action + " " + a.infraData);
+						boolean success = executeAction(a.agName, a.action);
+						getEnvironmentInfraTier().actionExecuted(a.agName, a.action, success, a.infraData);
+						if (success)
+							jointAction[i++] = this.toString(a.action);
+						else 
+							jointAction[i++] = this.toString(new Structure("NoOp"));
+					}
 					serverOut.println(Arrays.toString(jointAction));
+					requests.clear();
+					updateAgsPercept();
 					
 					if (!TEST)
 					{
@@ -111,18 +123,12 @@ public class ServerEnv extends Environment {
 							logger.severe("Action failed on server");
 						}
 					}
-	
-	                for (ActRequest a: requests.values()) 
-	                {
-                        boolean success = executeAction(a.agName, a.action);
-                        getEnvironmentInfraTier().actionExecuted(a.agName, a.action, success, a.infraData);
-	                }
-	                
-	                updateAgsPercept();
+					
 				}
 			} 
 			catch (Exception e) 
 			{
+				logger.warning("Error: scheduleAction");
 				e.printStackTrace();
 			}
 		}

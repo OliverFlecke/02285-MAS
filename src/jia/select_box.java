@@ -31,6 +31,9 @@ public class select_box extends DefaultInternalAction {
         	int bestDistance = Integer.MAX_VALUE;
         	for (Box box : WorldModel.getInstance().getBoxesNotOnGoal())
         	{
+//        		ts.getAg().getLogger().info("Look at box: " + box.getLocation().x + ", " + box.getLocation().y);
+//        		ts.getAg().getLogger().info("Color: " + box.getColor() + " == " + color);
+//        		ts.getAg().getLogger().info("Letter: " + Character.toLowerCase(box.getLetter()) + " == " + letter);
         		if (box.getColor() == color && Character.toLowerCase(box.getLetter()) == letter)
         		{
         			int distance = box.getLocation().distanceManhattan(goal);

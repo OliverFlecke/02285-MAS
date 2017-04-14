@@ -2,10 +2,13 @@
 
 package jia;
 
+import java.util.stream.Collectors;
+
 import env.WorldModel;
 import jason.asSemantics.*;
 import jason.asSyntax.*;
 import jason.environment.grid.Location;
+import lvl.Color;
 import lvl.cell.Goal;
 
 public class select_goal extends DefaultInternalAction {
@@ -19,8 +22,9 @@ public class select_goal extends DefaultInternalAction {
         
         try 
         {
-        	int agentX = (int) ((NumberTerm) terms[1]).solve();
-        	int agentY = (int) ((NumberTerm) terms[2]).solve();
+        	Color color = Color.getColor(((Atom) terms[0]).getFunctor());
+        	int agentX = (int) ((NumberTerm) terms[2]).solve();
+        	int agentY = (int) ((NumberTerm) terms[3]).solve();
         	
         	Goal bestGoal = null;
         	Location best = new Location(1000, 1000);
@@ -30,7 +34,12 @@ public class select_goal extends DefaultInternalAction {
         	for (Goal goal : WorldModel.getInstance().getUnsolvedGoals())
         	{
         		int distance = goal.getLocation().distanceManhattan(agent);
-        		if (bestDistance > distance)
+        		
+        		// Should also test if the goal is reachable
+        		if (bestDistance > distance &&
+        				WorldModel.getInstance().getBoxesNotOnGoal().stream()
+        				.filter(box -> box.getLetter() == goal.getLetter() && box.getColor() == color)
+        				.collect(Collectors.toSet()).size() > 0) 
         		{
         			best = goal.getLocation();
         			bestDistance = distance;
@@ -39,9 +48,9 @@ public class select_goal extends DefaultInternalAction {
         	}
         	if (bestGoal == null) return false;
         	
-        	return un.unifies(terms[0], new LiteralImpl(Character.toString(Character.toLowerCase(bestGoal.getLetter())))) && 
-        			un.unifies(terms[3], new NumberTermImpl(best.x)) && 
-        			un.unifies(terms[4], new NumberTermImpl(best.y));
+        	return un.unifies(terms[1], new LiteralImpl(Character.toString(Character.toLowerCase(bestGoal.getLetter())))) && 
+        			un.unifies(terms[4], new NumberTermImpl(best.x)) && 
+        			un.unifies(terms[5], new NumberTermImpl(best.y));
         }
         catch (Throwable e)
         {
