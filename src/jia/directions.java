@@ -1,6 +1,6 @@
 package jia;
 
-import java.util.LinkedList;
+import java.util.List;
 import java.util.logging.Level;
 
 import jason.asSemantics.*;
@@ -30,7 +30,7 @@ public class directions extends DefaultInternalAction {
 	        
 	        ListTermImpl directions = new ListTermImpl();
 	        
-	        LinkedList<String> path = DirSearch.search(from, to, proximity);
+	        List<String> path = DirSearch.search(from, to, proximity);
 	        
 	        if (path == null)
 	        {

@@ -1,6 +1,6 @@
 package srch;
 
-import java.util.LinkedList;
+import java.util.List;
 
 public abstract class Search {
 	
@@ -10,7 +10,7 @@ public abstract class Search {
 		strategy = s;
 	}
 	
-	public LinkedList<String> search(Node initial)
+	public List<? extends Object> search(Node initial)
 	{
 		strategy.addToFrontier(initial);
 		
@@ -25,7 +25,7 @@ public abstract class Search {
 			
 			strategy.addToExplored(leaf);
 			
-			for (Node n : leaf.GetExpandedNodes())
+			for (Node n : leaf.getExpandedNodes())
 			{
 				if (!strategy.isExplored(n) && !strategy.inFrontier(n))
 				{

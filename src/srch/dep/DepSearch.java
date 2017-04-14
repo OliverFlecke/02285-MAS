@@ -1,4 +1,4 @@
-package srch.dir;
+package srch.dep;
 
 import java.util.List;
 import jason.environment.grid.Location;
@@ -8,7 +8,7 @@ import srch.Strategy.BestFirst;
 import srch.Evaluation.AStar;
 import srch.Heuristic;
 
-public class DirSearch extends Search implements Heuristic {
+public class DepSearch extends Search implements Heuristic {
 	
 	/**
 	 * Returns an ordered list of strings corresponding to the sequence of
@@ -23,28 +23,26 @@ public class DirSearch extends Search implements Heuristic {
 	 * @return Ordered list of directions leading to the goal.
 	 */
 	@SuppressWarnings("unchecked")
-	public static List<String> search(Location from, Location to, int proximity) {
-		return (List<String>) new DirSearch(to, proximity).search(new DirNode(from));
+	public static List<Location> search(Location from, Location to) {
+		return (List<Location>) new DepSearch(to).search(new DepNode(from));
 	}
 	
 	private Location goalLocation;
-	private int 	 goalDistance;
 	
-	public DirSearch(Location to, int proximity)
+	public DepSearch(Location to)
 	{
 		this.setStrategy(new BestFirst(new AStar(this)));
 		
 		goalLocation = to;
-		goalDistance = proximity;
 	}
 
 	@Override
 	public boolean isGoalState(Node n) {
-		return n.getLocation().distance(goalLocation) == goalDistance;
+		return n.getLocation().distance(goalLocation) == 0;
 	}
 
 	@Override
 	public int h(Node n) {
-		return n.getLocation().distance(goalLocation); 
+		return n.getLocation().distance(goalLocation) + ((DepNode) n).getDependencies() * 10; 
 	}
 }

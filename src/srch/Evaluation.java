@@ -1,7 +1,6 @@
 package srch;
 
 import java.util.*;
-import java.util.function.Function;
 
 public abstract class Evaluation implements Comparator<Node> {
 
@@ -14,15 +13,15 @@ public abstract class Evaluation implements Comparator<Node> {
 
 	public static class AStar extends Evaluation {
 		
-		private Function<Node, Integer> heuristic;
+		private Heuristic heuristic;
 		
-		public AStar(Function<Node, Integer> h) {
+		public AStar(Heuristic h) {
 			heuristic = h;
 		}
 
 		@Override
 		public int f(Node n) {
-			return n.g() + heuristic.apply(n);
+			return n.g() + heuristic.h(n);
 		}
 
 		@Override
@@ -33,17 +32,17 @@ public abstract class Evaluation implements Comparator<Node> {
 
 	public static class WeightedAStar extends Evaluation {
 		
-		private Function<Node, Integer> heuristic;
+		private Heuristic heuristic;
 		private int W;
 
-		public WeightedAStar(Function<Node, Integer> h, int W) {
+		public WeightedAStar(Heuristic h, int W) {
 			heuristic = h;
 			this.W = W;
 		}
 
 		@Override
 		public int f(Node n) {
-			return n.g() + W * heuristic.apply(n);
+			return n.g() + W * heuristic.h(n);
 		}
 
 		@Override
@@ -54,15 +53,15 @@ public abstract class Evaluation implements Comparator<Node> {
 
 	public static class Greedy extends Evaluation {
 		
-		private Function<Node, Integer> heuristic;
+		private Heuristic heuristic;
 		
-		public Greedy(Function<Node, Integer> h) {
+		public Greedy(Heuristic h) {
 			heuristic = h;
 		}
 
 		@Override
 		public int f(Node n) {
-			return heuristic.apply(n);
+			return heuristic.h(n);
 		}
 
 		@Override

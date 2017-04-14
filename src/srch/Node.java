@@ -1,32 +1,38 @@
 package srch;
 
-import java.util.ArrayList;
-import java.util.LinkedList;
+import java.util.List;
 
 import jason.environment.grid.Location;
 
 public abstract class Node {
 	
-	private Node parent;
+	private Node parent;	
+	private String direction;
 	private Location location;	
 	private int g;
 	
 	public Node(Location initial)
 	{
-		parent = null;
-		location = initial;
-		g = 0;
+		parent 		= null;
+		direction 	= null;
+		location 	= initial;
+		g 			= 0;
 	}
 	
-	public Node(Node parent, Location location) 
+	public Node(Node parent, String direction, Location location) 
 	{
 		this.parent    = parent;
+		this.direction = direction;
 		this.location  = location;	
 		this.g         = parent.g + 1;
 	}
 	
 	public Node getParent() {
 		return parent;
+	}
+	
+	public String getDirection() {
+		return direction;
 	}
 	
 	public Location getLocation() {
@@ -37,9 +43,9 @@ public abstract class Node {
 		return g;
 	}
 
-	public abstract ArrayList<Node> GetExpandedNodes();
+	public abstract List<Node> getExpandedNodes();
 
-	public abstract LinkedList<String> extractPlan();
+	public abstract List<? extends Object> extractPlan();
 
 	@Override
 	public int hashCode() {
