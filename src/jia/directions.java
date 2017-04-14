@@ -19,12 +19,12 @@ public class directions extends DefaultInternalAction {
 	public Object execute(TransitionSystem ts, Unifier un, Term[] args) throws Exception
 	{
 		try {
-			int agX = (int) ((NumberTerm) args[0]).solve();
-	        int agY = (int) ((NumberTerm) args[1]).solve();
+			int frX = (int) ((NumberTerm) args[0]).solve();
+	        int frY = (int) ((NumberTerm) args[1]).solve();
 	        int toX = (int) ((NumberTerm) args[2]).solve();
 	        int toY = (int) ((NumberTerm) args[3]).solve();
 	        
-	        Location from = new Location(agX, agY);
+	        Location from = new Location(frX, frY);
 	        Location to   = new Location(toX, toY);	        
 	        int proximity = (int) ((NumberTerm) args[4]).solve();
 	        
@@ -34,14 +34,15 @@ public class directions extends DefaultInternalAction {
 	        
 	        if (path == null)
 	        {
-	        	ts.getLogger().warning("Unable to find path from (" + agX + "," + agY + ") to (" + toX + "," + toY + ")");
+	        	ts.getLogger().warning("Unable to find path from (" + frX + "," + frY + ") to (" + toX + "," + toY + ")");
 	        	return false;
 	        }
 	        
 	        for (String dir : path)
 	        {
-	        	directions.add(Literal.parseLiteral(dir));
-	        }	        
+	        	directions.add(new LiteralImpl(dir));
+	        }
+	        
 	        return un.unifies(args[5], directions); 
 		} 
 		catch (Throwable e) 
