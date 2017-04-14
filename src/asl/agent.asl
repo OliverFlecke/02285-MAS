@@ -15,20 +15,39 @@ object(box,  8).
 // Initial goal
 !solve_level.
 
-+!solve_level <-
-	while (select_goal(Letter, X, Y)) { !solve_goal(Letter, X, Y); }.
+//+!solve_level <-
+//	while (select_goal(Letter, X, Y)) { !solve_goal(Letter, X, Y); }.
 //	for ( goal(A, GoalX, GoalY) ) { !solve_goal(A, GoalX, GoalY); }.
+//	
+//+!solve_goal(A, X, Y) : box(_, A, X, Y).
+//
+////+!solve_goal(A, X, Y) : color(C) & box(C, A, BoxX, BoxY) & not goal(A, BoxX, BoxY) <-
+//+!solve_goal(A, X, Y) : color(C) & select_box(C, A, X, Y, BoxX, BoxY) <-
+//	.print("Solve goal at (", X, ", ", Y, ") with box at (", BoxX, ",", BoxY, ")");
+//	!move_box(BoxX, BoxY, X, Y).	
 	
-+!solve_goal(A, X, Y) : box(_, A, X, Y).
 
-//+!solve_goal(A, X, Y) : color(C) & box(C, A, BoxX, BoxY) & not goal(A, BoxX, BoxY) <-
-+!solve_goal(A, X, Y) : color(C) & select_box(C, A, X, Y, BoxX, BoxY) <-
-	.print("Solve goal at (", X, ", ", Y, ") with box at (", BoxX, ",", BoxY, ")");
-	!get_box(BoxX, BoxY);
-	!move_box(BoxX, BoxY, X, Y).	
 	
 
++!solve_level : pos(AgX, AgY) & object(goal, Obj) <-
+
+	+dependencies([]);
 	
+	for ( goal(_, GoalX, GoalY) ) {
+		jia.dependencies(GoalX, GoalY, AgX, AgY, Obj, Dependencies);
+		?dependencies(List);
+		-+dependencies([depend(GoalX, GoalY,Dependencies)|List]);
+	};
+	
+	?dependencies(List);
+	jia.prioritize(List, Goals);
+	!solve_goal(Goals).
+	
++!solve_goal([]).
++!solve_goal([goal(X,Y)|Goals]) : goal(L, X, Y) <- !solve_goal(L, X, Y); !solve_goal(Goals).
+
++!solve_goal(L, X, Y) : box(_, L, X, Y).
++!solve_goal(L, X, Y) : color(C) & box(C, L, BoxX, BoxY) & not goal(L, BoxX, BoxY) <- !move_box(BoxX, BoxY, X, Y).
 
 
 	

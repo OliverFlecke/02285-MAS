@@ -113,6 +113,21 @@ public class WorldModel extends GridWorldModel {
 		return this.boxes;
 	}
 	
+	public Agent getAgent(int x, int y) 
+	{
+		return agentArray[x][y];
+	}
+	
+	public Goal getGoal(int x, int y) 
+	{
+		return goalArray[x][y];
+	}
+	
+	public Box getBox(int x, int y) 
+	{
+		return boxArray[x][y];
+	}
+	
 	/**
 	 * @return All the boxes in the world, which is not already on a goal
 	 */

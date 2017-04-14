@@ -31,7 +31,7 @@ public class dependencies extends DefaultInternalAction {
         {
         	NumberTerm locX = new NumberTermImpl(loc.x);
         	NumberTerm locY = new NumberTermImpl(loc.y);
-        	Literal literal = new LiteralImpl("box");
+        	Literal literal = new LiteralImpl("depend");
         	literal.addTerms(locX, locY);
         	dependencies.add(literal);
         }

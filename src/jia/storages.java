@@ -20,9 +20,11 @@ public class storages extends DefaultInternalAction {
         
         Location from = new Location(frX, frY);
         
+        int object = (int) ((NumberTerm) args[2]).solve();
+        
         ListTermImpl storages = new ListTermImpl();
         
-        List<Location> locations = StrSearch.search(from);
+        List<Location> locations = StrSearch.search(from, object);
         
         for (Location loc : locations)
         {
@@ -32,6 +34,6 @@ public class storages extends DefaultInternalAction {
         	literal.addTerms(locX, locY);
         	storages.add(literal);
         }		
-		return un.unifies(args[2], storages); 
+		return un.unifies(args[3], storages); 
 	}
 }

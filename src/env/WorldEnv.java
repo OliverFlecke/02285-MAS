@@ -4,7 +4,7 @@ package env;
 import java.util.logging.Logger;
 
 import jason.asSyntax.*;
-import lvl.cell.Agent;
+import lvl.cell.*;
 import lvl.Color;
 import lvl.Level;
 public class WorldEnv extends ServerEnv {
@@ -16,7 +16,7 @@ public class WorldEnv extends ServerEnv {
     private static final String PULL = "pull";
     private static final String SKIP = "skip";   
 	
-    private WorldModel 					model;
+    private static WorldModel model;
     
     @Override
     public void init(String[] args) 
@@ -24,7 +24,9 @@ public class WorldEnv extends ServerEnv {
     	super.init(args);
 
 		try {
-			model = new WorldModel(Level.parse(serverIn));
+			new WorldModel(Level.parse(serverIn));
+			
+			model = WorldModel.getInstance();
 
 			updateNumberOfAgents();
 
@@ -130,16 +132,19 @@ public class WorldEnv extends ServerEnv {
     
     public static Literal createBoxPerception(int x, int y)
     {
+    	Box box = model.getBox(x, y);
     	return ASSyntax.createLiteral("box", 
-    			new Atom("blue"), new Atom("a"),
+    			new Atom(box.getColor().toString().toLowerCase()), 
+    			new Atom(Character.toString(box.getLetter())),
                 ASSyntax.createNumber(x),
                 ASSyntax.createNumber(y)); 
     }
     
     public static Literal createGoalPerception(int x, int y)
     {
+    	Goal goal = model.getGoal(x, y);
     	return ASSyntax.createLiteral("goal", 
-    			new Atom("a"),
+    			new Atom(Character.toString(goal.getLetter())),
                 ASSyntax.createNumber(x),
                 ASSyntax.createNumber(y)); 
     }
