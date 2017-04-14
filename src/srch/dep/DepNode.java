@@ -10,18 +10,23 @@ import jason.environment.grid.Location;
 import srch.Node;
 
 public class DepNode extends Node {
-	
+
+	private int object;
 	private int dependencies;
 
-	public DepNode(Location initial) {
+	public DepNode(Location initial, int object) {
 		super(initial);
-		dependencies = 0;
+		this.object 		= object;
+		this.dependencies 	= 0;
 	}
 
 	public DepNode(Node parent, String dir, Location loc) {
 		super(parent, dir, loc);
 		
-		if (WorldModel.getInstance().hasObject(WorldModel.GOAL, loc)) {
+		this.object 		= ((DepNode) parent).object;
+		this.dependencies 	= ((DepNode) parent).dependencies;
+		
+		if (WorldModel.getInstance().hasObject(object, loc)) {
 			dependencies++;
 		}
 	}
@@ -64,7 +69,7 @@ public class DepNode extends Node {
 		{
 			Location loc = n.getLocation();
 			
-			if (WorldModel.getInstance().hasObject(WorldModel.GOAL, loc))
+			if (WorldModel.getInstance().hasObject(object, loc))
 			{
 				plan.addFirst(loc);
 			}

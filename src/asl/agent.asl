@@ -33,6 +33,7 @@ select_goal(Letter, X, Y) :- goal(Letter, X, Y) & not box(_, Letter, X, Y).
 
 +!move_adjacent(ToX, ToY) : pos(AgX, AgY) <-
 	.print("move_to(", AgX, ", ", AgY, ", ", ToX, ", ", ToY, ")");
+	jia.box_dependencies(AgX, AgY, ToX, ToY, _);
 	jia.directions(AgX, AgY, ToX, ToY, 1, Directions);
 	.print("Move to directions: ", Directions);
 	!move(Directions).

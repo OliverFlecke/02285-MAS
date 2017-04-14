@@ -23,8 +23,8 @@ public class DepSearch extends Search implements Heuristic {
 	 * @return Ordered list of directions leading to the goal.
 	 */
 	@SuppressWarnings("unchecked")
-	public static List<Location> search(Location from, Location to) {
-		return (List<Location>) new DepSearch(to).search(new DepNode(from));
+	public static List<Location> search(Location from, Location to, int object) {
+		return (List<Location>) new DepSearch(to).search(new DepNode(from, object));
 	}
 	
 	private Location goalLocation;

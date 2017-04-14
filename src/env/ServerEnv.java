@@ -44,7 +44,7 @@ public class ServerEnv extends Environment {
 		if (TEST)
 		{
 			try {
-				serverIn = new BufferedReader(new FileReader(new File("levels\\single_agent\\sokoban\\SAsoko3_12.lvl")));
+				serverIn = new BufferedReader(new FileReader(new File("levels/single_agent/easy/SACrunch.lvl")));
 			} catch (FileNotFoundException e) {
 				e.printStackTrace();
 			}
