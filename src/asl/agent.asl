@@ -16,20 +16,13 @@ object(box,  8).
 !solve_level.
 
 +!solve_level <-
-	while (select_goal(Letter, X, Y))
-	{
-//		.print("goal(", Letter, ", ", X, ", ", Y, ")");
-		!solve_goal(Letter, X, Y);
-	}.
-//	for ( goal(A, GoalX, GoalY) ) {
-//		.print("goal(", A, ", ", GoalX, ", ", GoalY, ")");
-//		!solve_goal(A, GoalX, GoalY);
-//	}.
+	while (select_goal(Letter, X, Y)) { !solve_goal(Letter, X, Y); }.
+//	for ( goal(A, GoalX, GoalY) ) { !solve_goal(A, GoalX, GoalY); }.
 	
-+!solve_goal(A, X, Y) : box(_, A, X, Y) <- .print("Box on goal").
++!solve_goal(A, X, Y) : box(_, A, X, Y).
 
-+!solve_goal(A, X, Y) : color(C) & select_box(C, A, X, Y, BoxX, BoxY) <-
 //+!solve_goal(A, X, Y) : color(C) & box(C, A, BoxX, BoxY) & not goal(A, BoxX, BoxY) <-
++!solve_goal(A, X, Y) : color(C) & select_box(C, A, X, Y, BoxX, BoxY) <-
 	.print("Solve goal at (", X, ", ", Y, ") with box at (", BoxX, ",", BoxY, ")");
 	!get_box(BoxX, BoxY);
 	!move_box(BoxX, BoxY, X, Y).	

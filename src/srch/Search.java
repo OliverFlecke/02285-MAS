@@ -32,8 +32,8 @@ public abstract class Search {
 					strategy.addToFrontier(n);
 				}
 			}
-		}		
-		return null;
+		}
+		return initial.extractPlan();
 	}
 	
 	public abstract boolean isGoalState(Node n);

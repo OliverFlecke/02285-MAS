@@ -18,9 +18,9 @@ public class DirNode extends Node {
 		super(parent, direction, location);
 	}
 
-	public ArrayList<Node> getExpandedNodes() 
+	public List<Node> getExpandedNodes() 
 	{
-		ArrayList<Node> expandedNodes = new ArrayList<Node>(WorldModel.DIRECTIONS.length);
+		List<Node> expandedNodes = new ArrayList<Node>(WorldModel.DIRECTIONS.length);
 		
 		for (String dir : WorldModel.DIRECTIONS)
 		{

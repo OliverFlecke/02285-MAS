@@ -5,37 +5,33 @@ import java.util.List;
 import jason.asSemantics.*;
 import jason.asSyntax.*;
 import jason.environment.grid.Location;
-import srch.dep.DepSearch;
+import srch.str.StrSearch;
 
-public class dependencies extends DefaultInternalAction {
+public class storages extends DefaultInternalAction {
 
 	private static final long serialVersionUID = 1L;
 
 	@Override
 	public Object execute(TransitionSystem ts, Unifier un, Term[] args) throws Exception {
+		
 
 		int frX = (int) ((NumberTerm) args[0]).solve();
         int frY = (int) ((NumberTerm) args[1]).solve();
-        int toX = (int) ((NumberTerm) args[2]).solve();
-        int toY = (int) ((NumberTerm) args[3]).solve();
-
+        
         Location from = new Location(frX, frY);
-        Location to   = new Location(toX, toY);	        
-        int object = (int) ((NumberTerm) args[4]).solve();
         
-        ListTermImpl dependencies = new ListTermImpl();
+        ListTermImpl storages = new ListTermImpl();
         
-        List<Location> locations = DepSearch.search(from, to, object);
+        List<Location> locations = StrSearch.search(from);
         
         for (Location loc : locations)
         {
         	NumberTerm locX = new NumberTermImpl(loc.x);
         	NumberTerm locY = new NumberTermImpl(loc.y);
-        	Literal literal = new LiteralImpl("box");
+        	Literal literal = new LiteralImpl("storage");
         	literal.addTerms(locX, locY);
-        	dependencies.add(literal);
-        }
-		
-		return un.unifies(args[5], dependencies); 
+        	storages.add(literal);
+        }		
+		return un.unifies(args[2], storages); 
 	}
 }

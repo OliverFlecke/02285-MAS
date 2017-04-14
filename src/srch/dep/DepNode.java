@@ -39,9 +39,9 @@ public class DepNode extends Node {
 	 * Override to only account for walls
 	 */
 	@Override
-	public ArrayList<Node> getExpandedNodes() 
+	public List<Node> getExpandedNodes() 
 	{
-		ArrayList<Node> expandedNodes = new ArrayList<Node>(WorldModel.DIRECTIONS.length);
+		List<Node> expandedNodes = new ArrayList<Node>(WorldModel.DIRECTIONS.length);
 		
 		for (String dir : WorldModel.DIRECTIONS)
 		{
