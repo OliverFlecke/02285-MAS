@@ -61,13 +61,13 @@ public class WorldEnv extends ServerEnv {
 	{
 //		logger.info(ag + " doing: " + action);
 		
-        int agId = 0;
+        int agId = (int) ((NumberTermImpl) action.getTerm(0)).solve();
         
         switch(action.getFunctor())
         {
-        case MOVE: return model.move(action.getTerm(0), agId);
-        case PUSH: return model.push(action.getTerm(0), action.getTerm(1), agId);
-        case PULL: return model.pull(action.getTerm(0), action.getTerm(1), agId);
+        case MOVE: return model.move(action.getTerm(1), agId);
+        case PUSH: return model.push(action.getTerm(1), action.getTerm(2), agId);
+        case PULL: return model.pull(action.getTerm(1), action.getTerm(2), agId);
         case SKIP: return true;
         default: 
             logger.warning("** Action not implemented: " + action);
@@ -99,6 +99,7 @@ public class WorldEnv extends ServerEnv {
     		
     		addPercept(agent.getName(), createAgentPerception(agent.getLocation().x, agent.getLocation().y));
     		addPercept(agent.getName(), createColorPerception(agent.getColor()));
+    		addPercept(agent.getName(), createIdPerception(agent));
     	}
     	
     	setNbAgs(model.getAgents().length);
@@ -167,17 +168,22 @@ public class WorldEnv extends ServerEnv {
                 ASSyntax.createNumber(x),
                 ASSyntax.createNumber(y)); 
     }
+    
+    public static Literal createIdPerception(Agent agent)
+    {
+    	return ASSyntax.createLiteral("id", ASSyntax.createNumber(agent.getNumber()));
+    }
 	
     @Override
 	public String toString(Structure action)
 	{
 		switch(action.getFunctor())
 		{
-		case MOVE: return "Move(" + toString(action.getTerm(0)) + ")";
-		case PUSH: return "Push(" + toString(action.getTerm(0)) + "," 
-								  + toString(action.getTerm(1)) + ")";
-		case PULL: return "Pull(" + toString(action.getTerm(0)) + "," 
-		  						  + toString(action.getTerm(1)) + ")";
+		case MOVE: return "Move(" + toString(action.getTerm(1)) + ")";
+		case PUSH: return "Push(" + toString(action.getTerm(1)) + "," 
+								  + toString(action.getTerm(2)) + ")";
+		case PULL: return "Pull(" + toString(action.getTerm(1)) + "," 
+		  						  + toString(action.getTerm(2)) + ")";
 		default  : return "NoOp";
 		}
 	}
