@@ -55,8 +55,10 @@ object(box,  4).
 	jia.prioritize(List, Goals);
 	!solve_goal(Goals).
 	
-+!solve_goal([]).
++!solve_goal([]) <- !end.
 +!solve_goal([goal(X,Y)|Goals]) : goal(L, X, Y) <- !solve_goal(L, X, Y); !solve_goal(Goals).
 
 +!solve_goal(L, X, Y) : box(_, L, X, Y).
 +!solve_goal(L, X, Y) : color(C) & box(C, L, BoxX, BoxY) & not goal(L, BoxX, BoxY) <- !move_box(BoxX, BoxY, X, Y).
+
++!end <- skip; !end.

@@ -77,35 +77,31 @@ public class ServerEnv extends Environment {
 	}
 	
 	@Override
-	public void scheduleAction(final String agName, final Structure action, final Object infraData) 
+	public void scheduleAction(final String agentName, final Structure action, final Object infraData) 
 	{
-        int agId = getAgentIdByName(agName);
+//        int agentId = getAgentIdByName(agentName);
+//        
+//        synchronized (jointAction) 
+//        {
+//			jointAction[agentId] = toString(action);
+//		}
         
-        synchronized (jointAction) 
-        {
-			jointAction[agId] = toString(action);
-		}
-        
-        ActRequest newRequest = new ActRequest(agName, action, infraData);
+        ActRequest newRequest = new ActRequest(agentName, action, infraData);
         
         synchronized (requests) 
         {        	
-			requests.put(agName, newRequest);
+			requests.put(agentName, newRequest);
 			try {
 				if (requests.size() >= nbAgs)
-				{			
-//					logger.info(Arrays.toString(jointAction));
-					
-					int i = 0; // Can we get the id of the agent, so we are sure their actions are in the correct position?
-					for (ActRequest a: requests.values()) 
+				{								
+					for (ActRequest request : requests.values()) 
 					{
-//	                	System.out.println(a.agName + " " + a.action + " " + a.infraData);
-						boolean success = executeAction(a.agName, a.action);
-						getEnvironmentInfraTier().actionExecuted(a.agName, a.action, success, a.infraData);
+						boolean success = executeAction(request.agentName, request.action);
+						getEnvironmentInfraTier().actionExecuted(request.agentName, request.action, success, request.infraData);
 						if (success)
-							jointAction[i++] = this.toString(a.action);
+							jointAction[getAgentIdByName(request.agentName)] = this.toString(request.action);
 						else 
-							jointAction[i++] = this.toString(new Structure("NoOp"));
+							jointAction[getAgentIdByName(request.agentName)] = this.toString(new Structure("NoOp"));
 					}
 					serverOut.println(Arrays.toString(jointAction));
 					requests.clear();
@@ -124,6 +120,7 @@ public class ServerEnv extends Environment {
 						}
 					}
 					
+					// Send step percept when actions have been executed?
 				}
 			} 
 			catch (Exception e) 
@@ -142,12 +139,12 @@ public class ServerEnv extends Environment {
 	
 	class ActRequest {
 		
-		String agName;
+		String agentName;
 		Structure action;
 		Object infraData;
 		
-		public ActRequest(String agName, Structure action, Object infraData) {
-            this.agName = agName;
+		public ActRequest(String agentName, Structure action, Object infraData) {
+            this.agentName = agentName;
             this.action = action;
             this.infraData = infraData;
         }

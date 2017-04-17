@@ -53,21 +53,22 @@ public class WorldEnv extends ServerEnv {
 	
 	@Override
 	protected int getAgentIdByName(String name) {
-		return 0;
+		for (Agent agent : model.getAgents())
+			if (agent.getName().equals(name))
+				return agent.getNumber();
+		return 0; // Default value
 	}
 
 	@Override
-	public boolean executeAction(String ag, Structure action) 
+	public boolean executeAction(String agentName, Structure action) 
 	{
-//		logger.info(ag + " doing: " + action);
+		int agentId = getAgentIdByName(agentName);
 		
-        int agId = (int) ((NumberTermImpl) action.getTerm(0)).solve();
-        
         switch(action.getFunctor())
         {
-        case MOVE: return model.move(action.getTerm(1), agId);
-        case PUSH: return model.push(action.getTerm(1), action.getTerm(2), agId);
-        case PULL: return model.pull(action.getTerm(1), action.getTerm(2), agId);
+        case MOVE: return model.move(action.getTerm(0), agentId);
+        case PUSH: return model.push(action.getTerm(0), action.getTerm(1), agentId);
+        case PULL: return model.pull(action.getTerm(0), action.getTerm(1), agentId);
         case SKIP: return true;
         default: 
             logger.warning("** Action not implemented: " + action);
@@ -75,7 +76,8 @@ public class WorldEnv extends ServerEnv {
         }
 	}
     
-    private void updateInitialAgsPercept()
+	private boolean notInitialized = true;
+    private synchronized void updateInitialAgsPercept()
     {
     	for (int x = 0; x < model.getWidth(); x++)
     	{
@@ -88,13 +90,13 @@ public class WorldEnv extends ServerEnv {
     	// Add agent specific information to each agent
     	for (Agent agent : model.getAgents())
     	{
-    		addPercept("initializer", Literal.parseLiteral("create_agent(" + agent.getName() + ")"));
+    		if (notInitialized) // We just need to make sure the agents are only created once
+    			addPercept("initializer", Literal.parseLiteral("create_agent(" + agent.getName() + ")"));
     		
     		addPercept(agent.getName(), createPosPerception(agent.getLocation().x, agent.getLocation().y));
     		addPercept(agent.getName(), createColorPerception(agent.getColor()));
-    		addPercept(agent.getName(), createIdPerception(agent));
     	}
-    	
+    	notInitialized = false;
     	setNbAgs(model.getAgents().length);
     }
 
@@ -173,21 +175,16 @@ public class WorldEnv extends ServerEnv {
                 ASSyntax.createNumber(y)); 
     }
     
-    public static Literal createIdPerception(Agent agent)
-    {
-    	return ASSyntax.createLiteral("id", ASSyntax.createNumber(agent.getNumber()));
-    }
-	
     @Override
 	public String toString(Structure action)
 	{
 		switch(action.getFunctor())
 		{
-		case MOVE: return "Move(" + toString(action.getTerm(1)) + ")";
-		case PUSH: return "Push(" + toString(action.getTerm(1)) + "," 
-								  + toString(action.getTerm(2)) + ")";
-		case PULL: return "Pull(" + toString(action.getTerm(1)) + "," 
-		  						  + toString(action.getTerm(2)) + ")";
+		case MOVE: return "Move(" + toString(action.getTerm(0)) + ")";
+		case PUSH: return "Push(" + toString(action.getTerm(0)) + "," 
+								  + toString(action.getTerm(1)) + ")";
+		case PULL: return "Pull(" + toString(action.getTerm(0)) + "," 
+		  						  + toString(action.getTerm(1)) + ")";
 		default  : return "NoOp";
 		}
 	}

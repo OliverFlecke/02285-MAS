@@ -9,4 +9,4 @@
 	!move(Directions).
 	
 +!move([]).
-+!move([Dir|Directions]) : id(Id) <- move(Id, Dir); !move(Directions).
++!move([Dir|Directions]) <- move(Dir); !move(Directions).
