@@ -1,48 +1,33 @@
-package env;
+package env.model;
 
 import java.util.*;
 import java.util.logging.Logger;
-import java.util.stream.Collectors;
 
 import jason.asSyntax.Term;
-import jason.environment.grid.GridWorldModel;
 import jason.environment.grid.Location;
-import lvl.cell.*;
+import lvl.Level;
 
-public class WorldModel extends GridWorldModel {
+public class WorldModel extends DataWorldModel {
 	
 	private static final Logger logger = Logger.getLogger(WorldModel.class.getName());
 	
+	public static final String UP    = "up"   ;
+	public static final String DOWN  = "down" ;
+	public static final String LEFT  = "left" ;
+	public static final String RIGHT = "right";
+	public static final String[] DIRECTIONS = {
+			UP, DOWN, LEFT, RIGHT
+	};
+	
 	private static WorldModel instance;
-	
-	private Agent[]				agents;
-	private Set<Box>			boxes	= new HashSet<>();
-	private Set<Goal>			goals	= new HashSet<>();
-	
-	private Agent[][]			agentArray;
-	private Box[][]				boxArray;
-	private Goal[][]			goalArray;
-
-	// GridWorldModel uses bit flags to represent objects
-	//						CLEAN		= 0
-	public static final int	GOAL 		= 1;
-	//						AGENT		= 2
-	//						OBSTACLE 	= 4
-	public static final int	BOX 		= 8;
 	
 	/**
 	 * Constructs a new WorldModel based on a level.
 	 * @param level - Level object
 	 */
-	public WorldModel(lvl.Level level) 
+	public WorldModel(Level level) 
 	{		
 		super(level.width, level.height, level.nbAgs);
-
-		agents 		= new Agent[level.nbAgs];
-		
-		agentArray 	= new Agent[width][height];
-		boxArray  	= new Box  [width][height];
-		goalArray 	= new Goal [width][height];
 		
 		initData(level.data, level.colors);
 		
@@ -52,119 +37,6 @@ public class WorldModel extends GridWorldModel {
 	public static WorldModel getInstance() {
 		return instance;
 	}
-
-	@Override
-    public int getNbOfAgs() {
-        return agents.length;
-    }
-	
-	@Override
-	public Location getAgPos(int agId) {
-		return agents[agId].getLocation();
-	}
-	
-	@Override
-	public void setAgPos(int agId, Location l) {
-		move(AGENT, agents[agId].getLocation(), l);
-	}
-	
-	public Agent[] getAgents()
-	{
-		return this.agents;
-	}
-	
-	/**
-	 * @return The data in this world model
-	 */
-	public int[][] getData()
-	{
-		return this.data;
-	}
-	
-	/**
-	 * @return The array of all the goals
-	 */
-	public Goal[][] getGoalsArray()
-	{
-		return this.goalArray;
-	}
-	
-	/**
-	 * @return The goals in the world model
-	 */
-	public Set<Goal> getGoals()
-	{
-		return this.goals;
-	}
-	
-	/**
-	 * @return The box array in the world model
-	 */
-	public Box[][] getBoxArray()
-	{
-		return this.boxArray;
-	}
-	
-	/**
-	 * @return The boxes in the world
-	 */
-	public Set<Box> getBoxes()
-	{
-		return this.boxes;
-	}
-	
-	public Agent getAgent(int x, int y) 
-	{
-		return agentArray[x][y];
-	}
-	
-	public Goal getGoal(int x, int y) 
-	{
-		return goalArray[x][y];
-	}
-	
-	public Box getBox(int x, int y) 
-	{
-		return boxArray[x][y];
-	}
-	
-	/**
-	 * @return All the boxes in the world, which is not already on a goal
-	 */
-	public Set<Box> getBoxesNotOnGoal()
-	{
-		return boxes.stream().filter(box -> !box.onGoal()).collect(Collectors.toSet());
-	}
-	
-	/**
-	 * @return Get all the goals that has not been solved yet
-	 */
-	public Set<Goal> getUnsolvedGoals()
-	{
-		return goals.stream().filter(goal -> !goal.isSolved()).collect(Collectors.toSet());
-	}
-	
-	public void move(int value, Location fr, Location to)
-	{
-		switch (value)
-		{
-		case AGENT: 
-			agentArray[fr.x][fr.y].setLocation(to); 
-			agentArray[to.x][to.y] = agentArray[fr.x][fr.y];
-			agentArray[fr.x][fr.y] = null;
-			break;
-		case BOX:	
-			boxArray  [fr.x][fr.y].setLocation(to); 
-			boxArray  [to.x][to.y] = boxArray[fr.x][fr.y];
-			boxArray  [fr.x][fr.y] = null;
-			break;
-		default: 	return;
-		}
-
-		remove	(value, fr);
-		add		(value, to);
-	}
-	
 	
 	/**
 	 * Initializes the grid with objects according to the 
@@ -179,79 +51,17 @@ public class WorldModel extends GridWorldModel {
 			{
 				char ch = data[x][y];
 				
-				if (Character.isDigit(ch)) 
-				{
-					int number = Character.getNumericValue(ch);
-					Agent agent = new Agent(x, y, ch, colors.getOrDefault(ch, ""));
-
-					add(AGENT, x, y);			// Add to integer representation
-					agents[number] = agent;		// Add to map for quick lookup
-					agentArray[x][y] = agent;	// Add to array for quick lookup
-				}
+				if (Character.isDigit(ch)) addAgent(x, y, ch, colors.get(ch));
 				
-				else if (ch == '+') add(OBSTACLE, x, y);
+				else if (Character.isLowerCase(ch)) addGoal(x, y, ch);
 				
-				else if (Character.isUpperCase(ch)) 
-				{
-					Box box = new Box(x, y, ch, colors.getOrDefault(ch, ""));
-					
-					add(BOX, x, y);				// Add to integer representation
-					boxes.add(box);             // Add to set to easily get all
-					boxArray[x][y] = box;		// Add to array for quick lookup
-				}
+				else if (Character.isUpperCase(ch)) addBox(x, y, ch, colors.get(ch));
 				
-				else if (Character.isLowerCase(ch)) 
-				{
-					Goal goal = new Goal(x, y, ch);
-					
-					add(GOAL, x, y);			// Add to integer representation
-					goals.add(goal);            // Add to set to easily get all 
-					goalArray[x][y] = goal;		// Add to array for quick lookup
-				}
+				else if (ch == '+') addWall(x, y);
 			}
 		}
 		printLevel();
 	}
-	
-	public void printLevel()
-	{
-		// Print integer representation of level
-		for (int y = 0; y < height; y++) 
-		{
-			for (int x = 0; x < width; x++) 
-			{
-				System.err.print(data[x][y]);
-			}
-			System.err.println();
-		}
-	}
-
-	/**
-	 * Adjusted to take boxes into account.
-	 */
-	@Override
-	public boolean isFree(int x, int y) {
-        return super.isFree(x, y) && !hasObject(BOX, x, y);
-    }
-	
-	/**
-	 * Should agents be considered?
-	 */
-	public boolean noWallsOrBoxes(Location l) {
-		return inGrid(l) && isFree(OBSTACLE, l) && isFree(BOX, l);
-	}
-	
-	/* 
-	 *  ACTIONS
-	 */
-	
-	public static final String UP    = "up"   ;
-	public static final String DOWN  = "down" ;
-	public static final String LEFT  = "left" ;
-	public static final String RIGHT = "right";
-	public static final String[] DIRECTIONS = {
-			UP, DOWN, LEFT, RIGHT
-	};
 
 	/**
 	 * Computes a new Location based on current direction 
@@ -348,7 +158,7 @@ public class WorldModel extends GridWorldModel {
             return false;
         }
     	
-    	if (!hasObject(BOX, nAgLoc))
+    	if (isFree(nAgLoc, BOX))
     	{
             logger.warning("** No box at: " + nAgLoc);            
             return false;
@@ -405,7 +215,7 @@ public class WorldModel extends GridWorldModel {
             return false;
     	}
     	
-    	if (!hasObject(BOX, boxLoc))
+    	if (isFree(boxLoc, BOX))
     	{
             logger.warning("** No box at: " + boxLoc);            
             return false;

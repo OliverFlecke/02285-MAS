@@ -3,7 +3,7 @@ package srch.str;
 import java.util.ArrayList;
 import java.util.List;
 
-import env.WorldModel;
+import env.model.WorldModel;
 import jason.environment.grid.Location;
 import srch.Node;
 
@@ -15,7 +15,7 @@ public class StrNode extends Node {
 	public StrNode(Location initial, int object, List<Location> storages) {
 		super(initial);
 		
-		this.object   = object | WorldModel.OBSTACLE;
+		this.object   = object | WorldModel.WALL;
 		this.storages = storages;
 	}
 	
@@ -35,7 +35,7 @@ public class StrNode extends Node {
 		{
 			Location loc = WorldModel.newLocation(dir, this.getLocation());
 
-			if (WorldModel.getInstance().isFree(object, loc))
+			if (WorldModel.getInstance().isFree(loc, object))
 			{
 				expandedNodes.add(new StrNode(this, dir, loc));
 			}
@@ -46,7 +46,7 @@ public class StrNode extends Node {
 		{
 			Location loc = this.getLocation();
 			
-			if (WorldModel.getInstance().isFree(WorldModel.BOX, loc))
+			if (WorldModel.getInstance().isFree(loc, WorldModel.BOX))
 			{
 				storages.add(loc);
 			}

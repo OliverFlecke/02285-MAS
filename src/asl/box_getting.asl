@@ -14,3 +14,6 @@
 	.print("Box dependencies: ", Dependencies);
 	!store_box(Dependencies);
 	!get_box(BoxX, BoxY).
+	
+-!get_box(BoxX, BoxY) : pos(AgX, AgY) <-
+	.print("Agent at (", AgX, ",", AgY, ") failed to get box at (", BoxX, ",", BoxY, ")").

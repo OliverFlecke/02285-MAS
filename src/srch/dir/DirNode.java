@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
-import env.WorldModel;
+import env.model.WorldModel;
 import jason.environment.grid.Location;
 import srch.Node;
 
@@ -26,7 +26,7 @@ public class DirNode extends Node {
 		{
 			Location loc = WorldModel.newLocation(dir, this.getLocation());
 					
-			if (WorldModel.getInstance().noWallsOrBoxes(loc))
+			if (WorldModel.getInstance().isFree(loc, WorldModel.WALL, WorldModel.BOX))
 			{
 				expandedNodes.add(new DirNode(this, dir, loc));
 			}

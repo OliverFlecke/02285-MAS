@@ -5,7 +5,7 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
-import env.WorldModel;
+import env.model.WorldModel;
 import jason.environment.grid.Location;
 import srch.Node;
 
@@ -26,7 +26,7 @@ public class DepNode extends Node {
 		this.object 		= ((DepNode) parent).object;
 		this.dependencies 	= ((DepNode) parent).dependencies;
 		
-		if (WorldModel.getInstance().hasObject(object, loc)) {
+		if (WorldModel.getInstance().hasObject(loc, object)) {
 			dependencies++;
 		}
 	}
@@ -47,7 +47,7 @@ public class DepNode extends Node {
 		{
 			Location loc = WorldModel.newLocation(dir, this.getLocation());
 			
-			if (WorldModel.getInstance().isFreeOfObstacle(loc))
+			if (WorldModel.getInstance().isFree(loc, WorldModel.WALL))
 			{
 				expandedNodes.add(new DepNode(this, dir, loc));
 			}
@@ -69,7 +69,7 @@ public class DepNode extends Node {
 		{
 			Location loc = n.getLocation();
 			
-			if (WorldModel.getInstance().hasObject(object, loc))
+			if (WorldModel.getInstance().hasObject(loc, object))
 			{
 				plan.addFirst(loc);
 			}

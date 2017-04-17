@@ -9,15 +9,15 @@ select_box(C, A, _, _, X, Y) :- box(C, A, X, Y) & not goal(A, X, Y).
 select_goal(Letter, X, Y) :- color(C) & pos(AgentX, AgentY) & jia.select_goal(C, Letter, AgentX, AgentY, X, Y).
 select_goal(Letter, X, Y) :- goal(Letter, X, Y) & not box(_, Letter, X, Y).
 
-object(goal, 1).
-object(box,  8).
+object(goal, 2).
+object(box,  4).
 
 // Initial goal
 !solve_level.
 
 //+!solve_level <-
 //	while (select_goal(Letter, X, Y)) { !solve_goal(Letter, X, Y); }.
-//	for ( goal(A, GoalX, GoalY) ) { !solve_goal(A, GoalX, GoalY); }.
+////	for ( goal(A, GoalX, GoalY) ) { !solve_goal(A, GoalX, GoalY); }.
 //	
 //+!solve_goal(A, X, Y) : box(_, A, X, Y).
 //
@@ -28,6 +28,19 @@ object(box,  8).
 	
 
 	
+//+!add_dependencies : object(goal, Obj) <-
+//	
+//	for ( goal(_, GoalX, GoalY) ) {
+//		
+//		jia.dependencies(GoalX, GoalY, AgX, AgY, Obj, Dependencies);
+//		
+//		for ( .member(depend(X, Y), Dependencies)) {
+//			
+//			?goal(X, Y, List);
+//			
+//			-+goal(X, Y, [depend(GoalX, GoalY)]);
+//		};		
+//	}.
 
 +!solve_level : pos(AgX, AgY) & object(goal, Obj) <-
 

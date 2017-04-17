@@ -1,6 +1,6 @@
 package lvl.cell;
 
-import env.WorldModel;
+import env.model.WorldModel;
 
 public class Box extends Colored {
 
@@ -13,8 +13,8 @@ public class Box extends Colored {
 	 * @return True if the box is already on a goal
 	 */
 	public boolean onGoal()
-	{
-		Goal goal = WorldModel.getInstance().getGoalsArray()[this.getLocation().x][this.getLocation().y];
+	{		
+		Goal goal = WorldModel.getInstance().getGoal(this.getLocation());
 		if (goal != null)
 			return goal.getLetter() == this.getLetter();
 		else

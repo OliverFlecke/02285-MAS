@@ -10,14 +10,14 @@ public abstract class Colored extends Lettered {
 	{
 		super(x, y, letter);
 		
-		this.color = Color.getColor(color);
+		this.color = Color.getColor(color == null ? "" : color);
 	}
 	
 	/**
 	 * @return The color of this object
 	 */
-	public Color getColor()
+	public String getColor()
 	{
-		return this.color;
+		return color.toString().toLowerCase();
 	}
 }

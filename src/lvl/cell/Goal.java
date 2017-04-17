@@ -1,6 +1,6 @@
 package lvl.cell;
 
-import env.WorldModel;
+import env.model.WorldModel;
 
 public class Goal extends Lettered {
 	
@@ -11,7 +11,7 @@ public class Goal extends Lettered {
 	
 	public boolean isSolved()
 	{
-		Box box = WorldModel.getInstance().getBoxArray()[this.getLocation().x][this.getLocation().y];
+		Box box = WorldModel.getInstance().getBox(this.getLocation());
 		if (box == null)
 			return false;
 		else

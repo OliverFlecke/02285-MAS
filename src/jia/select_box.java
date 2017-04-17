@@ -2,11 +2,10 @@
 
 package jia;
 
-import env.*;
+import env.model.WorldModel;
 import jason.asSemantics.*;
 import jason.asSyntax.*;
 import jason.environment.grid.Location;
-import lvl.Color;
 import lvl.cell.Box;
 
 public class select_box extends DefaultInternalAction {
@@ -20,7 +19,7 @@ public class select_box extends DefaultInternalAction {
         
         try 
         {
-        	Color color = Color.getColor(((Atom) terms[0]).getFunctor());
+        	String color = ((Atom) terms[0]).getFunctor();
         	char letter = ((Atom) terms[1]).getFunctor().charAt(0);
         	int goalX = (int) ((NumberTerm) terms[2]).solve();
         	int goalY = (int) ((NumberTerm) terms[3]).solve();

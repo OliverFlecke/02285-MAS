@@ -3,9 +3,9 @@ package env;
 
 import java.util.logging.Logger;
 
+import env.model.WorldModel;
 import jason.asSyntax.*;
 import lvl.cell.*;
-import lvl.Color;
 import lvl.Level;
 public class WorldEnv extends ServerEnv {
 
@@ -40,7 +40,7 @@ public class WorldEnv extends ServerEnv {
     
     @Override
     protected void updateNumberOfAgents() {
-		setNbAgs(model.getNbOfAgs());
+		setNbAgs(model.getNbAgs());
     }
     
     @Override
@@ -74,12 +74,6 @@ public class WorldEnv extends ServerEnv {
         	return true;
         }
 	}
-
-    public static final Atom aEMPTY    = new Atom("empty");
-    public static final Atom aAGENT    = new Atom("agent");
-    public static final Atom aOBSTACLE = new Atom("obstacle");
-    public static final Atom aGOAL     = new Atom("goal");
-    public static final Atom aBOX      = new Atom("box");
     
     private void updateInitialAgsPercept()
     {
@@ -87,8 +81,7 @@ public class WorldEnv extends ServerEnv {
     	{
     		for (int y = 0; y < model.getHeight(); y++)
     		{
-    			if ((model.getData()[x][y] & WorldModel.AGENT) != WorldModel.AGENT)
-    				addModelPercepts(x, y);
+				addModelPercepts(x, y);
     		}
     	}
 
@@ -97,7 +90,7 @@ public class WorldEnv extends ServerEnv {
     	{
     		addPercept("initializer", Literal.parseLiteral("create_agent(" + agent.getName() + ")"));
     		
-    		addPercept(agent.getName(), createAgentPerception(agent.getLocation().x, agent.getLocation().y));
+    		addPercept(agent.getName(), createPosPerception(agent.getLocation().x, agent.getLocation().y));
     		addPercept(agent.getName(), createColorPerception(agent.getColor()));
     	}
     	
@@ -112,19 +105,20 @@ public class WorldEnv extends ServerEnv {
      */
 	private void addModelPercepts(int x, int y) 
 	{
-		if (model.hasObject(WorldModel.GOAL, x, y))
+		if (model.hasObject(x, y, WorldModel.GOAL))
         {
         	addPercept(createGoalPerception(x, y));
         }
+		
 		if (model.isFree(x, y))
 		{
         	addPercept(createFreePerception(x, y));
 		}
-//		else if (model.hasObject(WorldModel.AGENT, x, y))
-//        {
-//            addPercept(createAgentPerception(x, y));
-//        }
-        else if (model.hasObject(WorldModel.BOX, x, y))
+		else if (model.hasObject(x, y, WorldModel.AGENT))
+        {
+            addPercept(createAgentPerception(x, y));
+        }
+        else if (model.hasObject(x, y, WorldModel.BOX))
         {
         	addPercept(createBoxPerception(x, y));
         }
@@ -134,8 +128,8 @@ public class WorldEnv extends ServerEnv {
     {
     	Box box = model.getBox(x, y);
     	return ASSyntax.createLiteral("box", 
-    			new Atom(box.getColor().toString().toLowerCase()), 
-    			new Atom(Character.toString(box.getLetter())),
+    			ASSyntax.createAtom(box.getColor()),
+    			ASSyntax.createAtom(Character.toString(box.getLetter())),
                 ASSyntax.createNumber(x),
                 ASSyntax.createNumber(y)); 
     }
@@ -144,21 +138,31 @@ public class WorldEnv extends ServerEnv {
     {
     	Goal goal = model.getGoal(x, y);
     	return ASSyntax.createLiteral("goal", 
-    			new Atom(Character.toString(goal.getLetter())),
+    			ASSyntax.createAtom(Character.toString(goal.getLetter())),
                 ASSyntax.createNumber(x),
                 ASSyntax.createNumber(y)); 
     }
     
     public static Literal createAgentPerception(int x, int y)
     {
+    	Agent agent = model.getAgent(x, y);
+    	return ASSyntax.createLiteral("agent",
+    			ASSyntax.createAtom(agent.getColor()),
+    			ASSyntax.createNumber(x),
+    			ASSyntax.createNumber(y));
+    }
+    
+    public static Literal createPosPerception(int x, int y)
+    {
     	return ASSyntax.createLiteral("pos",
                 ASSyntax.createNumber(x),
                 ASSyntax.createNumber(y)); 
     }
     
-    public static Literal createColorPerception(Color color)
+    public static Literal createColorPerception(String color)
     {
-    	return ASSyntax.createLiteral("color", ASSyntax.createAtom(color.toString().toLowerCase()));
+    	return ASSyntax.createLiteral("color", 
+    			ASSyntax.createAtom(color));
     }
     
     public static Literal createFreePerception(int x, int y)

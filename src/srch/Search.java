@@ -10,7 +10,7 @@ public abstract class Search {
 		strategy = s;
 	}
 	
-	public List<? extends Object> search(Node initial)
+	public List<?> search(Node initial)
 	{
 		strategy.addToFrontier(initial);
 		

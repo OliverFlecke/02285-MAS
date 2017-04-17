@@ -4,11 +4,10 @@ package jia;
 
 import java.util.stream.Collectors;
 
-import env.WorldModel;
+import env.model.WorldModel;
 import jason.asSemantics.*;
 import jason.asSyntax.*;
 import jason.environment.grid.Location;
-import lvl.Color;
 import lvl.cell.Goal;
 
 public class select_goal extends DefaultInternalAction {
@@ -22,7 +21,7 @@ public class select_goal extends DefaultInternalAction {
         
         try 
         {
-        	Color color = Color.getColor(((Atom) terms[0]).getFunctor());
+        	String color = ((Atom) terms[0]).getFunctor();
         	int agentX = (int) ((NumberTerm) terms[2]).solve();
         	int agentY = (int) ((NumberTerm) terms[3]).solve();
         	
