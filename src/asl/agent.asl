@@ -24,8 +24,7 @@ object(box,  4).
 ////+!solve_goal(A, X, Y) : color(C) & box(C, A, BoxX, BoxY) & not goal(A, BoxX, BoxY) <-
 //+!solve_goal(A, X, Y) : color(C) & select_box(C, A, X, Y, BoxX, BoxY) <-
 //	.print("Solve goal at (", X, ", ", Y, ") with box at (", BoxX, ",", BoxY, ")");
-//	!move_box(BoxX, BoxY, X, Y).	
-	
+//	!move_box(BoxX, BoxY, X, Y).
 
 	
 //+!add_dependencies : object(goal, Obj) <-
@@ -42,11 +41,11 @@ object(box,  4).
 //		};		
 //	}.
 
-+!solve_level : pos(AgX, AgY) & object(goal, Obj) <-
++!solve_level : pos(AgX, AgY) & object(goal, Obj) & color(C) <-
 
 	+dependencies([]);
 	
-	for ( goal(_, GoalX, GoalY) ) {
+	for ( goal(L, GoalX, GoalY) & box(C, L, _, _) ) {
 		jia.dependencies(GoalX, GoalY, AgX, AgY, Obj, Dependencies);
 		?dependencies(List);
 		-+dependencies([depend(GoalX, GoalY,Dependencies)|List]);
@@ -61,10 +60,3 @@ object(box,  4).
 
 +!solve_goal(L, X, Y) : box(_, L, X, Y).
 +!solve_goal(L, X, Y) : color(C) & box(C, L, BoxX, BoxY) & not goal(L, BoxX, BoxY) <- !move_box(BoxX, BoxY, X, Y).
-
-
-	
-
-	
-	
-	
