@@ -15,9 +15,8 @@ public class StrSearch extends Search {
 	 * @param object
 	 * @return
 	 */
-	@SuppressWarnings("unchecked")
 	public static List<Location> search(Location initial, int object) {
-		return (List<Location>) new StrSearch().search(new StrNode(initial, object, new ArrayList<Location>()));
+		return new StrSearch().search(new StrNode(initial, object, new ArrayList<Location>()));
 	}
 	
 	public StrSearch()

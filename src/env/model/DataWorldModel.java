@@ -8,13 +8,16 @@ import lvl.cell.*;
 
 public class DataWorldModel extends GridWorldModel {
 	
-	private Agent[]				agents;
-	private Set<Goal>			goals;
-	private Set<Box>			boxes;
+	private Agent[]						agents;
+	private Set<Goal>					goals;
+	private Set<Box>					boxes;
 
-	private Agent[][]			agentArray;
-	private Goal[][]			goalArray;
-	private Box[][]				boxArray;
+	private Agent[][]					agentArray;
+	private Goal[][]					goalArray;
+	private Box[][]						boxArray;
+	
+	private Map<Character, Set<Goal>> 	goalMap;
+	private Map<Character, Set<Box>>  	boxMap;
 	
 	public DataWorldModel(int width, int height, int nbAgs)
 	{
@@ -27,6 +30,9 @@ public class DataWorldModel extends GridWorldModel {
 		agentArray 	= new Agent[width][height];
 		goalArray 	= new Goal [width][height];
 		boxArray  	= new Box  [width][height];
+		
+		goalMap 	= new HashMap<>();
+		boxMap		= new HashMap<>();
 	}
 	
 	/**
@@ -69,6 +75,18 @@ public class DataWorldModel extends GridWorldModel {
 		return getBox(l.x, l.y);
 	}
 	
+	public Agent[] getAgents() {
+		return agents;
+	}
+	
+	public Set<Goal> getGoals() {
+		return goals;
+	}
+	
+	public Set<Box> getBoxes() {
+		return boxes;
+	}
+	
 	public Agent getAgent(int x, int y) {
 		return agentArray[x][y];
 	}
@@ -81,16 +99,20 @@ public class DataWorldModel extends GridWorldModel {
 		return boxArray[x][y];
 	}
 	
-	public Agent[] getAgents() {
-		return agents;
+	public Map<Character, Set<Goal>> getGoalMap() {
+		return goalMap;
 	}
 	
-	public Set<Goal> getGoals() {
-		return goals;
+	public Map<Character, Set<Box>> getBoxMap() {
+		return boxMap;
 	}
 	
-	public Set<Box> getBoxes() {
-		return boxes;
+	public Set<Goal> getGoals(char letter) {
+		return goalMap.get(letter);
+	}
+	
+	public Set<Box> getBoxes(char letter) {
+		return boxMap.get(letter);
 	}
 	
 	
@@ -134,20 +156,35 @@ public class DataWorldModel extends GridWorldModel {
 		add(GOAL, x, y);
 		goals.add(goal);
 		goalArray[x][y] = goal;
+		addToMap(goalMap, letter, goal);
 	}
 	
-	protected void addBox(int x, int y, char letter, String color) 
+	protected void addBox(int x, int y, char upperCaseLetter, String color) 
 	{
+		char letter = Character.toLowerCase(upperCaseLetter);
+		
 		Box box = new Box(x, y, letter, color);
 		
 		add(BOX, x, y);
 		boxes.add(box);
 		boxArray[x][y] = box;
+		addToMap(boxMap, letter, box);
 	}
 	
 	protected void addWall(int x, int y)
 	{
 		add(WALL, x, y);
 	}
-
+	
+	private <T> void addToMap(Map<Character, Set<T>> map, char letter, T object)
+	{
+		if (map.containsKey(letter))
+		{
+			map.get(letter).add(object);
+		}
+		else
+		{
+			map.put(letter, new HashSet<T>(Arrays.asList(object)));
+		}
+	}
 }

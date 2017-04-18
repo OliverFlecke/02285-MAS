@@ -35,6 +35,7 @@ public class DirNode extends Node {
 		return expandedNodes;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<String> extractPlan() 
 	{

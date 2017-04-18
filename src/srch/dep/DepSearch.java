@@ -17,9 +17,8 @@ public class DepSearch extends Search implements Heuristic {
 	 * @param object
 	 * @return
 	 */
-	@SuppressWarnings("unchecked")
 	public static List<Location> search(Location from, Location to, int object) {
-		return (List<Location>) new DepSearch(to).search(new DepNode(from, object));
+		return new DepSearch(to).search(new DepNode(from, object));
 	}
 	
 	private Location goalLocation;

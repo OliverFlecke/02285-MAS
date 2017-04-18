@@ -1,7 +1,5 @@
 package srch;
 
-import java.util.List;
-
 public abstract class Search {
 	
 	private Strategy strategy;
@@ -10,7 +8,7 @@ public abstract class Search {
 		strategy = s;
 	}
 	
-	public List<?> search(Node initial)
+	public <T> T search(Node initial)
 	{
 		strategy.addToFrontier(initial);
 		

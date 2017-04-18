@@ -14,19 +14,23 @@ public class DepNode extends Node {
 	private int object;
 	private int dependencies;
 
-	public DepNode(Location initial, int object) {
+	public DepNode(Location initial, int object) 
+	{
 		super(initial);
+		
 		this.object 		= object;
 		this.dependencies 	= 0;
 	}
 
-	public DepNode(Node parent, String dir, Location loc) {
+	public DepNode(Node parent, String dir, Location loc) 
+	{
 		super(parent, dir, loc);
 		
 		this.object 		= ((DepNode) parent).object;
 		this.dependencies 	= ((DepNode) parent).dependencies;
 		
-		if (WorldModel.getInstance().hasObject(loc, object)) {
+		if (WorldModel.getInstance().hasObject(loc, object)) 
+		{
 			dependencies++;
 		}
 	}
@@ -58,6 +62,7 @@ public class DepNode extends Node {
 	/**
 	 * Override to extract dependency
 	 */
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<Location> extractPlan() 
 	{
@@ -65,7 +70,7 @@ public class DepNode extends Node {
 		
 		LinkedList<Location> plan = new LinkedList<Location>();		
 		
-		for (DepNode n = this; n.getDirection() != null; n = (DepNode) n.getParent()) 
+		for (Node n = this; n.getDirection() != null; n = n.getParent()) 
 		{
 			Location loc = n.getLocation();
 			

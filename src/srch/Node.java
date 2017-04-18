@@ -45,7 +45,7 @@ public abstract class Node {
 
 	public abstract List<Node> getExpandedNodes();
 
-	public abstract List<?> extractPlan();
+	public abstract <T> T extractPlan();
 
 	@Override
 	public int hashCode() {

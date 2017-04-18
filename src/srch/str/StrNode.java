@@ -12,14 +12,16 @@ public class StrNode extends Node {
 	private int object;
 	private List<Location> storages;
 
-	public StrNode(Location initial, int object, List<Location> storages) {
+	public StrNode(Location initial, int object, List<Location> storages) 
+	{
 		super(initial);
 		
 		this.object   = object | WorldModel.WALL;
 		this.storages = storages;
 	}
 	
-	public StrNode(Node parent, String dir, Location loc) {
+	public StrNode(Node parent, String dir, Location loc) 
+	{
 		super(parent, dir, loc);
 
 		this.object   = ((StrNode) parent).object;
@@ -55,6 +57,7 @@ public class StrNode extends Node {
 		return expandedNodes;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<Location> extractPlan() 
 	{		
