@@ -19,6 +19,12 @@ public class WorldModel extends DataWorldModel {
 			UP, DOWN, LEFT, RIGHT
 	};
 	
+	private int step = 0;
+	
+	public int getStep() { return this.step; }
+	
+	public void nextStep() { step++; }
+	
 	private static WorldModel instance;
 	
 	/**
@@ -123,6 +129,7 @@ public class WorldModel extends DataWorldModel {
         }
 
         move(AGENT, agLoc, nAgLoc);
+        remove(LOCKED, agLoc.x, agLoc.y);
         return true;
     }	
     

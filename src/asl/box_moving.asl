@@ -4,10 +4,9 @@
 // The box(X,Y) predicate is used to keep track of the box being moved
 +!move_box(BoxX, BoxY, ToX, ToY) <-
 	!get_box(BoxX, BoxY);
-//	-+box(BoxX, BoxY);
-	.print("Move box at (", BoxX, ",", BoxY, ") to (", ToX, ",", ToY, ")");
+//	.print("Move box at (", BoxX, ",", BoxY, ") to (", ToX, ",", ToY, ")");
 	jia.directions(BoxX, BoxY, ToX, ToY, 0, Directions);
-	.print("Move box directions: ", Directions);
+//	.print("Move box directions: ", Directions);
 	!move_box(Directions).
 
 +!move_box([]).

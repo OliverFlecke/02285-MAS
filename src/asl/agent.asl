@@ -42,9 +42,7 @@ object(box,  4).
 //	}.
 
 +!solve_level : pos(AgX, AgY) & object(goal, Obj) & color(C) <-
-
 	+dependencies([]);
-	
 	for ( goal(L, GoalX, GoalY) & box(C, L, _, _) ) {
 		jia.dependencies(GoalX, GoalY, AgX, AgY, Obj, Dependencies);
 		?dependencies(List);
@@ -53,12 +51,24 @@ object(box,  4).
 	
 	?dependencies(List);
 	jia.prioritize(List, Goals);
-	!solve_goal(Goals).
+	!solve_level(Goals).
 	
-+!solve_goal([]) <- !end.
-+!solve_goal([goal(X,Y)|Goals]) : goal(L, X, Y) <- !solve_goal(L, X, Y); !solve_goal(Goals).
++!solve_level([]) <- !end.
++!solve_level([goal(X,Y)|Goals]) : goal(L, X, Y) & box(C, L, _, _) & color(C) 
+	<- !solve_goal(L, X, Y); !solve_level(Goals).
+	
+// If agent is not able to solve current goal, ask for help (somehow) and try solving the next goal
++!solve_level([goal(X, Y)|Goals]) <- !solve_level(Goals).
 
+// Solve specific goal
 +!solve_goal(L, X, Y) : box(_, L, X, Y).
-+!solve_goal(L, X, Y) : color(C) & box(C, L, BoxX, BoxY) & not goal(L, BoxX, BoxY) <- !move_box(BoxX, BoxY, X, Y).
++!solve_goal(L, X, Y) : color(C) & box(C, L, BoxX, BoxY) & not goal(L, BoxX, BoxY) 
+	<- !move_box(BoxX, BoxY, X, Y).
+
+//-!solve_goal(L, X, Y) <- !end.
+-!solve_goal(L, X, Y) <- 
+	skip; 
+//	.print("Could not find a solution. Retrying"); 
+	!solve_goal(L, X, Y).
 
 +!end <- skip; !end.

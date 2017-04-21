@@ -46,4 +46,34 @@ public class DirSearch extends Search implements Heuristic {
 	public int h(Node n) {
 		return n.getLocation().distance(goalLocation); 
 	}
+	
+//	@Override
+//	public <T> T search(Node initial)
+//	{
+//		strategy.addToFrontier(initial);
+//		Node leaf = null;
+//		while (!strategy.frontierIsEmpty())
+//		{
+//			leaf = strategy.getAndRemoveLeaf();
+//			
+//			if (isGoalState(leaf))
+//			{
+//				return leaf.extractPlan();
+//			}
+//			
+//			strategy.addToExplored(leaf);
+//			
+//			for (Node n : leaf.getExpandedNodes())
+//			{
+//				if (!strategy.isExplored(n) && !strategy.inFrontier(n))
+//				{
+//					strategy.addToFrontier(n);
+//				}
+//			}
+//		}
+//		if (leaf == null || leaf.getParent() == null || this.h(leaf) + leaf.g() > this.h(initial) + initial.g()) 
+//			return initial.extractPlan();
+//		else 
+//			return leaf.getParent().extractPlan();
+//	}
 }

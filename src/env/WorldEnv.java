@@ -95,6 +95,7 @@ public class WorldEnv extends ServerEnv {
     		
     		addPercept(agent.getName(), createPosPerception(agent.getLocation().x, agent.getLocation().y));
     		addPercept(agent.getName(), createColorPerception(agent.getColor()));
+    		addPercept(agent.getName(), createStepPerception());
     	}
     	notInitialized = false;
     	setNbAgs(model.getAgents().length);
@@ -173,6 +174,11 @@ public class WorldEnv extends ServerEnv {
     	return ASSyntax.createLiteral("free",
                 ASSyntax.createNumber(x),
                 ASSyntax.createNumber(y)); 
+    }
+    
+    public static Literal createStepPerception()
+    {
+    	return ASSyntax.createLiteral("step", ASSyntax.createNumber(WorldModel.getInstance().getStep()));
     }
     
     @Override

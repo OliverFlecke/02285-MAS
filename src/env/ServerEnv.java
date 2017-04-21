@@ -12,6 +12,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.logging.Logger;
 
+import env.model.WorldModel;
 import jason.asSyntax.Structure;
 import jason.environment.Environment;
 
@@ -106,6 +107,7 @@ public class ServerEnv extends Environment {
 					serverOut.println(Arrays.toString(jointAction));
 					requests.clear();
 					updateAgsPercept();
+			    	WorldModel.getInstance().nextStep();
 					
 					if (!TEST)
 					{

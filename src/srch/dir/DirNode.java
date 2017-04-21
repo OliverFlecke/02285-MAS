@@ -26,7 +26,7 @@ public class DirNode extends Node {
 		{
 			Location loc = WorldModel.newLocation(dir, this.getLocation());
 					
-			if (WorldModel.getInstance().isFree(loc, WorldModel.WALL, WorldModel.BOX))
+			if (WorldModel.getInstance().isFree(loc, WorldModel.WALL, WorldModel.BOX, WorldModel.LOCKED))
 			{
 				expandedNodes.add(new DirNode(this, dir, loc));
 			}

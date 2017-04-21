@@ -3,6 +3,7 @@ package jia;
 import java.util.List;
 import java.util.logging.Level;
 
+import env.model.WorldModel;
 import jason.asSemantics.*;
 import jason.asSyntax.*;
 import jason.environment.grid.Location;
@@ -16,7 +17,7 @@ public class directions extends DefaultInternalAction {
 	private static final long serialVersionUID = 1L;
 
 	@Override
-	public Object execute(TransitionSystem ts, Unifier un, Term[] args) throws Exception
+	public synchronized Object execute(TransitionSystem ts, Unifier un, Term[] args) throws Exception
 	{
 		try {
 			int frX = (int) ((NumberTerm) args[0]).solve();
@@ -38,9 +39,14 @@ public class directions extends DefaultInternalAction {
 	        	return false;
 	        }
 	        
+	        Location location = new Location(frX, frY);
+	        
 	        for (String dir : path)
 	        {
 	        	directions.add(new LiteralImpl(dir));
+//	        	ts.getLogger().info("Locking: " + location.x + ", " + location.y);
+	        	WorldModel.getInstance().lock(location);
+	        	location = WorldModel.newLocation(dir, location);
 	        }
 	        
 	        return un.unifies(args[5], directions); 

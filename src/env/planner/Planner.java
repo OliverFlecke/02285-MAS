@@ -44,6 +44,8 @@ public class Planner {
 		}		
 		unsolvedGoals.remove(goal);
 		
+		// Merge plan with other agents
+		
 		return goal.getLocation();
 	}
 	

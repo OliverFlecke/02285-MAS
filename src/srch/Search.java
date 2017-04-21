@@ -2,7 +2,7 @@ package srch;
 
 public abstract class Search {
 	
-	private Strategy strategy;
+	protected Strategy strategy;
 	
 	public void setStrategy(Strategy s) {
 		strategy = s;

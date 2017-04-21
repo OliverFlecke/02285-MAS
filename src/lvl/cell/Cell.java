@@ -30,6 +30,4 @@ public abstract class Cell {
 	{
 		this.location = new Location(x, y);
 	}
-	
-	
 }

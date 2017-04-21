@@ -10,6 +10,7 @@ public class GridWorldModel {
 	public static final int		GOAL 	= 2;
 	public static final int		BOX		= 4;
     public static final int 	WALL 	= 8;
+    public static final int 	LOCKED  = 16;	
 	
 	protected int				width, height;
     
@@ -31,6 +32,21 @@ public class GridWorldModel {
     	return height;
     }
     
+    public int[][] getDate()
+    {
+    	return this.data;
+    }
+    
+    public void lock(Location location)
+    {
+    	add(LOCKED, location);
+    }
+    
+    public void unlock(Location location)
+    {
+    	remove(LOCKED, location);
+    }
+    
     public boolean inGrid(int x, int y) {
         return y >= 0 && y < height && x >= 0 && x < width;
     }
@@ -49,9 +65,9 @@ public class GridWorldModel {
 
     public boolean isFree(int x, int y) {
         return inGrid(x, y) 
-        		&& (data[x][y] & WALL) 	== 0 
-        		&& (data[x][y] & AGENT) == 0 
-        		&& (data[x][y] & BOX) 	== 0;
+        		&& (data[x][y] & WALL) 		== 0 
+        		&& (data[x][y] & AGENT) 	== 0 
+        		&& (data[x][y] & BOX) 		== 0;
     }
 
     public boolean isFree(Location l, int... objs) {
