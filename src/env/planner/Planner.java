@@ -35,7 +35,7 @@ public class Planner {
 	{
 		Agent agent = model.getAgent(agX, agY);
 		
-		Location closestLoc = GoalSearch.search(agent.getLocation());
+		Location closestLoc = GoalSearch.search(agent.getColor(), agent.getLocation());
 		
 		Goal goal = model.getGoal(closestLoc);
 		
