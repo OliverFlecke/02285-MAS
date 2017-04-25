@@ -23,7 +23,7 @@ public class ServerEnv extends Environment {
 	
     private static final Logger logger = Logger.getLogger(ServerEnv.class.getName());
     
-    private static final boolean TEST = true;
+    private static final boolean TEST = false;
 
 	private int 						nbAgs;	  
 	private HashMap<String, ActRequest> requests;	

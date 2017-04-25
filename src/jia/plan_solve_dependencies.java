@@ -14,6 +14,7 @@ public class plan_solve_dependencies extends DefaultInternalAction {
 	@Override
 	public Object execute(TransitionSystem ts, Unifier un, Term[] terms) throws Exception 
 	{	
+		ts.getLogger().info("Executing plan_solve_dependencies");
 		int agX  = (int) ((NumberTerm) terms[0]).solve();
         int agY  = (int) ((NumberTerm) terms[1]).solve();		
 		int boxX = (int) ((NumberTerm) terms[2]).solve();
