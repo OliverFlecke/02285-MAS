@@ -47,7 +47,7 @@ object(box,  4).
 +help(ToX, ToY) 			<- .print("HELP MOVE"); !move(ToX, ToY).
 +help(BoxX, BoxY, ToX, ToY) <- .print("HELP BOX"); 	!move_box(BoxX, BoxY, ToX, ToY).
 	
-+!solve_level : pos(AgX, AgY) & goal(L, GoalX, GoalY) & not box(_, L, GoalX, GoalY) <- 
++!solve_level : pos(AgX, AgY) & goal(L, X, Y) & not box(_, L, X, Y) <- 
 	jia.plan_select_goal(AgX, AgY, BoxX, BoxY, GoalX, GoalY);
 	!move_box(BoxX, BoxY, GoalX, GoalY).
 	
