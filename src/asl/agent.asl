@@ -13,7 +13,6 @@ object(goal, 2).
 object(box,  4).
 
 // Initial goal
-!solve_level.
 
 //+!solve_level <-
 //	while (select_goal(Letter, X, Y)) { !solve_goal(Letter, X, Y); }.
@@ -41,11 +40,29 @@ object(box,  4).
 //		};		
 //	}.
 
-+!solve_level : goal(L, GoalX, GoalY) & not box(_, L, GoalX, GoalY) <- !solve_goal; !solve_level.
--!solve_level <- .print("Skipping"); skip; !solve_level.
+!start.
+
++!start <- while ( true ) { !solve_level; }.
+
++help(ToX, ToY) 			<- .print("HELP MOVE"); !move(ToX, ToY).
++help(BoxX, BoxY, ToX, ToY) <- .print("HELP BOX"); 	!move_box(BoxX, BoxY, ToX, ToY).
+
+//+!solve_level : help(ToX, ToY) <-
+//	!move(ToX, ToY);
+//	-help(ToX, ToY).
+//	
+//+!solve_level : help(BoxX, BoxY, ToX, ToY) <- 
+//	!move_box(BoxX, BoxY, ToX, ToY); 
+//	-help(BoxX, BoxY, ToX, ToY).
 	
-+!solve_goal : pos(AgX, AgY) <- 
-	jia.plan_select_goal(AgX, AgY, BoxX, BoxY, GoalX, GoalY); 
++!solve_level : goal(L, GoalX, GoalY) & not box(_, L, GoalX, GoalY) <- 
+	!solve_goal.
+	
+-!solve_level <- 
+	.print("Skipping");
+	skip.
+	
++!solve_goal : pos(AgX, AgY) & jia.plan_select_goal(AgX, AgY, BoxX, BoxY, GoalX, GoalY) <- 	 
 	!move_box(BoxX, BoxY, GoalX, GoalY).
 
 //+!solve_level : pos(AgX, AgY) & object(goal, Obj) & color(C) <-

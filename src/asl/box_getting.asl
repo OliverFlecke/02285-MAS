@@ -12,11 +12,12 @@
 	: pos(AgX, AgY) & object(box, Obj) & color(C) & box(C, _, BoxX, BoxY)
 	<- 
 	.print("Agent at (", AgX, ",", AgY, ") get box at (", BoxX, ",", BoxY, ")");
-	jia.dependencies(BoxX, BoxY, AgX, AgY, Obj, Dependencies);
-	.print("Box dependencies: ", Dependencies);
-	!solve_dependencies(Dependencies);
-	.print("Dependiencise solved; moving on");
-	!get_box(BoxX, BoxY).
+	jia.plan_solve_dependencies(AgX, AgY, BoxX, BoxY);
+//	jia.dependencies(BoxX, BoxY, AgX, AgY, Obj, Dependencies);
+//	.print("Box dependencies: ", Dependencies);
+//	!solve_dependencies(Dependencies);
+//	.print("Dependiencise solved; moving on");
+	.fail.
 	
--!get_box(BoxX, BoxY) : pos(AgX, AgY) <-
-	.print("Agent at (", AgX, ",", AgY, ") failed to get box at (", BoxX, ",", BoxY, ")").
+//-!get_box(BoxX, BoxY) : pos(AgX, AgY) <-
+//	.print("Agent at (", AgX, ",", AgY, ") failed to get box at (", BoxX, ",", BoxY, ")").

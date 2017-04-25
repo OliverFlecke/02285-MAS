@@ -6,13 +6,17 @@ import java.util.Map.Entry;
 import java.util.stream.Collectors;
 import java.util.Optional;
 import java.util.Set;
+
+import env.WorldEnv;
 import env.model.WorldModel;
 import jason.environment.grid.Location;
 import lvl.cell.Agent;
 import lvl.cell.Box;
 import lvl.cell.Goal;
+import srch.agent.AgentSearch;
 import srch.dep.DepSearch;
 import srch.goal.GoalSearch;
+import srch.str.StrSearch;
 
 public class Planner {
 	
@@ -53,6 +57,33 @@ public class Planner {
 		// Merge plan with other agents
 		
 		return null;
+	}
+	
+	public static synchronized void solveDependencies(int agX, int agY, int boxX, int boxY)
+	{
+		Agent agent = model.getAgent(agX, agY);
+		
+		Box box = model.getBox(boxX, boxY);
+        
+        List<Location> locations = DepSearch.search(box.getLocation(), agent.getLocation(), WorldModel.AGENT & WorldModel.BOX);
+        
+        List<Location> storages = StrSearch.search(agent.getLocation(), 0);
+        
+        for (Location loc : locations)
+        {
+        	if (model.hasObject(loc, WorldModel.AGENT))
+        	{
+        		WorldEnv.getInstance().addAgentPercept(model.getAgent(loc).getName(), WorldEnv.createMovePerception(storages.get(0)));
+        	}
+        	else if (model.hasObject(loc, WorldModel.BOX))
+        	{
+        		Location agentLoc = AgentSearch.search(model.getBox(loc).getColor(), loc);
+        		
+        		WorldEnv.getInstance().addAgentPercept(model.getAgent(agentLoc).getName(), WorldEnv.createMoveBoxPerception(loc, storages.get(0)));
+        	}
+        }
+		
+		
 	}
 	
 	private static void matchBoxesAndGoals()

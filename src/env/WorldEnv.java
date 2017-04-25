@@ -6,8 +6,10 @@ import java.util.logging.Logger;
 import env.model.WorldModel;
 import env.planner.Planner;
 import jason.asSyntax.*;
+import jason.environment.grid.Location;
 import lvl.cell.*;
 import lvl.Level;
+
 public class WorldEnv extends ServerEnv {
 
     private static final Logger logger = Logger.getLogger(WorldEnv.class.getName());
@@ -19,10 +21,14 @@ public class WorldEnv extends ServerEnv {
 	
     private static WorldModel model;
     
+    private static WorldEnv instance;
+    
     @Override
     public void init(String[] args) 
     {
     	super.init(args);
+    	
+		instance = this;
 
 		try {
 			new WorldModel(Level.parse(serverIn));
@@ -39,6 +45,11 @@ public class WorldEnv extends ServerEnv {
 		{
 			logger.warning("Exception: " + e + " at init: " + e.getMessage());
 		}
+    }
+    
+    public static WorldEnv getInstance() 
+    {
+    	return instance;
     }
     
     @Override
@@ -130,6 +141,11 @@ public class WorldEnv extends ServerEnv {
         	addPercept(createBoxPerception(x, y));
         }
 	}
+	
+	public void addAgentPercept(String agentName, Literal percept)
+	{
+		addPercept(agentName, percept);
+	}
     
     public static Literal createBoxPerception(int x, int y)
     {
@@ -178,6 +194,24 @@ public class WorldEnv extends ServerEnv {
                 ASSyntax.createNumber(x),
                 ASSyntax.createNumber(y)); 
     }
+    
+    public static Literal createMovePerception(Location l)
+    {
+    	return ASSyntax.createLiteral("help",
+                ASSyntax.createNumber(l.x),
+                ASSyntax.createNumber(l.y)); 
+    }
+    
+    public static Literal createMoveBoxPerception(Location box, Location to)
+    {
+    	return ASSyntax.createLiteral("help",
+                ASSyntax.createNumber(box.x),
+                ASSyntax.createNumber(box.y),
+                ASSyntax.createNumber(to.x),
+                ASSyntax.createNumber(to.y)); 
+    }
+    
+    
     
     public static Literal createStepPerception()
     {
