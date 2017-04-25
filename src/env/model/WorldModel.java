@@ -187,6 +187,7 @@ public class WorldModel extends DataWorldModel {
     	
         move(AGENT, agLoc, nAgLoc);
         move(BOX, nAgLoc, nBoxLoc);
+        remove(LOCKED, agLoc.x, agLoc.y);
 		return true;
     }
     
@@ -244,6 +245,7 @@ public class WorldModel extends DataWorldModel {
 
     	move(AGENT, agLoc, nAgLoc);
     	move(BOX, boxLoc, agLoc);
+    	remove(LOCKED, boxLoc.x, boxLoc.y);
         return true;
     }    
 }
