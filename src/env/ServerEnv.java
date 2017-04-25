@@ -80,27 +80,31 @@ public class ServerEnv extends Environment {
 	@Override
 	public void scheduleAction(final String agentName, final Structure action, final Object infraData) 
 	{        
-        synchronized (jointAction) 
-        {
-			jointAction[getAgentIdByName(agentName)] = toString(action);
-		}
-        
-        ActRequest newRequest = new ActRequest(agentName, action, infraData);
-        
-        synchronized (requests) 
-        {        	
+
+		// int agentId = getAgentIdByName(agentName);
+		//
+		// synchronized (jointAction)
+		// {
+		// jointAction[agentId] = toString(action);
+		// }
+
+		ActRequest newRequest = new ActRequest(agentName, action, infraData);
+
+		synchronized (requests)
+		{
 			requests.put(agentName, newRequest);
 			try {
 				if (requests.size() >= nbAgs)
-				{								
-					for (ActRequest request : requests.values()) 
+				{
+					for (ActRequest request : requests.values())
 					{
 						boolean success = executeAction(request.agentName, request.action);
-						getEnvironmentInfraTier().actionExecuted(request.agentName, request.action, success, request.infraData);
-						
-						// If action could not be executed in the model, don't execute on server
-						if (!success) 
-							jointAction[getAgentIdByName(agentName)] = "NoOp"; 
+						getEnvironmentInfraTier().actionExecuted(request.agentName, request.action, success,
+								request.infraData);
+						if (success)
+							jointAction[getAgentIdByName(request.agentName)] = this.toString(request.action);
+						else
+							jointAction[getAgentIdByName(request.agentName)] = this.toString(new Structure("NoOp"));
 					}
 					serverOut.println(Arrays.toString(jointAction));
 					requests.clear();
