@@ -1,6 +1,7 @@
 package lvl.cell;
 
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Set;
 
 import env.model.WorldModel;
@@ -35,6 +36,19 @@ public class Goal extends Lettered {
 	}
 	
 	public boolean hasDependencies() {
+		
+		Iterator<Goal> it = dependencies.iterator();
+		
+		while (it.hasNext())
+		{
+			Goal goal = it.next();
+			
+			if (goal.isSolved())
+			{
+				it.remove();
+			}
+		}
+		
 		return dependencies.size() > 0;
 	}
 	

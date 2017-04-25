@@ -8,10 +8,11 @@ import java.util.Optional;
 import java.util.Set;
 import env.model.WorldModel;
 import jason.environment.grid.Location;
+import lvl.cell.Agent;
 import lvl.cell.Box;
 import lvl.cell.Goal;
-import srch.clo.CloSearch;
 import srch.dep.DepSearch;
+import srch.goal.GoalSearch;
 
 public class Planner {
 	
@@ -30,11 +31,11 @@ public class Planner {
 		createGoalDependencies();
 	}
 	
-	public static synchronized Location selectGoal(int agX, int agY)
+	public static synchronized Goal selectGoal(int agX, int agY)
 	{
-		Location from = new Location(agX, agY);
+		Agent agent = model.getAgent(agX, agY);
 		
-		Location closestLoc = CloSearch.search(WorldModel.GOAL, from);
+		Location closestLoc = GoalSearch.search(agent.getLocation());
 		
 		Goal goal = model.getGoal(closestLoc);
 		
@@ -42,11 +43,16 @@ public class Planner {
 		{
 			goal = goal.getDependency();
 		}		
-		unsolvedGoals.remove(goal);
+		
+		if (agent.getColor().equals(goal.getBox().getColor())) 
+		{
+			unsolvedGoals.remove(goal);
+			return goal;
+		}
 		
 		// Merge plan with other agents
 		
-		return goal.getLocation();
+		return null;
 	}
 	
 	private static void matchBoxesAndGoals()

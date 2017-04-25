@@ -4,6 +4,7 @@ package env;
 import java.util.logging.Logger;
 
 import env.model.WorldModel;
+import env.planner.Planner;
 import jason.asSyntax.*;
 import lvl.cell.*;
 import lvl.Level;
@@ -27,6 +28,8 @@ public class WorldEnv extends ServerEnv {
 			new WorldModel(Level.parse(serverIn));
 			
 			model = WorldModel.getInstance();
+			
+			Planner.plan();
 
 			updateNumberOfAgents();
 

@@ -41,17 +41,24 @@ object(box,  4).
 //		};		
 //	}.
 
-+!solve_level : pos(AgX, AgY) & object(goal, Obj) & color(C) <-
-	+dependencies([]);
-	for ( goal(L, GoalX, GoalY) & box(C, L, _, _) ) {
-		jia.dependencies(GoalX, GoalY, AgX, AgY, Obj, Dependencies);
-		?dependencies(List);
-		-+dependencies([depend(GoalX, GoalY,Dependencies)|List]);
-	};
++!solve_level : goal(L, GoalX, GoalY) & not box(_, L, GoalX, GoalY) <- !solve_goal; !solve_level.
+-!solve_level <- .print("Skipping"); skip; !solve_level.
 	
-	?dependencies(List);
-	jia.prioritize(List, Goals);
-	!solve_level(Goals).
++!solve_goal : pos(AgX, AgY) <- 
+	jia.plan_select_goal(AgX, AgY, BoxX, BoxY, GoalX, GoalY); 
+	!move_box(BoxX, BoxY, GoalX, GoalY).
+
+//+!solve_level : pos(AgX, AgY) & object(goal, Obj) & color(C) <-
+//	+dependencies([]);
+//	for ( goal(L, GoalX, GoalY) & box(C, L, _, _) ) {
+//		jia.dependencies(GoalX, GoalY, AgX, AgY, Obj, Dependencies);
+//		?dependencies(List);
+//		-+dependencies([depend(GoalX, GoalY,Dependencies)|List]);
+//	};
+//	
+//	?dependencies(List);
+//	jia.prioritize(List, Goals);
+//	!solve_level(Goals).
 	
 +!solve_level([]) <- !end.
 +!solve_level([goal(X,Y)|Goals]) : goal(L, X, Y) & box(C, L, _, _) & color(C) 

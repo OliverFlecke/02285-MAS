@@ -17,6 +17,8 @@ public class CloSearch extends Search {
 	public CloSearch(int object)
 	{
 		this.setStrategy(new BFS());
+		
+		this.object = object;
 	}
 
 	@Override
