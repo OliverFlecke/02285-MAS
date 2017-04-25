@@ -3,6 +3,7 @@ package env.planner;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map.Entry;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import java.util.Optional;
 import java.util.Set;
@@ -20,6 +21,8 @@ import srch.str.StrSearch;
 
 public class Planner {
 	
+	@SuppressWarnings("unused")
+	private static Logger logger = Logger.getLogger(Planner.class.getName());
 	private static WorldModel model;
 	
 	private static Set<Goal> unsolvedGoals = new HashSet<>();
@@ -65,12 +68,14 @@ public class Planner {
 		
 		Box box = model.getBox(boxX, boxY);
         
-        List<Location> locations = DepSearch.search(box.getLocation(), agent.getLocation(), WorldModel.AGENT & WorldModel.BOX);
+//		logger.info("Asking for help is: " + agent.getName());
+        List<Location> locations = DepSearch.search(agent.getLocation(), box.getLocation(), WorldModel.AGENT | WorldModel.BOX);
         
         List<Location> storages = StrSearch.search(agent.getLocation(), 0);
         
         for (Location loc : locations)
         {
+//        	logger.info(loc.x + ", " + loc.y + " is a dependency");
         	if (model.hasObject(loc, WorldModel.AGENT))
         	{
         		WorldEnv.getInstance().addAgentPercept(model.getAgent(loc).getName(), WorldEnv.createMovePerception(storages.get(0)));
@@ -78,8 +83,8 @@ public class Planner {
         	else if (model.hasObject(loc, WorldModel.BOX))
         	{
         		Location agentLoc = AgentSearch.search(model.getBox(loc).getColor(), loc);
-        		
-        		WorldEnv.getInstance().addAgentPercept(model.getAgent(agentLoc).getName(), WorldEnv.createMoveBoxPerception(loc, storages.get(0)));
+        		WorldEnv.getInstance().addAgentPercept(model.getAgent(agentLoc).getName(), 
+        				WorldEnv.createMoveBoxPerception(loc, storages.get(0)));
         	}
         }
 		
