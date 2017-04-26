@@ -1,12 +1,14 @@
-// Internal action code for project 02285-MAS
-
 package jia;
 
-import java.util.stream.Collectors;
+import java.util.logging.Level;
 
-import env.model.WorldModel;
-import jason.asSemantics.*;
-import jason.asSyntax.*;
+import env.planner.Planner;
+import jason.asSemantics.DefaultInternalAction;
+import jason.asSemantics.TransitionSystem;
+import jason.asSemantics.Unifier;
+import jason.asSyntax.ASSyntax;
+import jason.asSyntax.NumberTerm;
+import jason.asSyntax.Term;
 import jason.environment.grid.Location;
 import lvl.cell.Goal;
 
@@ -15,46 +17,40 @@ public class select_goal extends DefaultInternalAction {
 	private static final long serialVersionUID = 1L;
 
 	@Override
-    public Object execute(TransitionSystem ts, Unifier un, Term[] terms) throws Exception {
-        // execute the internal action
-//        ts.getAg().getLogger().info("executing internal action 'jia.select_goal'");
-        
-        try 
-        {
-        	String color = ((Atom) terms[0]).getFunctor();
-        	int agentX = (int) ((NumberTerm) terms[2]).solve();
-        	int agentY = (int) ((NumberTerm) terms[3]).solve();
-        	
-        	Goal bestGoal = null;
-        	Location best = new Location(1000, 1000);
-        	Location agent = new Location(agentX, agentY);
-        	int bestDistance = Integer.MAX_VALUE;
-        	
-        	for (Goal goal : WorldModel.getInstance().getUnsolvedGoals())
-        	{
-        		int distance = goal.getLocation().distanceManhattan(agent);
-        		
-        		// Should also test if the goal is reachable
-        		if (bestDistance > distance &&
-        				WorldModel.getInstance().getBoxesNotOnGoal().stream()
-        				.filter(box -> box.getLetter() == goal.getLetter() && box.getColor() == color)
-        				.collect(Collectors.toSet()).size() > 0) 
-        		{
-        			best = goal.getLocation();
-        			bestDistance = distance;
-        			bestGoal = goal;
-        		}
-        	}
-        	if (bestGoal == null) return false;
-        	
-        	return un.unifies(terms[1], new LiteralImpl(Character.toString(Character.toLowerCase(bestGoal.getLetter())))) && 
-        			un.unifies(terms[4], new NumberTermImpl(best.x)) && 
-        			un.unifies(terms[5], new NumberTermImpl(best.y));
-        }
-        catch (Throwable e)
-        {
-        	ts.getLogger().log(java.util.logging.Level.SEVERE, "select box error: " + e, e);
-            return false;
-        }
-    }
+	public Object execute(TransitionSystem ts, Unifier un, Term[] terms) throws Exception 
+	{
+		try 
+		{
+			int agX = (int) ((NumberTerm) terms[0]).solve();
+	        int agY = (int) ((NumberTerm) terms[1]).solve();
+	        
+	        Goal goal = Planner.selectGoal(agX, agY);
+	        
+	        if (goal == null) 
+	        {
+				ts.getLogger().warning("Unable to select goal");
+	        	return false;
+	        }
+	        
+	        Location goalLoc = goal.getLocation();
+	        
+	        Location boxLoc = goal.getBox().getLocation();
+	        
+	        Term boxX  = ASSyntax.createNumber(boxLoc.x );
+	        Term boxY  = ASSyntax.createNumber(boxLoc.y );
+	        Term goalX = ASSyntax.createNumber(goalLoc.x);
+	        Term goalY = ASSyntax.createNumber(goalLoc.y);	        
+	        
+			return  un.unifies(terms[2], boxX ) && 
+					un.unifies(terms[3], boxY ) && 
+					un.unifies(terms[4], goalX) && 
+					un.unifies(terms[5], goalY);
+		} 
+		catch (Throwable e) 
+		{
+			ts.getLogger().log(Level.SEVERE, "select_goal error: " + e, e);
+			return false;
+		}
+	}
+
 }

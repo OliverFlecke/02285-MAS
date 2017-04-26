@@ -1,4 +1,4 @@
-package srch.dep;
+package srch.nodes;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -9,40 +9,36 @@ import env.model.WorldModel;
 import jason.environment.grid.Location;
 import srch.Node;
 
-public class DepNode extends Node {
+public class DependencyNode extends Node {
 
-	private int object;
-	private int dependencies;
+	private int dependency;
+	private int dependencyCount;
 
-	public DepNode(Location initial, int object) 
+	public DependencyNode(Location initial, int dependency) 
 	{
 		super(initial);
 		
-		this.object 		= object;
-		this.dependencies 	= 0;
+		this.dependency 		= dependency;
+		this.dependencyCount 	= 0;
 	}
 
-	public DepNode(Node parent, String dir, Location loc) 
+	public DependencyNode(Node parent, String dir, Location loc) 
 	{
 		super(parent, dir, loc);
 		
-		this.object 		= ((DepNode) parent).object;
-		this.dependencies 	= ((DepNode) parent).dependencies;
+		this.dependency 		= ((DependencyNode) parent).dependency;
+		this.dependencyCount 	= ((DependencyNode) parent).dependencyCount;
 		
-		if (WorldModel.getInstance().hasObject(loc, object)) 
+		if (WorldModel.getInstance().hasObject(dependency, loc)) 
 		{
-			dependencies++;
+			dependencyCount++;
 		}
 	}
 	
 	public int getDependencies() {
-		return dependencies;
+		return dependencyCount;
 	}
 
-	/**
-	 * Override to only account for walls
-	 */
-	@Override
 	public List<Node> getExpandedNodes() 
 	{
 		List<Node> expandedNodes = new ArrayList<Node>(WorldModel.DIRECTIONS.length);
@@ -51,9 +47,9 @@ public class DepNode extends Node {
 		{
 			Location loc = WorldModel.newLocation(dir, this.getLocation());
 			
-			if (WorldModel.getInstance().isFree(loc, WorldModel.WALL))
+			if (WorldModel.getInstance().isFree(this.getObject(), loc))
 			{
-				expandedNodes.add(new DepNode(this, dir, loc));
+				expandedNodes.add(new DependencyNode(this, dir, loc));
 			}
 		}
 		return expandedNodes;
@@ -70,11 +66,11 @@ public class DepNode extends Node {
 		
 		LinkedList<Location> plan = new LinkedList<Location>();		
 		
-		for (Node n = this; n.getDirection() != null; n = n.getParent()) 
+		for (Node n = this; n.getParent() != null; n = n.getParent()) 
 		{
 			Location loc = n.getLocation();
 			
-			if (WorldModel.getInstance().hasObject(loc, object))
+			if (WorldModel.getInstance().hasObject(dependency, loc))
 			{
 				plan.addFirst(loc);
 			}

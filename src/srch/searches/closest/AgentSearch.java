@@ -1,17 +1,16 @@
-package srch.agent;
+package srch.searches.closest;
 
 import env.model.WorldModel;
 import jason.environment.grid.Location;
 import lvl.cell.Agent;
 import srch.Node;
-import srch.clo.CloNode;
-import srch.clo.CloSearch;
+import srch.nodes.ClosestNode;
 
-public class AgentSearch extends CloSearch {
+public class AgentSearch extends ClosestSearch {
 
 	public static Location search(String color, Location from) 
 	{
-		return new AgentSearch(color).search(new CloNode(from));
+		return new AgentSearch(color).search(new ClosestNode(from));
 	}
 	
 	private String color;

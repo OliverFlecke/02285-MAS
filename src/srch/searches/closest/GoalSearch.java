@@ -1,17 +1,16 @@
-package srch.goal;
+package srch.searches.closest;
 
 import env.model.WorldModel;
 import jason.environment.grid.Location;
 import lvl.cell.Goal;
 import srch.Node;
-import srch.clo.CloNode;
-import srch.clo.CloSearch;
+import srch.nodes.ClosestNode;
 
-public class GoalSearch extends CloSearch {
+public class GoalSearch extends ClosestSearch {
 
 	public static Location search(String color, Location from) 
 	{
-		return new GoalSearch(color).search(new CloNode(from));
+		return new GoalSearch(color).search(new ClosestNode(from));
 	}
 	
 	private String color;

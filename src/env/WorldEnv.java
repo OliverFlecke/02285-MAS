@@ -123,7 +123,7 @@ public class WorldEnv extends ServerEnv {
      */
 	private void addModelPercepts(int x, int y) 
 	{
-		if (model.hasObject(x, y, WorldModel.GOAL))
+		if (model.hasObject(WorldModel.GOAL, x, y))
         {
         	addPercept(createGoalPerception(x, y));
         }
@@ -132,11 +132,11 @@ public class WorldEnv extends ServerEnv {
 		{
         	addPercept(createFreePerception(x, y));
 		}
-		else if (model.hasObject(x, y, WorldModel.AGENT))
+		else if (model.hasObject(WorldModel.AGENT, x, y))
         {
             addPercept(createAgentPerception(x, y));
         }
-        else if (model.hasObject(x, y, WorldModel.BOX))
+        else if (model.hasObject(WorldModel.BOX, x, y))
         {
         	addPercept(createBoxPerception(x, y));
         }

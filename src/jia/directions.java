@@ -7,7 +7,7 @@ import env.model.WorldModel;
 import jason.asSemantics.*;
 import jason.asSyntax.*;
 import jason.environment.grid.Location;
-import srch.dir.DirSearch;
+import srch.searches.DirectionSearch;
 
 /**
  * Gets a sequence of directions towards some location using A*.
@@ -31,9 +31,9 @@ public class directions extends DefaultInternalAction {
 	        
 	        ListTermImpl directions = new ListTermImpl();
 	        
-	        List<String> path = DirSearch.search(from, to, proximity);
+	        List<String> path = DirectionSearch.search(from, to, proximity);
 	        
-	        if (path == null)
+	        if (path == null || path.size() == 0)
 	        {
 	        	ts.getLogger().warning("Unable to find path from (" + frX + "," + frY + ") to (" + toX + "," + toY + ")");
 	        	return false;
@@ -54,7 +54,7 @@ public class directions extends DefaultInternalAction {
 		catch (Throwable e) 
 		{
 			ts.getLogger().log(Level.SEVERE, "direction error: " + e, e);
+			return false;
 		}
-		return false;
 	}
 }

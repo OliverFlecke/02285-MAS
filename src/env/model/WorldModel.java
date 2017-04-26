@@ -165,7 +165,7 @@ public class WorldModel extends DataWorldModel {
             return false;
         }
     	
-    	if (isFree(nAgLoc, BOX))
+    	if (isFree(BOX, nAgLoc))
     	{
             logger.warning("** No box at: " + nAgLoc);            
             return false;
@@ -223,7 +223,7 @@ public class WorldModel extends DataWorldModel {
             return false;
     	}
     	
-    	if (isFree(boxLoc, BOX))
+    	if (isFree(BOX, boxLoc))
     	{
             logger.warning("** No box at: " + boxLoc);            
             return false;

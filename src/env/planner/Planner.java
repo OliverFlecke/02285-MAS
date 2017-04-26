@@ -9,29 +9,34 @@ import java.util.Optional;
 import java.util.Set;
 
 import env.WorldEnv;
+import env.model.GridWorldModel;
 import env.model.WorldModel;
+import jason.asSyntax.Literal;
 import jason.environment.grid.Location;
 import lvl.cell.Agent;
 import lvl.cell.Box;
 import lvl.cell.Goal;
-import srch.agent.AgentSearch;
-import srch.dep.DepSearch;
-import srch.goal.GoalSearch;
-import srch.str.StrSearch;
+import srch.searches.DependencySearch;
+import srch.searches.LocationSearch;
+import srch.searches.closest.AgentSearch;
+import srch.searches.closest.GoalSearch;
+import srch.searches.closest.StorageSearch;
 
 public class Planner {
 	
-	@SuppressWarnings("unused")
-	private static Logger logger = Logger.getLogger(Planner.class.getName());
-	private static WorldModel model;
+	private static final Logger logger = Logger.getLogger(Planner.class.getName());
 	
-	private static Set<Goal> unsolvedGoals = new HashSet<>();
+	private static WorldModel 		model;	
+	private static GridWorldModel 	localModel;	
+//	private static Set<Goal> 		unsolvedGoals = new HashSet<>();
 	
 	public static void plan()
 	{
 		model = WorldModel.getInstance();
 		
-		unsolvedGoals.addAll(model.getGoals());
+		localModel = new GridWorldModel(model.deepCopyData());
+		
+//		unsolvedGoals.addAll(model.getGoals());
 		
 		matchBoxesAndGoals();
 		
@@ -51,15 +56,23 @@ public class Planner {
 			goal = goal.getDependency();
 		}		
 		
-		if (agent.getColor().equals(goal.getBox().getColor())) 
+		if (!agent.getColor().equals(goal.getBox().getColor())) 
 		{
-			unsolvedGoals.remove(goal);
-			return goal;
+			logger.warning("Could not find solvable goal");
+			return null;
+		}
+		
+		List<Location> path = LocationSearch.search(goal.getLocation(), goal.getBox().getLocation(), 0);
+		
+		for (Location l : path)
+		{
+			localModel.lock(l);
 		}
 		
 		// Merge plan with other agents
-		
-		return null;
+
+//		unsolvedGoals.remove(goal);
+		return goal;
 	}
 	
 	public static synchronized void solveDependencies(int agX, int agY, int boxX, int boxY)
@@ -67,28 +80,47 @@ public class Planner {
 		Agent agent = model.getAgent(agX, agY);
 		
 		Box box = model.getBox(boxX, boxY);
+		
+        List<Location> dependencies = DependencySearch.search(box.getLocation(), agent.getLocation(), WorldModel.BOX);
         
-//		logger.info("Asking for help is: " + agent.getName());
-        List<Location> locations = DepSearch.search(agent.getLocation(), box.getLocation(), WorldModel.AGENT | WorldModel.BOX);
+        if (dependencies.size() == 0) return;
+		
+		List<Location> path = LocationSearch.search(box.getLocation(), agent.getLocation(), 1);
+		
+		for (Location l : path)
+		{
+			localModel.lock(l);
+		}
         
-        List<Location> storages = StrSearch.search(agent.getLocation(), 0);
+		// TODO: Include agents
         
-        for (Location loc : locations)
+        for (Location l : dependencies)
         {
+        	Location storage = StorageSearch.search(l, localModel);
+        	
+        	logger.info("Found storage at: " + storage.toString());
+        	
 //        	logger.info(loc.x + ", " + loc.y + " is a dependency");
-        	if (model.hasObject(loc, WorldModel.AGENT))
+//        	if (model.hasObject(WorldModel.AGENT, l))
+//        	{
+//        		Literal helpPercept = WorldEnv.createMovePerception(storage);
+//        		
+//        		String agentName = model.getAgent(l).getName();
+//        		
+//        		WorldEnv.getInstance().addAgentPercept(agentName, helpPercept);
+//        	}
+//        	else 
+        	if (model.hasObject(WorldModel.BOX, l))
         	{
-        		WorldEnv.getInstance().addAgentPercept(model.getAgent(loc).getName(), WorldEnv.createMovePerception(storages.get(0)));
-        	}
-        	else if (model.hasObject(loc, WorldModel.BOX))
-        	{
-        		Location agentLoc = AgentSearch.search(model.getBox(loc).getColor(), loc);
-        		WorldEnv.getInstance().addAgentPercept(model.getAgent(agentLoc).getName(), 
-        				WorldEnv.createMoveBoxPerception(loc, storages.get(0)));
+        		Literal helpPercept = WorldEnv.createMoveBoxPerception(l, storage);
+        		
+        		Location agentLoc = AgentSearch.search(model.getBox(l).getColor(), l);
+        		
+        		String agentName = model.getAgent(agentLoc).getName();
+        		
+        		WorldEnv.getInstance().addAgentPercept(agentName, helpPercept);
         	}
         }
-		
-		
 	}
 	
 	private static void matchBoxesAndGoals()
@@ -121,7 +153,7 @@ public class Planner {
 			Location from = goal.getBox().getLocation();	
 			Location to   = goal.getLocation();		
 
-	        List<Location> dependencies = DepSearch.search(from, to, WorldModel.GOAL);
+	        List<Location> dependencies = DependencySearch.search(from, to, WorldModel.GOAL);
 	        
 	        List<Goal> goals = dependencies.stream().map(loc -> model.getGoal(loc))
 	        										.collect(Collectors.toList());

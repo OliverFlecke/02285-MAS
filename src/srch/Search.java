@@ -31,7 +31,7 @@ public abstract class Search {
 				}
 			}
 		}
-		return initial.extractPlan();
+		return null;
 	}
 	
 	public abstract boolean isGoalState(Node n);

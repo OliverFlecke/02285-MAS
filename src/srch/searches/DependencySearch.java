@@ -1,14 +1,15 @@
-package srch.dep;
+package srch.searches;
 
 import java.util.List;
 import jason.environment.grid.Location;
 import srch.Node;
 import srch.Search;
 import srch.Strategy.BestFirst;
+import srch.nodes.DependencyNode;
 import srch.Evaluation.AStar;
 import srch.Heuristic;
 
-public class DepSearch extends Search implements Heuristic {
+public class DependencySearch extends Search implements Heuristic {
 
 	/**
 	 * 
@@ -17,13 +18,14 @@ public class DepSearch extends Search implements Heuristic {
 	 * @param object
 	 * @return
 	 */
-	public static List<Location> search(Location from, Location to, int object) {
-		return new DepSearch(to).search(new DepNode(from, object));
+	public static List<Location> search(Location from, Location to, int object) 
+	{
+		return new DependencySearch(to).search(new DependencyNode(from, object));
 	}
 	
 	private Location goalLocation;
 	
-	public DepSearch(Location to)
+	public DependencySearch(Location to)
 	{
 		this.setStrategy(new BestFirst(new AStar(this)));
 		
@@ -37,6 +39,6 @@ public class DepSearch extends Search implements Heuristic {
 
 	@Override
 	public int h(Node n) {
-		return n.getLocation().distance(goalLocation) + ((DepNode) n).getDependencies() * 10; 
+		return n.getLocation().distance(goalLocation) + ((DependencyNode) n).getDependencies() * 10; 
 	}
 }

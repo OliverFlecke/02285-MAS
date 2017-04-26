@@ -1,4 +1,4 @@
-package srch.dir;
+package srch.nodes;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -8,30 +8,30 @@ import env.model.WorldModel;
 import jason.environment.grid.Location;
 import srch.Node;
 
-public class DirNode extends Node {
+public class DirectionNode extends Node {
 
-	public DirNode(Location initial) {
-		super(initial);
+	public DirectionNode(Location initial) {
+		super(initial, WorldModel.BOX);
 	}
 
-	public DirNode(Node parent, String direction, Location location) {
+	public DirectionNode(Node parent, String direction, Location location) {
 		super(parent, direction, location);
 	}
 
-	public List<Node> getExpandedNodes() 
+	@Override
+	public List<Node> getExpandedNodes()
 	{
 		List<Node> expandedNodes = new ArrayList<Node>(WorldModel.DIRECTIONS.length);
 		
 		for (String dir : WorldModel.DIRECTIONS)
 		{
 			Location loc = WorldModel.newLocation(dir, this.getLocation());
-					
-			if (WorldModel.getInstance().isFree(loc, WorldModel.WALL, WorldModel.BOX))
+			
+			if (WorldModel.getInstance().isFree(this.getObject(), loc))
 			{
-				expandedNodes.add(new DirNode(this, dir, loc));
+				expandedNodes.add(new DirectionNode(this, dir, loc));
 			}
-		}		
-		
+		}
 		return expandedNodes;
 	}
 
@@ -41,11 +41,11 @@ public class DirNode extends Node {
 	{
 		LinkedList<String> plan = new LinkedList<String>();
 		
-		for (DirNode n = this; n.getDirection() != null; n = (DirNode) n.getParent()) 
+		for (Node n = this; n.getDirection() != null; n = n.getParent()) 
 		{
 			plan.addFirst(n.getDirection());
 		}		
-		
 		return plan;
 	}
+
 }

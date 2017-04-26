@@ -2,6 +2,7 @@ package srch;
 
 import java.util.List;
 
+import env.model.WorldModel;
 import jason.environment.grid.Location;
 
 public abstract class Node {
@@ -9,22 +10,29 @@ public abstract class Node {
 	private Node parent;	
 	private String direction;
 	private Location location;	
-	private int g;
+	private int object, g;
 	
 	public Node(Location initial)
 	{
-		parent 		= null;
-		direction 	= null;
-		location 	= initial;
-		g 			= 0;
+		this(initial, 0);
+	}
+	
+	public Node(Location initial, int object)
+	{
+		this.parent 	= null;
+		this.direction 	= null;
+		this.location 	= initial;
+		this.object		= object | WorldModel.WALL;
+		this.g 			= 0;
 	}
 	
 	public Node(Node parent, String direction, Location location) 
 	{
-		this.parent    = parent;
-		this.direction = direction;
-		this.location  = location;	
-		this.g         = parent.g + 1;
+		this.parent    	= parent;
+		this.direction 	= direction;
+		this.location  	= location;
+		this.object	   	= parent.object;
+		this.g         	= parent.g + 1;
 	}
 	
 	public Node getParent() {
@@ -37,6 +45,10 @@ public abstract class Node {
 	
 	public Location getLocation() {
 		return location;
+	}
+	
+	public int getObject() {
+		return object;
 	}
 	
 	public int g() {
@@ -70,7 +82,5 @@ public abstract class Node {
 		} else if (!location.equals(other.location))
 			return false;
 		return true;
-	}
-	
-	
+	}	
 }
