@@ -6,6 +6,7 @@ import java.util.List;
 
 import env.model.WorldModel;
 import jason.environment.grid.Location;
+import level.Direction;
 import srch.Node;
 
 public class LocationNode extends Node {
@@ -14,18 +15,18 @@ public class LocationNode extends Node {
 		super(initial);
 	}
 
-	public LocationNode(Node parent, String direction, Location location) {
+	public LocationNode(Node parent, Direction direction, Location location) {
 		super(parent, direction, location);
 	}
 
 	@Override
 	public List<Node> getExpandedNodes()
 	{
-		List<Node> expandedNodes = new ArrayList<Node>(WorldModel.DIRECTIONS.length);
+		List<Node> expandedNodes = new ArrayList<Node>(Direction.DIRECTIONS.length);
 		
-		for (String dir : WorldModel.DIRECTIONS)
+		for (Direction dir : Direction.DIRECTIONS)
 		{
-			Location loc = WorldModel.newLocation(dir, this.getLocation());
+			Location loc = Direction.newLocation(dir, this.getLocation());
 			
 			if (WorldModel.getInstance().isFree(this.getObject(), loc))
 			{

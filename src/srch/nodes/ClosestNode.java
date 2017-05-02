@@ -5,6 +5,7 @@ import java.util.List;
 
 import env.model.WorldModel;
 import jason.environment.grid.Location;
+import level.Direction;
 import srch.Node;
 
 public class ClosestNode extends Node {
@@ -17,18 +18,18 @@ public class ClosestNode extends Node {
 		super(initial, object);
 	}
 
-	public ClosestNode(Node parent, String direction, Location location) {
+	public ClosestNode(Node parent, Direction direction, Location location) {
 		super(parent, direction, location);
 	}
 
 	@Override
 	public List<Node> getExpandedNodes()
 	{
-		List<Node> expandedNodes = new ArrayList<Node>(WorldModel.DIRECTIONS.length);
+		List<Node> expandedNodes = new ArrayList<Node>(Direction.DIRECTIONS.length);
 		
-		for (String dir : WorldModel.DIRECTIONS)
+		for (Direction dir : Direction.DIRECTIONS)
 		{
-			Location loc = WorldModel.newLocation(dir, this.getLocation());
+			Location loc = Direction.newLocation(dir, this.getLocation());
 			
 			if (WorldModel.getInstance().isFree(this.getObject(), loc))
 			{
