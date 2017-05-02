@@ -15,9 +15,9 @@ public class ClosestSearch extends Search {
 	 * @param from
 	 * @return Location of the object.
 	 */
-	public static Location search(int object, Location from, int initialStep) 
+	public static Location search(int object, Location from) 
 	{
-		return new ClosestSearch(object).search(new ClosestNode(from, initialStep));
+		return new ClosestSearch(object).search(new ClosestNode(from));
 	}
 	
 	private int object;

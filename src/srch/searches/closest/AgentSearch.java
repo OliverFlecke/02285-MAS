@@ -8,9 +8,9 @@ import srch.nodes.ClosestNode;
 
 public class AgentSearch extends ClosestSearch {
 
-	public static Location search(String color, Location from, int initialStep) 
+	public static Location search(String color, Location from) 
 	{
-		return new AgentSearch(color).search(new ClosestNode(from, initialStep));
+		return new AgentSearch(color).search(new ClosestNode(from));
 	}
 	
 	private String color;
