@@ -1,4 +1,4 @@
-package lvl.cell;
+package level.cell;
 
 public abstract class Lettered extends Cell {
 	

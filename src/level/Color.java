@@ -1,4 +1,4 @@
-package lvl;
+package level;
 
 public enum Color {
 	Blue, 

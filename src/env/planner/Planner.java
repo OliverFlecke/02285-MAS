@@ -1,5 +1,6 @@
 package env.planner;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map.Entry;
@@ -13,9 +14,9 @@ import env.model.GridWorldModel;
 import env.model.WorldModel;
 import jason.asSyntax.Literal;
 import jason.environment.grid.Location;
-import lvl.cell.Agent;
-import lvl.cell.Box;
-import lvl.cell.Goal;
+import level.cell.Agent;
+import level.cell.Box;
+import level.cell.Goal;
 import srch.searches.DependencySearch;
 import srch.searches.LocationSearch;
 import srch.searches.closest.AgentSearch;
@@ -29,10 +30,13 @@ public class Planner {
 	private static WorldModel 		model;	
 	private static GridWorldModel 	localModel;	
 //	private static Set<Goal> 		unsolvedGoals = new HashSet<>();
+
+	private static ArrayList<GridWorldModel> models;
 	
 	public static void plan()
 	{
 		model = WorldModel.getInstance();
+		models = new ArrayList<GridWorldModel>();
 		
 		localModel = new GridWorldModel(model.deepCopyData());
 		

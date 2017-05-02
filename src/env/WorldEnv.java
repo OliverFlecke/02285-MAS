@@ -7,8 +7,8 @@ import env.model.WorldModel;
 import env.planner.Planner;
 import jason.asSyntax.*;
 import jason.environment.grid.Location;
-import lvl.cell.*;
-import lvl.Level;
+import level.Level;
+import level.cell.*;
 
 public class WorldEnv extends ServerEnv {
 

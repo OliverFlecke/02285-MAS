@@ -1,4 +1,4 @@
-package lvl.cell;
+package level.cell;
 
 import java.util.HashSet;
 import java.util.Iterator;

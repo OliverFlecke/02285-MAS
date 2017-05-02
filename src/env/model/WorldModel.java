@@ -5,7 +5,7 @@ import java.util.logging.Logger;
 
 import jason.asSyntax.Term;
 import jason.environment.grid.Location;
-import lvl.Level;
+import level.Level;
 
 public class WorldModel extends DataWorldModel {
 	

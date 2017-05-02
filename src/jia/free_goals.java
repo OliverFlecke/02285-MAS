@@ -9,7 +9,7 @@ import jason.asSemantics.TransitionSystem;
 import jason.asSemantics.Unifier;
 import jason.asSyntax.Atom;
 import jason.asSyntax.Term;
-import lvl.cell.Goal;
+import level.cell.Goal;
 
 /**
  * Simple internal action to check in there is any goals left to be solved

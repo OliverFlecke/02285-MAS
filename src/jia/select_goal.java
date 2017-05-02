@@ -10,7 +10,7 @@ import jason.asSyntax.ASSyntax;
 import jason.asSyntax.NumberTerm;
 import jason.asSyntax.Term;
 import jason.environment.grid.Location;
-import lvl.cell.Goal;
+import level.cell.Goal;
 
 public class select_goal extends DefaultInternalAction {
 	

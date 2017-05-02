@@ -1,4 +1,5 @@
-package lvl.cell;
+package level.cell;
+
 
 public class Agent extends Colored {
 

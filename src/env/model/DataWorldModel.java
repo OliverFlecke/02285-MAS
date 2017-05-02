@@ -4,7 +4,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import jason.environment.grid.Location;
-import lvl.cell.*;
+import level.cell.*;
 
 public class DataWorldModel extends GridWorldModel {
 	

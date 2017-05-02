@@ -1,6 +1,7 @@
 package env.model;
 
 import jason.environment.grid.Location;
+import level.Actions.Action;
 
 public class GridWorldModel {
 	
@@ -13,6 +14,8 @@ public class GridWorldModel {
 	protected int				width, height;
     
     private int[][]             data; 
+    
+    private Action[] actions;
 	
 	public GridWorldModel(int width, int height)
 	{

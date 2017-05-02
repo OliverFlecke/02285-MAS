@@ -1,11 +1,11 @@
-package lvl;
+package level;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.util.*;
 
-import lvl.cell.Agent;
-import lvl.cell.Box;
+import level.cell.Agent;
+import level.cell.Box;
 
 public class Level {
 

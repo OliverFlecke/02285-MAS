@@ -1,4 +1,4 @@
-package lvl.cell;
+package level.cell;
 
 import jason.environment.grid.Location;
 

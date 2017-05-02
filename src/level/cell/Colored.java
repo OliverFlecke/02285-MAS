@@ -1,6 +1,6 @@
-package lvl.cell;
+package level.cell;
 
-import lvl.Color;
+import level.Color;
 
 public abstract class Colored extends Lettered {
 
