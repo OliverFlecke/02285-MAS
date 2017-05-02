@@ -45,6 +45,7 @@ public class Planner {
 		Agent agent = model.getAgent(agX, agY);
 		
 		Location closestLoc = GoalSearch.search(agent.getColor(), agent.getLocation());
+		if (closestLoc == null) return null;
 		
 		Goal goal = model.getGoal(closestLoc);
 		
@@ -77,11 +78,10 @@ public class Planner {
 		Agent agent = model.getAgent(agX, agY);
 		
 		Box box = model.getBox(boxX, boxY);
-		
-        List<Location> dependencies = DependencySearch.search(box.getLocation(), agent.getLocation(), WorldModel.BOX);
+        List<Location> dependencies = DependencySearch.search(box.getLocation(), agent.getLocation(), WorldModel.BOX | WorldModel.AGENT);
         
         if (dependencies.size() == 0) return;
-		
+        
 		List<Location> path = LocationSearch.search(box.getLocation(), agent.getLocation(), 1);
 		
 		for (Location l : path)
@@ -97,15 +97,17 @@ public class Planner {
         	
         	logger.info("Found storage at: " + storage.toString());
         	
-//        	logger.info(loc.x + ", " + loc.y + " is a dependency");
-//        	if (model.hasObject(WorldModel.AGENT, l))
-//        	{
-//        		Literal helpPercept = WorldEnv.createMovePerception(storage);
-//        		
-//        		String agentName = model.getAgent(l).getName();
-//        		
-//        		WorldEnv.getInstance().addAgentPercept(agentName, helpPercept);
-//        	}
+//        	logger.info(l.x + ", " + l.y + " is a dependency");
+        	if (model.hasObject(WorldModel.AGENT, l))
+        	{
+        		Agent otherAgent = model.getAgent(l);
+        		
+        		if (otherAgent.getNumber() > agent.getNumber()) // Need a better way to figure out who should move out of the way
+        		{
+        			Literal helpPercept = WorldEnv.createMovePerception(storage);
+        			WorldEnv.getInstance().addAgentPercept(otherAgent.getName(), helpPercept);
+        		}
+        	}
 //        	else 
         	if (model.hasObject(WorldModel.BOX, l))
         	{
