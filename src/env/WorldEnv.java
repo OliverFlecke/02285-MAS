@@ -5,7 +5,6 @@ import java.util.logging.Logger;
 
 import env.model.WorldModel;
 import env.planner.Planner;
-import jason.asSyntax.*;
 import level.Level;
 import level.Actions.*;
 import level.cell.*;
@@ -65,22 +64,19 @@ public class WorldEnv extends ServerEnv {
         case PUSH: return model.canPush((PushAction) action, agentId);
         case PULL: return model.canPull((PullAction) action, agentId);
         case SKIP: return true;
-        default: return true;
         }
-        
+        throw new UnsupportedOperationException("Invalid action: " + action.getType());        
 	}
 	
 	public void doExecute(Action action, int agentId)
 	{
         switch(action.getType())
         {
-        case MOVE: model.doMove((MoveAction) action, agentId);
-        case PUSH: model.doPush((PushAction) action, agentId);
-        case PULL: model.doPull((PullAction) action, agentId);
-		case SKIP:
-			break;
-		default:
-			break;
+        case MOVE: model.doMove((MoveAction) action, agentId); return;
+        case PUSH: model.doPush((PushAction) action, agentId); return;
+        case PULL: model.doPull((PullAction) action, agentId); return;
+		case SKIP:                                             return;
         }
+        throw new UnsupportedOperationException("Invalid action: " + action.getType());    
 	}
 }

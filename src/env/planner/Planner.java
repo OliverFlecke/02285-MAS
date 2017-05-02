@@ -12,46 +12,76 @@ import java.util.Set;
 import env.model.GridWorldModel;
 import env.model.WorldModel;
 import jason.environment.grid.Location;
+import level.Actions.Action;
 import level.cell.Agent;
 import level.cell.Box;
 import level.cell.Goal;
 import srch.searches.DependencySearch;
 import srch.searches.LocationSearch;
+import srch.searches.closest.AgentSearch;
+import srch.searches.closest.ClosestSearch;
 import srch.searches.closest.GoalSearch;
-import srch.searches.closest.StorageSearch;
 
 public class Planner {
 	
 	private static final Logger logger = Logger.getLogger(Planner.class.getName());
 	
-	private static WorldModel 		model;	
-	private static GridWorldModel 	localModel;	
-//	private static Set<Goal> 		unsolvedGoals = new HashSet<>();
+	private static WorldModel 	worldModel;	
+	private static Set<Goal> 	unsolvedGoals;
 
-	private static ArrayList<GridWorldModel> models;
+	private static ArrayList<GridWorldModel> gridModels;
+	
+	private static ArrayList<ArrayList<Action>> actions;
 	
 	public static void plan()
 	{
-		model = WorldModel.getInstance();
-		models = new ArrayList<GridWorldModel>();
+		worldModel = WorldModel.getInstance();
 		
-		localModel = new GridWorldModel(model.deepCopyData());
+		unsolvedGoals = new HashSet<>(worldModel.getGoals());
 		
-//		unsolvedGoals.addAll(model.getGoals());
+		gridModels = new ArrayList<GridWorldModel>();
+		
+		actions = new ArrayList<ArrayList<Action>>(worldModel.getAgents().length);
 		
 		matchBoxesAndGoals();
 		
 		createGoalDependencies();
+		
+		execute();
+	}
+	
+	public static void execute()
+	{
+		while (!unsolvedGoals.isEmpty())
+		{
+			Optional<Goal> goal = unsolvedGoals.stream().filter(g -> !g.hasDependencies()).findFirst();
+			
+			if (goal.isPresent())
+			{
+				Box box = goal.get().getBox();
+				
+				Location agentLoc = AgentSearch.search(box.getColor(), box.getLocation());
+				
+				Agent agent = worldModel.getAgent(agentLoc);
+				
+				
+			}
+		}
+	}
+	
+	public static GridWorldModel getModel(int step)
+	{
+		return gridModels.get(step);
 	}
 	
 	public static synchronized Goal selectGoal(int agX, int agY)
 	{
-		Agent agent = model.getAgent(agX, agY);
+		Agent agent = worldModel.getAgent(agX, agY);
 		
 		Location closestLoc = GoalSearch.search(agent.getColor(), agent.getLocation());
 		if (closestLoc == null) return null;
 		
-		Goal goal = model.getGoal(closestLoc);
+		Goal goal = worldModel.getGoal(closestLoc);
 		
 		while (goal.hasDependencies())
 		{
@@ -68,7 +98,7 @@ public class Planner {
 		
 		for (Location l : path)
 		{
-			localModel.lock(l);
+//			localModel.lock(l);
 		}
 		
 		// Merge plan with other agents
@@ -79,9 +109,9 @@ public class Planner {
 	
 	public static synchronized void solveDependencies(int agX, int agY, int boxX, int boxY)
 	{
-		Agent agent = model.getAgent(agX, agY);
+		Agent agent = worldModel.getAgent(agX, agY);
 		
-		Box box = model.getBox(boxX, boxY);
+		Box box = worldModel.getBox(boxX, boxY);
         List<Location> dependencies = DependencySearch.search(box.getLocation(), agent.getLocation(), WorldModel.BOX | WorldModel.AGENT);
         
         if (dependencies.size() == 0) return;
@@ -90,21 +120,21 @@ public class Planner {
 		
 		for (Location l : path)
 		{
-			localModel.lock(l);
+//			localModel.lock(l);
 		}
         
 		// TODO: Include agents
         
         for (Location l : dependencies)
         {
-        	Location storage = StorageSearch.search(l, localModel);
-        	
-        	logger.info("Found storage at: " + storage.toString());
+//        	Location storage = StorageSearch.search(l, localModel);
+//        	
+//        	logger.info("Found storage at: " + storage.toString());
         	
 //        	logger.info(l.x + ", " + l.y + " is a dependency");
-        	if (model.hasObject(WorldModel.AGENT, l))
+        	if (worldModel.hasObject(WorldModel.AGENT, l))
         	{
-        		Agent otherAgent = model.getAgent(l);
+        		Agent otherAgent = worldModel.getAgent(l);
         		
         		if (otherAgent.getNumber() > agent.getNumber()) // Need a better way to figure out who should move out of the way
         		{
@@ -113,7 +143,7 @@ public class Planner {
         		}
         	}
 //        	else 
-        	if (model.hasObject(WorldModel.BOX, l))
+        	if (worldModel.hasObject(WorldModel.BOX, l))
         	{
 //        		Literal helpPercept = WorldEnv.createMoveBoxPerception(l, storage);
 //        		
@@ -128,12 +158,12 @@ public class Planner {
 	
 	private static void matchBoxesAndGoals()
 	{		
-		for (Entry<Character, Set<Goal>> entry : model.getGoalMap().entrySet())
+		for (Entry<Character, Set<Goal>> entry : worldModel.getGoalMap().entrySet())
 		{
 			for (Goal goal : entry.getValue())
 			{
 				// Create copy of box set
-				Set<Box> boxes = new HashSet<>(model.getBoxes(entry.getKey()));
+				Set<Box> boxes = new HashSet<>(worldModel.getBoxes(entry.getKey()));
 				
 				Optional<Box> box = boxes.stream().min((b1, b2) -> d(goal, b1) - d(goal, b2));
 				
@@ -150,7 +180,7 @@ public class Planner {
 
 	private static void createGoalDependencies() 
 	{
-		for (Goal goal : model.getGoals())
+		for (Goal goal : worldModel.getGoals())
 		{
 			// Important to search from box to goal
 			Location from = goal.getBox().getLocation();	
@@ -158,7 +188,7 @@ public class Planner {
 
 	        List<Location> dependencies = DependencySearch.search(from, to, WorldModel.GOAL);
 	        
-	        List<Goal> goals = dependencies.stream().map(loc -> model.getGoal(loc))
+	        List<Goal> goals = dependencies.stream().map(loc -> worldModel.getGoal(loc))
 	        										.collect(Collectors.toList());
 	        // Add the dependency chain
 	        for (int i = 0; i < goals.size() - 1; i++) 
