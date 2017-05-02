@@ -3,7 +3,6 @@ package env.model;
 import java.util.*;
 import java.util.logging.Logger;
 
-import jason.asSyntax.Term;
 import jason.environment.grid.Location;
 import level.Level;
 import level.Direction;

@@ -77,30 +77,4 @@ public class WorldEnv extends ServerEnv {
         	return true;
         }
 	}
-    
-    @Override
-	public String toString(Structure action)
-	{
-		switch(action.getFunctor())
-		{
-		case MOVE: return "Move(" + toString(action.getTerm(0)) + ")";
-		case PUSH: return "Push(" + toString(action.getTerm(0)) + "," 
-								  + toString(action.getTerm(1)) + ")";
-		case PULL: return "Pull(" + toString(action.getTerm(0)) + "," 
-		  						  + toString(action.getTerm(1)) + ")";
-		default  : return "NoOp";
-		}
-	}
-
-	public static String toString(Term dir)
-	{
-		switch(dir.toString())
-		{
-		case WorldModel.UP   : return "N";
-		case WorldModel.DOWN : return "S";
-		case WorldModel.LEFT : return "W";
-		case WorldModel.RIGHT: return "E";
-		}
-		return "";
-	}
 }
