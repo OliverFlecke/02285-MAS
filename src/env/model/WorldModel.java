@@ -3,9 +3,9 @@ package env.model;
 import java.util.*;
 import java.util.logging.Logger;
 
-import jason.asSyntax.Term;
 import jason.environment.grid.Location;
 import level.Level;
+import level.Actions.*;
 import level.Direction;
 
 public class WorldModel extends DataWorldModel {
@@ -62,14 +62,10 @@ public class WorldModel extends DataWorldModel {
 		printLevel();
 	}
 
-    /**
-     * Moves an agent based on the direction.
-     * @param dir - Direction
-     * @param agId - Agent ID
-     * @return True if and only if action succeeds.
-     */
-    public synchronized boolean move(Direction dir, int agId) 
-    {        
+    public synchronized boolean canMove(MoveAction action, int agId) 
+    {
+    	Direction dir = action.getDirection();
+    	
         if (agId < 0) 
         {
             logger.warning("** Invalid agent number: " + agId);            
@@ -98,21 +94,25 @@ public class WorldModel extends DataWorldModel {
             return false;
         }
 
-        move(AGENT, agLoc, nAgLoc);
-        remove(LOCKED, agLoc.x, agLoc.y);
         return true;
     }	
     
-    /**
-     * Pushes a box based on the direction of the agent
-     * and the direction of the box?
-     * @param dir1 - Direction of the agent
-     * @param dir2 - Direction of the box
-     * @param agId - Agent ID
-     * @return True if and only if the action succeeds.
-     */
-    public synchronized boolean push(Direction dir1, Direction dir2, int agId)
+    public void doMove(MoveAction action, int agId)
     {
+    	Direction 	dir 	= action.getDirection();
+    	
+        Location 	agLoc 	= getAgPos(agId);
+        Location 	nAgLoc 	= Direction.newLocation(dir, agLoc);
+    	
+        move(AGENT, agLoc, nAgLoc);
+        remove(LOCKED, agLoc.x, agLoc.y);
+    }
+    
+    public boolean canPush(PushAction action, int agId)
+    {
+    	Direction dir1 = action.getAgentDir();
+    	Direction dir2 = action.getBoxDir();
+    	
         if (agId < 0) 
         {
             logger.warning("** Invalid agent number: " + agId);            
@@ -155,15 +155,21 @@ public class WorldModel extends DataWorldModel {
             return false;        	
         }
     	
-        move(AGENT, agLoc, nAgLoc);
-        move(BOX, nAgLoc, nBoxLoc);
-        remove(LOCKED, agLoc.x, agLoc.y);
 		return true;
     }
     
-    public void doPush(Direction dir1, Direction dir2, int agId)
+    public void doPush(PushAction action, int agId)
     {
-    	
+    	Direction 	dir1 	= action.getAgentDir();
+    	Direction 	dir2 	= action.getBoxDir();
+
+        Location 	agLoc 	= getAgPos(agId);
+    	Location 	nAgLoc 	= Direction.newLocation(dir1, agLoc);
+    	Location 	nBoxLoc = Direction.newLocation(dir2, nAgLoc);
+
+        move(AGENT, agLoc, nAgLoc);
+        move(BOX, nAgLoc, nBoxLoc);
+        remove(LOCKED, agLoc.x, agLoc.y);
     }
     
     /**
@@ -174,8 +180,11 @@ public class WorldModel extends DataWorldModel {
      * @param agId - Agent ID
      * @return True if and only if the action succeeds.
      */
-    public boolean canPull(Direction dir1, Direction dir2, int agId)
+    public boolean canPull(PullAction action, int agId)
     {
+    	Direction dir1 = action.getAgentDir();
+    	Direction dir2 = action.getBoxDir();
+    	
         if (agId < 0) 
         {
             logger.warning("** Invalid agent number: " + agId);            
@@ -221,8 +230,10 @@ public class WorldModel extends DataWorldModel {
         return true;
     }
     
-    public void doPull(Direction dir1, Direction dir2, int agId)
+    public void doPull(PullAction action, int agId)
     {
+    	Direction dir1 = action.getAgentDir();
+    	Direction dir2 = action.getBoxDir();
     	
         Location agLoc 	= getAgPos(agId);        
     	Location boxLoc = Direction.newLocation(dir2, agLoc);    	

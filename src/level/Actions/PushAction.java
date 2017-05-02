@@ -14,6 +14,16 @@ public class PushAction extends Action {
 		this.boxDir = boxDir;
 	}
 	
+	public Direction getAgentDir()
+	{
+		return agentDir;
+	}
+	
+	public Direction getBoxDir()
+	{
+		return boxDir;
+	}
+	
 	@Override
 	public String toString()
 	{

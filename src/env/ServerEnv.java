@@ -10,10 +10,12 @@ import java.io.InputStreamReader;
 import java.io.PrintStream;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Map.Entry;
 import java.util.logging.Logger;
 
 import env.model.WorldModel;
 import jason.asSyntax.Structure;
+import level.Actions.Action;
 
 /**
  * Derived from TimeSteppedEnvironment
@@ -25,7 +27,7 @@ public class ServerEnv {
     private static final boolean TEST = false;
 
 	private int 						nbAgs;	  
-	private HashMap<String, ActRequest> requests;	
+	private HashMap<Integer, Action> 	requests;	
 	private String[] 					jointAction;
 
     protected BufferedReader 			serverIn;  
@@ -33,7 +35,7 @@ public class ServerEnv {
     
 	public ServerEnv()
 	{		
-		requests	= new HashMap<String, ActRequest>();
+		requests	= new HashMap<Integer, Action>();
 
 		serverIn	= new BufferedReader(new InputStreamReader(System.in));		
 		serverOut	= new PrintStream(new FileOutputStream(FileDescriptor.out));
@@ -73,42 +75,25 @@ public class ServerEnv {
 		throw new UnsupportedOperationException("Not implemented");
 	}
 	
-	// Override
-	protected boolean executeAction(String agentName, Structure action)	{
-		throw new UnsupportedOperationException("Not implemented");
-	}
-	
-	public void scheduleAction(final String agentName, final Structure action, final Object infraData) 
-	{        
-
-		// int agentId = getAgentIdByName(agentName);
-		//
-		// synchronized (jointAction)
-		// {
-		// jointAction[agentId] = toString(action);
-		// }
-
-		ActRequest newRequest = new ActRequest(agentName, action, infraData);
-
+	public void scheduleAction(final Action action, final int agentId) 
+	{
 		synchronized (requests)
 		{
-			requests.put(agentName, newRequest);
-			try {
+			requests.put(agentId, action);
+			
+			try 
+			{
 				if (requests.size() >= nbAgs)
 				{
-					for (ActRequest request : requests.values())
+					for (Entry<Integer, Action> entry : requests.entrySet())
 					{
-						boolean success = executeAction(request.agentName, request.action);
-
-						if (success)
-							jointAction[getAgentIdByName(request.agentName)] = this.toString(request.action);
-						else
-							jointAction[getAgentIdByName(request.agentName)] = this.toString(new Structure("NoOp"));
+						jointAction[entry.getKey()] = entry.getValue().toString();
 					}
-					serverOut.println(Arrays.toString(jointAction));
 					requests.clear();
-					updateAgsPercept();
-			    	WorldModel.getInstance().nextStep();
+					
+					serverOut.println(Arrays.toString(jointAction));
+					
+					WorldModel.getInstance().nextStep();
 					
 					if (!TEST)
 					{

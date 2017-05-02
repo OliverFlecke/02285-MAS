@@ -7,16 +7,12 @@ import env.model.WorldModel;
 import env.planner.Planner;
 import jason.asSyntax.*;
 import level.Level;
+import level.Actions.*;
 import level.cell.*;
 
 public class WorldEnv extends ServerEnv {
 
     private static final Logger logger = Logger.getLogger(WorldEnv.class.getName());
-
-    private static final String MOVE = "move";
-    private static final String PUSH = "push";
-    private static final String PULL = "pull";
-    private static final String SKIP = "skip";   
 	
     private static WorldModel model;
     
@@ -61,20 +57,30 @@ public class WorldEnv extends ServerEnv {
 		return 0; // Default value
 	}
 
-	@Override
-	public boolean executeAction(String agentName, Structure action) 
-	{
-		int agentId = getAgentIdByName(agentName);
-		
-        switch(action.getFunctor())
+	public boolean canExecute(Action action, int agentId) 
+	{		
+        switch(action.getType())
         {
-        case MOVE: return model.move(action.getTerm(0), agentId);
-        case PUSH: return model.push(action.getTerm(0), action.getTerm(1), agentId);
-        case PULL: return model.pull(action.getTerm(0), action.getTerm(1), agentId);
+        case MOVE: return model.canMove((MoveAction) action, agentId);
+        case PUSH: return model.canPush((PushAction) action, agentId);
+        case PULL: return model.canPull((PullAction) action, agentId);
         case SKIP: return true;
-        default: 
-            logger.warning("** Action not implemented: " + action);
-        	return true;
+        default: return true;
+        }
+        
+	}
+	
+	public void doExecute(Action action, int agentId)
+	{
+        switch(action.getType())
+        {
+        case MOVE: model.doMove((MoveAction) action, agentId);
+        case PUSH: model.doPush((PushAction) action, agentId);
+        case PULL: model.doPull((PullAction) action, agentId);
+		case SKIP:
+			break;
+		default:
+			break;
         }
 	}
     
