@@ -5,6 +5,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import env.model.WorldModel;
+import env.planner.Planner;
 import jason.environment.grid.Location;
 import level.Direction;
 import srch.Node;
@@ -28,7 +29,7 @@ public class DirectionNode extends StepNode {
 		{
 			Location loc = Direction.newLocation(dir, this.getLocation());
 			
-			if (WorldModel.getInstance().isFree(this.getObject(), loc))
+			if (Planner.getModel(this.getStep()).isFree(this.getObject(), loc))
 			{
 				expandedNodes.add(new DirectionNode(this, dir, loc));
 			}

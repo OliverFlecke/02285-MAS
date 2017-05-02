@@ -23,7 +23,7 @@ public class solve_dependencies extends DefaultInternalAction {
 			int boxX = (int) ((NumberTerm) terms[2]).solve();
 	        int boxY = (int) ((NumberTerm) terms[3]).solve();
 			
-	        Planner.solveDependencies(agX, agY, boxX, boxY);
+//	        Planner.solveDependencies(agX, agY, boxX, boxY);
 			
 			return true;
 		} 
