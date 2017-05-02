@@ -1,9 +1,0 @@
-MAS room {
-
-	environment: env.WorldEnv
-	
-	agents:
-		initializer;
-			
-	aslSourcePath: "src/asl/";
-}

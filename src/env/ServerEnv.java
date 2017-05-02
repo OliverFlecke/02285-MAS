@@ -14,12 +14,11 @@ import java.util.logging.Logger;
 
 import env.model.WorldModel;
 import jason.asSyntax.Structure;
-import jason.environment.Environment;
 
 /**
  * Derived from TimeSteppedEnvironment
  */
-public class ServerEnv extends Environment {
+public class ServerEnv {
 	
     private static final Logger logger = Logger.getLogger(ServerEnv.class.getName());
     
@@ -32,13 +31,10 @@ public class ServerEnv extends Environment {
     protected BufferedReader 			serverIn;  
 	protected PrintStream				serverOut;
     
-	@Override
-	public void init(String[] args) 
-	{        
-		super.init(args);
-		
+	public ServerEnv()
+	{		
 		requests	= new HashMap<String, ActRequest>();
-			
+
 		serverIn	= new BufferedReader(new InputStreamReader(System.in));		
 		serverOut	= new PrintStream(new FileOutputStream(FileDescriptor.out));
 		
@@ -59,25 +55,29 @@ public class ServerEnv extends Environment {
 	
 	// Override
 	protected void updateNumberOfAgents() {
-		
+		throw new UnsupportedOperationException("Not implemented");
 	}
 	
 	// Override
 	protected void updateAgsPercept() {
-		
+		throw new UnsupportedOperationException("Not implemented");
 	}
 	
 	// Override
 	protected int getAgentIdByName(String name) {
-		return 0;
+		throw new UnsupportedOperationException("Not implemented");
 	}
 	
 	// Override
 	protected String toString(Structure action) {
-		return "";
+		throw new UnsupportedOperationException("Not implemented");
 	}
 	
-	@Override
+	// Override
+	protected boolean executeAction(String agentName, Structure action)	{
+		throw new UnsupportedOperationException("Not implemented");
+	}
+	
 	public void scheduleAction(final String agentName, final Structure action, final Object infraData) 
 	{        
 
@@ -99,8 +99,7 @@ public class ServerEnv extends Environment {
 					for (ActRequest request : requests.values())
 					{
 						boolean success = executeAction(request.agentName, request.action);
-						getEnvironmentInfraTier().actionExecuted(request.agentName, request.action, success,
-								request.infraData);
+
 						if (success)
 							jointAction[getAgentIdByName(request.agentName)] = this.toString(request.action);
 						else
@@ -133,12 +132,6 @@ public class ServerEnv extends Environment {
 				e.printStackTrace();
 			}
 		}
-	}
-	
-	@Override
-	public void stop() {
-		super.stop();
-		serverOut.close();
 	}
 	
 	class ActRequest {

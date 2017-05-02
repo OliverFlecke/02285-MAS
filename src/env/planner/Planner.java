@@ -8,17 +8,14 @@ import java.util.stream.Collectors;
 import java.util.Optional;
 import java.util.Set;
 
-import env.WorldEnv;
 import env.model.GridWorldModel;
 import env.model.WorldModel;
-import jason.asSyntax.Literal;
 import jason.environment.grid.Location;
 import lvl.cell.Agent;
 import lvl.cell.Box;
 import lvl.cell.Goal;
 import srch.searches.DependencySearch;
 import srch.searches.LocationSearch;
-import srch.searches.closest.AgentSearch;
 import srch.searches.closest.GoalSearch;
 import srch.searches.closest.StorageSearch;
 
@@ -112,13 +109,13 @@ public class Planner {
 //        	else 
         	if (model.hasObject(WorldModel.BOX, l))
         	{
-        		Literal helpPercept = WorldEnv.createMoveBoxPerception(l, storage);
-        		
-        		Location agentLoc = AgentSearch.search(model.getBox(l).getColor(), l);
-        		
-        		String agentName = model.getAgent(agentLoc).getName();
-        		
-        		WorldEnv.getInstance().addAgentPercept(agentName, helpPercept);
+//        		Literal helpPercept = WorldEnv.createMoveBoxPerception(l, storage);
+//        		
+//        		Location agentLoc = AgentSearch.search(model.getBox(l).getColor(), l);
+//        		
+//        		String agentName = model.getAgent(agentLoc).getName();
+//        		
+//        		WorldEnv.getInstance().addAgentPercept(agentName, helpPercept);
         	}
         }
 	}
