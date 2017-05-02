@@ -11,21 +11,20 @@ public abstract class Node {
 	private Node parent;	
 	private Direction direction;
 	private Location location;	
-	private int object, g, step;
+	private int object, g;
 	
-	public Node(Location initial, int initialStep)
+	public Node(Location initial)
 	{
-		this(initial, 0, initialStep);
+		this(initial, 0);
 	}
 	
-	public Node(Location initial, int object, int initialStep)
+	public Node(Location initial, int object)
 	{
 		this.parent 	= null;
 		this.direction 	= null;
 		this.location 	= initial;
 		this.object		= object | WorldModel.WALL;
 		this.g 			= 0;
-		this.step 		= initialStep;
 	}
 	
 	public Node(Node parent, Direction direction, Location location) 
@@ -35,7 +34,6 @@ public abstract class Node {
 		this.location  	= location;
 		this.object	   	= parent.object;
 		this.g         	= parent.g + 1;
-		this.step 		= parent.getStep() + 1;
 	}
 	
 	public Node getParent() {
@@ -56,11 +54,6 @@ public abstract class Node {
 	
 	public int g() {
 		return g;
-	}
-	
-	public int getStep()
-	{
-		return this.step;
 	}
 
 	public abstract List<Node> getExpandedNodes();

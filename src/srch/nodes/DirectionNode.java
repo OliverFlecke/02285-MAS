@@ -10,13 +10,13 @@ import jason.environment.grid.Location;
 import level.Direction;
 import srch.Node;
 
-public class DirectionNode extends Node {
+public class DirectionNode extends StepNode {
 
 	public DirectionNode(Location initial, int initialStep) {
 		super(initial, WorldModel.BOX, initialStep);
 	}
 
-	public DirectionNode(Node parent, Direction direction, Location location) {
+	public DirectionNode(StepNode parent, Direction direction, Location location) {
 		super(parent, direction, location);
 	}
 
@@ -24,6 +24,8 @@ public class DirectionNode extends Node {
 	public List<Node> getExpandedNodes()
 	{
 		List<Node> expandedNodes = new ArrayList<Node>(Direction.DIRECTIONS.length);
+		
+		expandedNodes.add(new DirectionNode(this, this.getDirection(), this.getLocation()));
 		
 		for (Direction dir : Direction.DIRECTIONS)
 		{

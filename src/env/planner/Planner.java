@@ -74,87 +74,87 @@ public class Planner {
 		return gridModels.get(step);
 	}
 	
-	public static synchronized Goal selectGoal(int agX, int agY)
-	{
-		Agent agent = worldModel.getAgent(agX, agY);
-		
-		Location closestLoc = GoalSearch.search(agent.getColor(), agent.getLocation());
-		if (closestLoc == null) return null;
-		
-		Goal goal = worldModel.getGoal(closestLoc);
-		
-		while (goal.hasDependencies())
-		{
-			goal = goal.getDependency();
-		}		
-		
-		if (!agent.getColor().equals(goal.getBox().getColor())) 
-		{
-			logger.warning("Could not find solvable goal");
-			return null;
-		}
-		
-		List<Location> path = LocationSearch.search(goal.getLocation(), goal.getBox().getLocation(), 0);
-		
-		for (Location l : path)
-		{
-//			localModel.lock(l);
-		}
-		
-		// Merge plan with other agents
-
-//		unsolvedGoals.remove(goal);
-		return goal;
-	}
+//	public static synchronized Goal selectGoal(int agX, int agY)
+//	{
+//		Agent agent = worldModel.getAgent(agX, agY);
+//		
+//		Location closestLoc = GoalSearch.search(agent.getColor(), agent.getLocation());
+//		if (closestLoc == null) return null;
+//		
+//		Goal goal = worldModel.getGoal(closestLoc);
+//		
+//		while (goal.hasDependencies())
+//		{
+//			goal = goal.getDependency();
+//		}		
+//		
+//		if (!agent.getColor().equals(goal.getBox().getColor())) 
+//		{
+//			logger.warning("Could not find solvable goal");
+//			return null;
+//		}
+//		
+//		List<Location> path = LocationSearch.search(goal.getLocation(), goal.getBox().getLocation(), 0);
+//		
+//		for (Location l : path)
+//		{
+////			localModel.lock(l);
+//		}
+//		
+//		// Merge plan with other agents
+//
+////		unsolvedGoals.remove(goal);
+//		return goal;
+//	}
 	
-	public static synchronized void solveDependencies(int agX, int agY, int boxX, int boxY)
-	{
-		Agent agent = worldModel.getAgent(agX, agY);
-		
-		Box box = worldModel.getBox(boxX, boxY);
-        List<Location> dependencies = DependencySearch.search(box.getLocation(), agent.getLocation(), WorldModel.BOX | WorldModel.AGENT);
-        
-        if (dependencies.size() == 0) return;
-        
-		List<Location> path = LocationSearch.search(box.getLocation(), agent.getLocation(), 1);
-		
-		for (Location l : path)
-		{
-//			localModel.lock(l);
-		}
-        
-		// TODO: Include agents
-        
-        for (Location l : dependencies)
-        {
-//        	Location storage = StorageSearch.search(l, localModel);
+//	public static synchronized void solveDependencies(int agX, int agY, int boxX, int boxY)
+//	{
+//		Agent agent = worldModel.getAgent(agX, agY);
+//		
+//		Box box = worldModel.getBox(boxX, boxY);
+//        List<Location> dependencies = DependencySearch.search(box.getLocation(), agent.getLocation(), WorldModel.BOX | WorldModel.AGENT);
+//        
+//        if (dependencies.size() == 0) return;
+//        
+//		List<Location> path = LocationSearch.search(box.getLocation(), agent.getLocation(), 1);
+//		
+//		for (Location l : path)
+//		{
+////			localModel.lock(l);
+//		}
+//        
+//		// TODO: Include agents
+//        
+//        for (Location l : dependencies)
+//        {
+////        	Location storage = StorageSearch.search(l, localModel);
+////        	
+////        	logger.info("Found storage at: " + storage.toString());
 //        	
-//        	logger.info("Found storage at: " + storage.toString());
-        	
-//        	logger.info(l.x + ", " + l.y + " is a dependency");
-        	if (worldModel.hasObject(WorldModel.AGENT, l))
-        	{
-        		Agent otherAgent = worldModel.getAgent(l);
-        		
-        		if (otherAgent.getNumber() > agent.getNumber()) // Need a better way to figure out who should move out of the way
-        		{
-//        			Literal helpPercept = WorldEnv.createMovePerception(storage);
-//        			WorldEnv.getInstance().addAgentPercept(otherAgent.getName(), helpPercept);
-        		}
-        	}
-//        	else 
-        	if (worldModel.hasObject(WorldModel.BOX, l))
-        	{
-//        		Literal helpPercept = WorldEnv.createMoveBoxPerception(l, storage);
+////        	logger.info(l.x + ", " + l.y + " is a dependency");
+//        	if (worldModel.hasObject(WorldModel.AGENT, l))
+//        	{
+//        		Agent otherAgent = worldModel.getAgent(l);
 //        		
-//        		Location agentLoc = AgentSearch.search(model.getBox(l).getColor(), l);
-//        		
-//        		String agentName = model.getAgent(agentLoc).getName();
-//        		
-//        		WorldEnv.getInstance().addAgentPercept(agentName, helpPercept);
-        	}
-        }
-	}
+//        		if (otherAgent.getNumber() > agent.getNumber()) // Need a better way to figure out who should move out of the way
+//        		{
+////        			Literal helpPercept = WorldEnv.createMovePerception(storage);
+////        			WorldEnv.getInstance().addAgentPercept(otherAgent.getName(), helpPercept);
+//        		}
+//        	}
+////        	else 
+//        	if (worldModel.hasObject(WorldModel.BOX, l))
+//        	{
+////        		Literal helpPercept = WorldEnv.createMoveBoxPerception(l, storage);
+////        		
+////        		Location agentLoc = AgentSearch.search(model.getBox(l).getColor(), l);
+////        		
+////        		String agentName = model.getAgent(agentLoc).getName();
+////        		
+////        		WorldEnv.getInstance().addAgentPercept(agentName, helpPercept);
+//        	}
+//        }
+//	}
 	
 	private static void matchBoxesAndGoals()
 	{		
