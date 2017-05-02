@@ -25,9 +25,9 @@ public class ClosestNode extends Node {
 	@Override
 	public List<Node> getExpandedNodes()
 	{
-		List<Node> expandedNodes = new ArrayList<Node>(Direction.DIRECTIONS.length);
+		List<Node> expandedNodes = new ArrayList<Node>(Direction.EVERY.length);
 		
-		for (Direction dir : Direction.DIRECTIONS)
+		for (Direction dir : Direction.EVERY)
 		{
 			Location loc = Direction.newLocation(dir, this.getLocation());
 			

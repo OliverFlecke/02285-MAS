@@ -1,5 +1,9 @@
 package level.Actions;
 
+import java.util.LinkedList;
+
+import level.Direction;
+
 public abstract class Action {
 
 	public enum ActionType {
@@ -21,19 +25,26 @@ public abstract class Action {
 		return this.type;
 	}
 	
-//	@Override
-//	public String toString()
-//	{
-//		switch (type)
-//		{
-//		case MOVE: return "Move(" + toString(action.getTerm(0)) + ")";
-//		case PUSH: return "Push(" + toString(action.getTerm(0)) + "," 
-//								  + toString(action.getTerm(1)) + ")";
-//		case PULL: return "Pull(" + toString(action.getTerm(0)) + "," 
-//		  						  + toString(action.getTerm(1)) + ")";
-//		default  : return "NoOp";
-//		}
-//	}
+	public static final Action[] EVERY;
+	static {
+		LinkedList<Action> actions = new LinkedList<Action>();
+		for (Direction d1 : Direction.EVERY) 
+			for (Direction d2 : Direction.EVERY) 
+				if (!Direction.isOpposite(d1, d2)) 
+					actions.add(new PushAction(d1, d2));
+		
+		for (Direction d1 : Direction.EVERY) 
+			for (Direction d2 : Direction.EVERY)
+				if (d1 != d2) 
+					actions.add(new PullAction(d1, d2));
+		
+		for (Direction dir : Direction.EVERY) 
+			actions.add(new MoveAction(dir));
+		
+		actions.add(new SkipAction());
+
+		EVERY = (Action[]) actions.toArray();
+	}
 }
 
 

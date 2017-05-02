@@ -5,11 +5,11 @@ import jason.environment.grid.Location;
 public enum Direction {
 
 	NORTH,
-	SOUTH,
 	WEST,
-	EAST;
+	EAST,
+	SOUTH;
 	
-	public static final Direction[] DIRECTIONS = {
+	public static final Direction[] EVERY = {
 			NORTH, SOUTH, WEST, EAST
 	};
 	
@@ -42,5 +42,9 @@ public enum Direction {
 	    case EAST	: return new Location(l.x + 1, l.y);
 	    }        
 	    return null; // Could return l
+	}
+	
+	public static boolean isOpposite(Direction d1, Direction d2) {
+		return d1.ordinal() + d2.ordinal() == 3;
 	}
 }
