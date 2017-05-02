@@ -10,9 +10,9 @@ import srch.nodes.StorageNode;
 
 public class StorageSearch extends Search {
 	
-	public static Location search(Location initial, GridWorldModel localModel) 
+	public static Location search(Location initial, GridWorldModel localModel, int initialStep) 
 	{
-		return new StorageSearch(localModel).search(new StorageNode(initial));
+		return new StorageSearch(localModel).search(new StorageNode(initial, initialStep));
 	}
 	
 	private GridWorldModel localModel;

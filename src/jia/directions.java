@@ -31,7 +31,7 @@ public class directions extends DefaultInternalAction {
 	        
 	        ListTermImpl directions = new ListTermImpl();
 	        
-	        List<String> path = DirectionSearch.search(from, to, proximity);
+	        List<String> path = DirectionSearch.search(from, to, proximity, 0);
 	        
 	        if (path == null || path.size() == 0)
 	        {

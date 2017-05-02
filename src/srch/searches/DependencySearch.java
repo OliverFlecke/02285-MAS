@@ -18,9 +18,9 @@ public class DependencySearch extends Search implements Heuristic {
 	 * @param object
 	 * @return
 	 */
-	public static List<Location> search(Location from, Location to, int object) 
+	public static List<Location> search(Location from, Location to, int object, int initialStep) 
 	{
-		return new DependencySearch(to).search(new DependencyNode(from, object));
+		return new DependencySearch(to).search(new DependencyNode(from, object, initialStep));
 	}
 	
 	private Location goalLocation;

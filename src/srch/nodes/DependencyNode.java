@@ -15,9 +15,9 @@ public class DependencyNode extends Node {
 	private int dependency;
 	private int dependencyCount;
 
-	public DependencyNode(Location initial, int dependency) 
+	public DependencyNode(Location initial, int dependency, int initialStep) 
 	{
-		super(initial);
+		super(initial, initialStep);
 		
 		this.dependency 		= dependency;
 		this.dependencyCount 	= 0;

@@ -8,9 +8,9 @@ import srch.nodes.ClosestNode;
 
 public class GoalSearch extends ClosestSearch {
 
-	public static Location search(String color, Location from) 
+	public static Location search(String color, Location from, int initialStep) 
 	{
-		return new GoalSearch(color).search(new ClosestNode(from));
+		return new GoalSearch(color).search(new ClosestNode(from, initialStep));
 	}
 	
 	private String color;

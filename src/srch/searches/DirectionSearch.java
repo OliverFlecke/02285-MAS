@@ -24,9 +24,9 @@ public class DirectionSearch extends Search implements Heuristic {
 	 * With proximity = 1, the solution is a path to a cell adjacent to the goal location.
 	 * @return Ordered list of directions leading to the goal.
 	 */
-	public static List<String> search(Location from, Location to, int proximity) 
+	public static List<String> search(Location from, Location to, int proximity, int initialStep) 
 	{
-		return new DirectionSearch(to, proximity).search(new DirectionNode(from));
+		return new DirectionSearch(to, proximity).search(new DirectionNode(from, initialStep));
 	}
 	
 	private Location goalLocation;
