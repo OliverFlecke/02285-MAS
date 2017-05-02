@@ -7,8 +7,8 @@ import srch.Node;
 
 public class StorageNode extends ClosestNode {
 
-	public StorageNode(Location initial, int initialStep) {
-		super(initial, WorldModel.AGENT | WorldModel.BOX, initialStep);
+	public StorageNode(Location initial) {
+		super(initial, WorldModel.AGENT | WorldModel.BOX);
 	}
 	
 	public StorageNode(Node parent, Direction dir, Location loc) {

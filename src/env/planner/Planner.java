@@ -26,7 +26,7 @@ public class Planner {
 	
 	private static WorldModel 		model;	
 	private static GridWorldModel 	localModel;	
-//	private static Set<Goal> 		unsolvedGoals = new HashSet<>();
+	private static Set<Goal> 		unsolvedGoals = new HashSet<>();
 
 	private static ArrayList<GridWorldModel> models;
 	
