@@ -13,10 +13,10 @@ public class GridWorldModel {
 	
 	protected static final Logger logger = Logger.getLogger(WorldModel.class.getName());
 	
-    public static final int 	AGENT   = 1;
-	public static final int		GOAL 	= 2;
-	public static final int		BOX		= 4;
-    public static final int 	WALL 	= 8;
+    public static final int 	AGENT   =  1;
+	public static final int		GOAL 	=  2;
+	public static final int		BOX		=  4;
+    public static final int 	WALL 	=  8;
     public static final int 	LOCKED  = 16;
 	
 	protected int				width, height;
@@ -106,6 +106,12 @@ public class GridWorldModel {
         data[x][y] &= ~obj;
     }
 	
+	public void move(int obj, Location fr, Location to)
+	{		
+		remove	(obj, fr);
+		add		(obj, to);
+	}
+	
 	public void printLevel()
 	{
 		// Print integer representation of level
@@ -128,6 +134,18 @@ public class GridWorldModel {
 	        result[row] = data[row].clone();
 	    }
 	    return result;
+	}
+
+	public boolean canExecute(Action action, Location agLoc) 
+	{		
+        switch(action.getType())
+        {
+        case MOVE: return canMove((MoveAction) action, agLoc);
+        case PUSH: return canPush((PushAction) action, agLoc);
+        case PULL: return canPull((PullAction) action, agLoc);
+        case SKIP: return true;
+        }
+        throw new UnsupportedOperationException("Invalid action: " + action.getType());        
 	}
 
     public synchronized boolean canMove(MoveAction action, Location agLoc) 
@@ -263,5 +281,53 @@ public class GridWorldModel {
     	}
 
         return true;
+    }
+	
+	public void doExecute(Action action, Location agLoc)
+	{
+        switch(action.getType())
+        {
+        case MOVE: doMove((MoveAction) action, agLoc); return;
+        case PUSH: doPush((PushAction) action, agLoc); return;
+        case PULL: doPull((PullAction) action, agLoc); return;	
+		case SKIP:                                     return;
+        }
+        throw new UnsupportedOperationException("Invalid action: " + action.getType());    
+	}
+    
+    public void doMove(MoveAction action, Location agLoc)
+    {
+    	Direction 	dir 	= action.getDirection();
+    	
+        Location 	nAgLoc 	= Direction.newLocation(dir, agLoc);
+    	
+        move(AGENT, agLoc, nAgLoc);
+        remove(LOCKED, agLoc.x, agLoc.y);
+    }
+    
+    public void doPush(PushAction action, Location agLoc)
+    {
+    	Direction 	dir1 	= action.getAgentDir();
+    	Direction 	dir2 	= action.getBoxDir();
+
+    	Location 	nAgLoc 	= Direction.newLocation(dir1, agLoc);
+    	Location 	nBoxLoc = Direction.newLocation(dir2, nAgLoc);
+
+        move(AGENT, agLoc, nAgLoc);
+        move(BOX, nAgLoc, nBoxLoc);
+        remove(LOCKED, agLoc.x, agLoc.y);
+    }
+    
+    public void doPull(PullAction action, Location agLoc)
+    {
+    	Direction dir1 = action.getAgentDir();
+    	Direction dir2 = action.getBoxDir();
+    	      
+    	Location boxLoc = Direction.newLocation(dir2, agLoc);    	
+    	Location nAgLoc = Direction.newLocation(dir1, agLoc);
+
+    	move(AGENT, agLoc, nAgLoc);
+    	move(BOX, boxLoc, agLoc);
+    	remove(LOCKED, boxLoc.x, boxLoc.y);
     }
 }

@@ -135,8 +135,7 @@ public class DataWorldModel extends GridWorldModel {
 		default: 	return;
 		}
 
-		remove	(obj, fr);
-		add		(obj, to);
+		super.move(obj, fr, to);
 	}
 	
 	protected void addAgent(int x, int y, char letter, String color) 

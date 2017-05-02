@@ -1,15 +1,26 @@
 package level.cell;
 
+import jason.environment.grid.Location;
 
 public class Agent extends Colored {
 
 	private int number;
 	
-	public Agent(int x, int y, char letter, String color)
+	public Agent(Location location, char letter, String color)
 	{
-		super(x, y, letter, color);
+		super(location, letter, color);
 		
 		this.number = Character.getNumericValue(letter);
+	}
+	
+	public Agent(int x, int y, char letter, String color)
+	{
+		this(new Location(x, y), letter, color);
+	}
+	
+	public Agent(Agent agent)
+	{
+		this(agent.getLocation(), agent.getLetter(), agent.getColor());
 	}
 	
 	public int getNumber() 
