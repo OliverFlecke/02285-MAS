@@ -6,7 +6,7 @@ import jason.environment.grid.Location;
 import srch.Node;
 import srch.Search;
 import srch.Strategy.BestFirst;
-import srch.nodes.DirectionNode;
+import srch.nodes.PathfindingNode;
 import srch.Evaluation.AStar;
 import srch.Heuristic;
 
@@ -26,7 +26,7 @@ public class DirectionSearch extends Search implements Heuristic {
 	 */
 	public static List<String> search(Location from, Location to, int proximity, int initialStep) 
 	{
-		return new DirectionSearch(to, proximity).search(new DirectionNode(from, initialStep));
+		return new DirectionSearch(to, proximity).search(new PathfindingNode(from, initialStep));
 	}
 	
 	private Location goalLocation;

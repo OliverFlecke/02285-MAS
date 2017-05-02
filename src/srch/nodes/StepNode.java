@@ -1,14 +1,14 @@
 package srch.nodes;
 
 import jason.environment.grid.Location;
-import level.Direction;
 import srch.Node;
 
 public abstract class StepNode extends Node {
 
 	private int step;
 	
-	public StepNode(Location initial, int initialStep) {
+	public StepNode(Location initial, int initialStep) 
+	{
 		super(initial);
 		
 		this.step = initialStep;
@@ -17,12 +17,14 @@ public abstract class StepNode extends Node {
 	public StepNode(Location initial, int object, int initialStep)
 	{
 		super(initial, object);
+		
 		this.step = initialStep;
 	}
 	
-	public StepNode(StepNode parent, Direction direction, Location location)
+	public StepNode(StepNode parent, Location location)
 	{
-		super(parent, direction, location);
+		super(parent, location);
+		
 		this.step = parent.getStep() + 1;
 	}
 	

@@ -5,6 +5,7 @@ import java.util.logging.Logger;
 
 import env.model.WorldModel;
 import env.planner.Planner;
+import jason.environment.grid.Location;
 import level.Level;
 import level.Actions.*;
 import level.cell.*;
@@ -58,11 +59,13 @@ public class WorldEnv extends ServerEnv {
 
 	public boolean canExecute(Action action, int agentId) 
 	{		
+		Location agLoc = model.getAgent(agentId).getLocation();
+		
         switch(action.getType())
         {
-        case MOVE: return model.canMove((MoveAction) action, agentId);
-        case PUSH: return model.canPush((PushAction) action, agentId);
-        case PULL: return model.canPull((PullAction) action, agentId);
+        case MOVE: return model.canMove((MoveAction) action, agLoc);
+        case PUSH: return model.canPush((PushAction) action, agLoc);
+        case PULL: return model.canPull((PullAction) action, agLoc);
         case SKIP: return true;
         }
         throw new UnsupportedOperationException("Invalid action: " + action.getType());        

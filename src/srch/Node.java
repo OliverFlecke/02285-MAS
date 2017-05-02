@@ -4,12 +4,10 @@ import java.util.List;
 
 import env.model.WorldModel;
 import jason.environment.grid.Location;
-import level.Direction;
 
 public abstract class Node {
 	
 	private Node parent;	
-	private Direction direction;
 	private Location location;	
 	private int object, g;
 	
@@ -21,16 +19,14 @@ public abstract class Node {
 	public Node(Location initial, int object)
 	{
 		this.parent 	= null;
-		this.direction 	= null;
 		this.location 	= initial;
 		this.object		= object | WorldModel.WALL;
 		this.g 			= 0;
 	}
 	
-	public Node(Node parent, Direction direction, Location location) 
+	public Node(Node parent, Location location) 
 	{
 		this.parent    	= parent;
-		this.direction 	= direction;
 		this.location  	= location;
 		this.object	   	= parent.object;
 		this.g         	= parent.g + 1;
@@ -38,10 +34,6 @@ public abstract class Node {
 	
 	public Node getParent() {
 		return this.parent;
-	}
-	
-	public Direction getDirection() {
-		return this.direction;
 	}
 	
 	public Location getLocation() {
