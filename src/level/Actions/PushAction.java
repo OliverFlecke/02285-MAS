@@ -1,5 +1,7 @@
 package level.Actions;
 
+import level.Direction;
+
 public class PushAction extends Action {
 	
 	private Direction agentDir;

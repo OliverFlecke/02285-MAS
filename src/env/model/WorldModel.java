@@ -6,18 +6,11 @@ import java.util.logging.Logger;
 import jason.asSyntax.Term;
 import jason.environment.grid.Location;
 import level.Level;
+import level.Direction;
 
 public class WorldModel extends DataWorldModel {
 	
 	private static final Logger logger = Logger.getLogger(WorldModel.class.getName());
-	
-	public static final String UP    = "up"   ;
-	public static final String DOWN  = "down" ;
-	public static final String LEFT  = "left" ;
-	public static final String RIGHT = "right";
-	public static final String[] DIRECTIONS = {
-			UP, DOWN, LEFT, RIGHT
-	};
 	
 	private int step = 0;
 	
@@ -69,36 +62,13 @@ public class WorldModel extends DataWorldModel {
 		printLevel();
 	}
 
-	/**
-	 * Computes a new Location based on current direction 
-	 * and location.
-	 * @param dir - Direction
-	 * @param l - Location
-	 * @return The new Location.
-	 */
-	public static Location newLocation(String dir, Location l)
-	{        
-	    switch (dir) 
-	    {
-	    case UP   : return new Location(l.x, l.y - 1);
-	    case DOWN : return new Location(l.x, l.y + 1);
-	    case LEFT : return new Location(l.x - 1, l.y);
-	    case RIGHT: return new Location(l.x + 1, l.y);
-	    }        
-	    return null; // Could return l
-	}
-	
-	public static Location newLocation(Term dir, Location l) {
-		return newLocation(dir.toString(), l);
-	}
-
     /**
      * Moves an agent based on the direction.
      * @param dir - Direction
      * @param agId - Agent ID
      * @return True if and only if action succeeds.
      */
-    public synchronized boolean move(Term dir, int agId) 
+    public synchronized boolean move(Direction dir, int agId) 
     {        
         if (agId < 0) 
         {
@@ -114,7 +84,7 @@ public class WorldModel extends DataWorldModel {
             return false;
         }
         
-        Location nAgLoc = newLocation(dir, agLoc);
+        Location nAgLoc = Direction.newLocation(dir, agLoc);
         
         if (nAgLoc == null)
         {
@@ -141,7 +111,7 @@ public class WorldModel extends DataWorldModel {
      * @param agId - Agent ID
      * @return True if and only if the action succeeds.
      */
-    public synchronized boolean push(Term dir1, Term dir2, int agId)
+    public synchronized boolean push(Direction dir1, Direction dir2, int agId)
     {
         if (agId < 0) 
         {
@@ -157,7 +127,7 @@ public class WorldModel extends DataWorldModel {
             return false;
         }
         
-    	Location nAgLoc = newLocation(dir1, agLoc);
+    	Location nAgLoc = Direction.newLocation(dir1, agLoc);
         
         if (nAgLoc == null)
         {
@@ -171,7 +141,7 @@ public class WorldModel extends DataWorldModel {
             return false;
     	}
     	
-    	Location nBoxLoc = newLocation(dir2, nAgLoc);
+    	Location nBoxLoc = Direction.newLocation(dir2, nAgLoc);
         
         if (nBoxLoc == null)
         {
@@ -191,6 +161,11 @@ public class WorldModel extends DataWorldModel {
 		return true;
     }
     
+    public void doPush(Direction dir1, Direction dir2, int agId)
+    {
+    	
+    }
+    
     /**
      * Pulls a box based on the direction of the agent 
      * and the direction of the box?
@@ -199,8 +174,8 @@ public class WorldModel extends DataWorldModel {
      * @param agId - Agent ID
      * @return True if and only if the action succeeds.
      */
-    public synchronized boolean pull(Term dir1, Term dir2, int agId)
-    {    	
+    public boolean canPull(Direction dir1, Direction dir2, int agId)
+    {
         if (agId < 0) 
         {
             logger.warning("** Invalid agent number: " + agId);            
@@ -215,7 +190,7 @@ public class WorldModel extends DataWorldModel {
             return false;
         }
         
-    	Location boxLoc = newLocation(dir2, agLoc);
+    	Location boxLoc = Direction.newLocation(dir2, agLoc);
     	
     	if (boxLoc == null)
     	{
@@ -229,7 +204,7 @@ public class WorldModel extends DataWorldModel {
             return false;
     	}
     	
-    	Location nAgLoc = newLocation(dir1, agLoc);
+    	Location nAgLoc = Direction.newLocation(dir1, agLoc);
     	
     	if (nAgLoc == null)
     	{
@@ -243,9 +218,18 @@ public class WorldModel extends DataWorldModel {
             return false;        	
     	}
 
+        return true;
+    }
+    
+    public void doPull(Direction dir1, Direction dir2, int agId)
+    {
+    	
+        Location agLoc 	= getAgPos(agId);        
+    	Location boxLoc = Direction.newLocation(dir2, agLoc);    	
+    	Location nAgLoc = Direction.newLocation(dir1, agLoc);
+
     	move(AGENT, agLoc, nAgLoc);
     	move(BOX, boxLoc, agLoc);
     	remove(LOCKED, boxLoc.x, boxLoc.y);
-        return true;
-    }    
+    }
 }

@@ -1,9 +1,11 @@
 package level.Actions;
 
+import level.Direction;
+
 public class PullAction extends Action {
 
 	private Direction agentDir;
-	private Diraction boxDir;
+	private Direction boxDir;
 	
 	public PullAction(Direction agentDir, Direction boxDir)
 	{
