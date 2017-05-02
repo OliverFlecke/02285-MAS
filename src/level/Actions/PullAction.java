@@ -1,5 +1,6 @@
 package level.Actions;
 
+import jason.environment.grid.Location;
 import level.Direction;
 
 public class PullAction extends Action {
@@ -7,9 +8,9 @@ public class PullAction extends Action {
 	private Direction agentDir;
 	private Direction boxDir;
 	
-	public PullAction(Direction agentDir, Direction boxDir)
+	public PullAction(Direction agentDir, Direction boxDir, Location location)
 	{
-		super(ActionType.PULL);
+		super(ActionType.PULL, location);
 		this.agentDir = agentDir;
 		this.boxDir = boxDir;
 	}

@@ -1,5 +1,6 @@
 package level.Actions;
 
+import jason.environment.grid.Location;
 import level.Direction;
 
 public class PushAction extends Action {
@@ -7,9 +8,9 @@ public class PushAction extends Action {
 	private Direction agentDir;
 	private Direction boxDir;
 	
-	public PushAction(Direction agentDir, Direction boxDir)
+	public PushAction(Direction agentDir, Direction boxDir, Location location)
 	{
-		super(ActionType.PUSH);
+		super(ActionType.PUSH, location);
 		this.agentDir = agentDir;
 		this.boxDir = boxDir;
 	}

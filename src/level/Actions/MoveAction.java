@@ -1,14 +1,15 @@
 package level.Actions;
 
+import jason.environment.grid.Location;
 import level.*;
 
 public class MoveAction extends Action {
 
 	private Direction direction;
 	
-	public MoveAction(Direction direction)
+	public MoveAction(Direction direction, Location location)
 	{
-		super(ActionType.MOVE);
+		super(ActionType.MOVE, location);
 		this.direction = direction;
 	}
 	
