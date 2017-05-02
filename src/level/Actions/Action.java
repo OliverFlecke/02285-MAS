@@ -1,7 +1,9 @@
 package level.Actions;
 
 import java.util.LinkedList;
+import java.util.List;
 
+import jason.environment.grid.Location;
 import level.Direction;
 
 public abstract class Action {
@@ -14,10 +16,12 @@ public abstract class Action {
 	}
 	
 	private ActionType type;
+	private Location agentLocation;
 	
-	protected Action(ActionType type)
+	protected Action(ActionType type, Location location)
 	{
 		this.type = type;
+		this.agentLocation = location;
 	}
 
 	public ActionType getType()
@@ -25,26 +29,28 @@ public abstract class Action {
 		return this.type;
 	}
 	
-	public static final Action[] EVERY;
-	static {
+	public Location getAgentLocation()
+	{
+		return this.agentLocation;
+	}
+	
+	public static List<Action> Every(Location agentLocation)
+	{
 		LinkedList<Action> actions = new LinkedList<Action>();
 		for (Direction d1 : Direction.EVERY) 
 			for (Direction d2 : Direction.EVERY) 
 				if (!Direction.isOpposite(d1, d2)) 
-					actions.add(new PushAction(d1, d2));
+					actions.add(new PushAction(d1, d2, agentLocation));
 		
 		for (Direction d1 : Direction.EVERY) 
 			for (Direction d2 : Direction.EVERY)
 				if (d1 != d2) 
-					actions.add(new PullAction(d1, d2));
+					actions.add(new PullAction(d1, d2, agentLocation));
 		
 		for (Direction dir : Direction.EVERY) 
-			actions.add(new MoveAction(dir));
+			actions.add(new MoveAction(dir, agentLocation));
 		
-		actions.add(new SkipAction());
-
-		EVERY = (Action[]) actions.toArray();
+		actions.add(new SkipAction(agentLocation));
+		return actions;
 	}
 }
-
-
