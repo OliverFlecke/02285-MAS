@@ -7,6 +7,7 @@ import java.util.List;
 
 import env.model.WorldModel;
 import jason.environment.grid.Location;
+import level.Direction;
 import srch.Node;
 
 public class DependencyNode extends Node {
@@ -22,7 +23,7 @@ public class DependencyNode extends Node {
 		this.dependencyCount 	= 0;
 	}
 
-	public DependencyNode(Node parent, String dir, Location loc) 
+	public DependencyNode(Node parent, Direction dir, Location loc) 
 	{
 		super(parent, dir, loc);
 		
@@ -41,11 +42,11 @@ public class DependencyNode extends Node {
 
 	public List<Node> getExpandedNodes() 
 	{
-		List<Node> expandedNodes = new ArrayList<Node>(WorldModel.DIRECTIONS.length);
+		List<Node> expandedNodes = new ArrayList<Node>(Direction.DIRECTIONS.length);
 		
-		for (String dir : WorldModel.DIRECTIONS)
+		for (Direction dir : Direction.DIRECTIONS)
 		{
-			Location loc = WorldModel.newLocation(dir, this.getLocation());
+			Location loc = Direction.newLocation(dir, this.getLocation());
 			
 			if (WorldModel.getInstance().isFree(this.getObject(), loc))
 			{

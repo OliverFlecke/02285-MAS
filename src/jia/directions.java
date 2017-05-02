@@ -46,7 +46,7 @@ public class directions extends DefaultInternalAction {
 	        	directions.add(new LiteralImpl(dir));
 //	        	ts.getLogger().info("Locking: " + location.x + ", " + location.y);
 	        	WorldModel.getInstance().lock(location);
-	        	location = WorldModel.newLocation(dir, location);
+//	        	location = WorldModel.newLocation(dir, location);
 	        }
 	        
 	        return un.unifies(args[5], directions); 
