@@ -6,14 +6,10 @@ import java.util.List;
 
 import env.model.GridWorldModel;
 import env.model.SimulationWorldModel;
-import env.model.WorldModel;
 import env.planner.Planner;
 import jason.environment.grid.Location;
-import level.Direction;
 import level.Actions.Action;
-import level.Actions.SkipAction;
 import level.cell.Agent;
-import level.cell.Cell;
 import srch.Node;
 import srch.interfaces.IActionNode;
 
@@ -40,13 +36,19 @@ public class PathfindingNode extends StepNode implements IActionNode {
 	}
 
 	@Override
-	public List<Node> getExpandedNodes()
+	public Action getAction() 
 	{
-		List<Node> expandedNodes = new ArrayList<Node>(Action.EVERY.length);
+		return action;
+	}
+
+	@Override
+	public List<Node> getExpandedNodes()
+	{		
+		List<Node> expandedNodes = new ArrayList<Node>();
 		
-		for (Action action : Action.EVERY)
+		for (Action action : Action.Every(localModel.getAgentLocation()))
 		{			
-			if (Planner.getModel(this.getStep()).canExecute(action, localModel.getAgentLocation()));
+			if (Planner.getModel(this.getStep()).canExecute(action));
 			{
 				expandedNodes.add(new PathfindingNode(this, action, localModel.run(action)));
 			}
@@ -56,13 +58,15 @@ public class PathfindingNode extends StepNode implements IActionNode {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<Direction> extractPlan() 
+	public List<Action> extractPlan() 
 	{		
+		LinkedList<Action> plan = new LinkedList<>();
+		
 		for (PathfindingNode n = this; n.getAction() != null; n = (PathfindingNode) n.getParent()) 
 		{
-			Planner.getModel(getStep()).doExecute(action, agLoc);
+			plan.addFirst(action);
 		}
-		
+		return plan;
 	}
 
 }

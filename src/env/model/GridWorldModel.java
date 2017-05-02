@@ -136,20 +136,21 @@ public class GridWorldModel {
 	    return result;
 	}
 
-	public boolean canExecute(Action action, Location agLoc) 
+	public boolean canExecute(Action action) 
 	{		
         switch(action.getType())
         {
-        case MOVE: return canMove((MoveAction) action, agLoc);
-        case PUSH: return canPush((PushAction) action, agLoc);
-        case PULL: return canPull((PullAction) action, agLoc);
+        case MOVE: return canMove((MoveAction) action);
+        case PUSH: return canPush((PushAction) action);
+        case PULL: return canPull((PullAction) action);
         case SKIP: return true;
         }
         throw new UnsupportedOperationException("Invalid action: " + action.getType());        
 	}
 
-    public synchronized boolean canMove(MoveAction action, Location agLoc) 
+    public synchronized boolean canMove(MoveAction action) 
     {
+    	Location agLoc = action.getAgentLocation();
     	Direction dir = action.getDirection();
     	
 //        if (agId < 0) 
@@ -183,8 +184,9 @@ public class GridWorldModel {
         return true;
     }	
     
-    public boolean canPush(PushAction action, Location agLoc)
+    public boolean canPush(PushAction action)
     {
+    	Location agLoc = action.getAgentLocation();
     	Direction dir1 = action.getAgentDir();
     	Direction dir2 = action.getBoxDir();
     	
@@ -233,8 +235,9 @@ public class GridWorldModel {
 		return true;
     }
     
-    public boolean canPull(PullAction action, Location agLoc)
+    public boolean canPull(PullAction action)
     {
+    	Location agLoc = action.getAgentLocation();
     	Direction dir1 = action.getAgentDir();
     	Direction dir2 = action.getBoxDir();
     	
@@ -283,20 +286,21 @@ public class GridWorldModel {
         return true;
     }
 	
-	public void doExecute(Action action, Location agLoc)
+	public void doExecute(Action action)
 	{
         switch(action.getType())
         {
-        case MOVE: doMove((MoveAction) action, agLoc); return;
-        case PUSH: doPush((PushAction) action, agLoc); return;
-        case PULL: doPull((PullAction) action, agLoc); return;	
-		case SKIP:                                     return;
+        case MOVE: doMove((MoveAction) action); return;
+        case PUSH: doPush((PushAction) action); return;
+        case PULL: doPull((PullAction) action); return;	
+		case SKIP:                              return;
         }
         throw new UnsupportedOperationException("Invalid action: " + action.getType());    
 	}
     
-    public void doMove(MoveAction action, Location agLoc)
+    public void doMove(MoveAction action)
     {
+    	Location agLoc = action.getAgentLocation();
     	Direction 	dir 	= action.getDirection();
     	
         Location 	nAgLoc 	= Direction.newLocation(dir, agLoc);
@@ -305,8 +309,9 @@ public class GridWorldModel {
         remove(LOCKED, agLoc.x, agLoc.y);
     }
     
-    public void doPush(PushAction action, Location agLoc)
+    public void doPush(PushAction action)
     {
+    	Location agLoc = action.getAgentLocation();
     	Direction 	dir1 	= action.getAgentDir();
     	Direction 	dir2 	= action.getBoxDir();
 
@@ -318,8 +323,9 @@ public class GridWorldModel {
         remove(LOCKED, agLoc.x, agLoc.y);
     }
     
-    public void doPull(PullAction action, Location agLoc)
+    public void doPull(PullAction action)
     {
+    	Location agLoc = action.getAgentLocation();
     	Direction dir1 = action.getAgentDir();
     	Direction dir2 = action.getBoxDir();
     	      
