@@ -10,12 +10,12 @@ import srch.Node;
 
 public class ClosestNode extends Node {
 	
-	public ClosestNode(Location initial) {
-		super(initial);
+	public ClosestNode(Location initial, int initialStep) {
+		super(initial, initialStep);
 	}
 	
-	public ClosestNode(Location initial, int object) {
-		super(initial, object);
+	public ClosestNode(Location initial, int object, int initialStep) {
+		super(initial, object, initialStep);
 	}
 
 	public ClosestNode(Node parent, Direction direction, Location location) {

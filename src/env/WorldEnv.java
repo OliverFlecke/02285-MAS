@@ -5,7 +5,6 @@ import java.util.logging.Logger;
 
 import env.model.WorldModel;
 import env.planner.Planner;
-import jason.asSyntax.*;
 import level.Level;
 import level.Actions.*;
 import level.cell.*;

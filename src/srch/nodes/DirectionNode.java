@@ -11,8 +11,8 @@ import srch.Node;
 
 public class DirectionNode extends Node {
 
-	public DirectionNode(Location initial) {
-		super(initial, WorldModel.BOX);
+	public DirectionNode(Location initial, int initialStep) {
+		super(initial, WorldModel.BOX, initialStep);
 	}
 
 	public DirectionNode(Node parent, Direction direction, Location location) {

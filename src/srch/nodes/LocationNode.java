@@ -11,8 +11,8 @@ import srch.Node;
 
 public class LocationNode extends Node {
 
-	public LocationNode(Location initial) {
-		super(initial);
+	public LocationNode(Location initial, int initialStep) {
+		super(initial, initialStep);
 	}
 
 	public LocationNode(Node parent, Direction direction, Location location) {
