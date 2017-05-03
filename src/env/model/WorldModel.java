@@ -3,9 +3,15 @@ package env.model;
 import java.util.*;
 
 import level.Level;
+import level.cell.Agent;
+import level.cell.Box;
+import level.cell.Goal;
 import level.Color;
 
 public class WorldModel extends DataWorldModel {
+	
+	private Map<Character, Set<Goal>> 	goalMap;
+	private Map<Character, Set<Box>>  	boxMap;
 	
 	private int step = 0;
 	
@@ -23,6 +29,9 @@ public class WorldModel extends DataWorldModel {
 	{		
 		super(level.width, level.height, level.nbAgs);
 		
+		goalMap 	= new HashMap<>();
+		boxMap		= new HashMap<>();
+		
 		initData(level.data, level.colors);
 		
 		instance = this;
@@ -30,6 +39,22 @@ public class WorldModel extends DataWorldModel {
 	
 	public static WorldModel getInstance() {
 		return instance;
+	}
+	
+	public Map<Character, Set<Goal>> getGoalMap() {
+		return goalMap;
+	}
+	
+	public Map<Character, Set<Box>> getBoxMap() {
+		return boxMap;
+	}
+	
+	public Set<Goal> getGoals(char letter) {
+		return goalMap.get(letter);
+	}
+	
+	public Set<Box> getBoxes(char letter) {
+		return boxMap.get(letter);
 	}
 	
 	/**
@@ -55,5 +80,54 @@ public class WorldModel extends DataWorldModel {
 			}
 		}
 		printLevel();
+	}
+	
+	protected void addAgent(int x, int y, char letter, Color color) 
+	{
+		Agent agent = new Agent(x, y, letter, color);
+		int number = agent.getNumber();
+		
+		add(AGENT, x, y);
+		agents[number] = agent;
+		agentArray[x][y] = agent;
+	}
+	
+	protected void addGoal(int x, int y, char letter) 
+	{
+		Goal goal = new Goal(x, y, letter);
+		
+		add(GOAL, x, y);
+		goals.add(goal);
+		goalArray[x][y] = goal;
+		addToMap(goalMap, letter, goal);
+	}
+	
+	protected void addBox(int x, int y, char upperCaseLetter, Color color) 
+	{
+		char letter = Character.toLowerCase(upperCaseLetter);
+		
+		Box box = new Box(x, y, letter, color);
+		
+		add(BOX, x, y);
+		boxes.add(box);
+		boxArray[x][y] = box;
+		addToMap(boxMap, letter, box);
+	}
+	
+	protected void addWall(int x, int y)
+	{
+		add(WALL, x, y);
+	}
+	
+	private <T> void addToMap(Map<Character, Set<T>> map, char letter, T object)
+	{
+		if (map.containsKey(letter))
+		{
+			map.get(letter).add(object);
+		}
+		else
+		{
+			map.put(letter, new HashSet<T>(Arrays.asList(object)));
+		}
 	}
 }

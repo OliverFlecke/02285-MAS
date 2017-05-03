@@ -7,22 +7,18 @@ import level.Location;
 import level.action.MoveAction;
 import level.action.PullAction;
 import level.action.PushAction;
-import level.Color;
 import level.Direction;
 import level.cell.*;
 
 public class DataWorldModel extends GridWorldModel {
 	
-	private Agent[]						agents;
-	private Set<Goal>					goals;
-	private Set<Box>					boxes;
+	protected Agent[]					agents;
+	protected Set<Goal>					goals;
+	protected Set<Box>					boxes;
 
-	private Agent[][]					agentArray;
-	private Goal[][]					goalArray;
-	private Box[][]						boxArray;
-	
-	private Map<Character, Set<Goal>> 	goalMap;
-	private Map<Character, Set<Box>>  	boxMap;
+	protected Agent[][]					agentArray;
+	protected Goal[][]					goalArray;
+	protected Box[][]					boxArray;
 	
 	public DataWorldModel(int width, int height, int nbAgs)
 	{
@@ -35,9 +31,19 @@ public class DataWorldModel extends GridWorldModel {
 		agentArray 	= new Agent[width][height];
 		goalArray 	= new Goal [width][height];
 		boxArray  	= new Box  [width][height];
+	}
+	
+	public DataWorldModel(DataWorldModel model)
+	{
+		super(model);
 		
-		goalMap 	= new HashMap<>();
-		boxMap		= new HashMap<>();
+		agents 		= model.agents.clone();
+		goals		= new HashSet<>(model.goals);
+		boxes		= new HashSet<>(model.boxes);
+		
+		agentArray 	= deepCopyAgents(model.agentArray);
+		goalArray 	= deepCopyGoals(model.goalArray);
+		boxArray 	= deepCopyBoxes(boxArray);		
 	}
 	
 	/**
@@ -68,18 +74,6 @@ public class DataWorldModel extends GridWorldModel {
 		return agents[i].getLocation();
 	}
 	
-	public Agent getAgent(Location l) {
-		return getAgent(l.x, l.y);
-	}
-	
-	public Goal getGoal(Location l) {
-		return getGoal(l.x, l.y);
-	}
-	
-	public Box getBox(Location l) {
-		return getBox(l.x, l.y);
-	}
-	
 	public Agent[] getAgents() {
 		return agents;
 	}
@@ -90,6 +84,18 @@ public class DataWorldModel extends GridWorldModel {
 	
 	public Set<Box> getBoxes() {
 		return boxes;
+	}
+	
+	public Agent getAgent(Location l) {
+		return getAgent(l.x, l.y);
+	}
+	
+	public Goal getGoal(Location l) {
+		return getGoal(l.x, l.y);
+	}
+	
+	public Box getBox(Location l) {
+		return getBox(l.x, l.y);
 	}
 	
 	public Agent getAgent(int x, int y) {
@@ -104,20 +110,37 @@ public class DataWorldModel extends GridWorldModel {
 		return boxArray[x][y];
 	}
 	
-	public Map<Character, Set<Goal>> getGoalMap() {
-		return goalMap;
+	public static Agent[][] deepCopyAgents(Agent[][] data)
+	{
+		Agent[][] result = new Agent[data.length][];
+	    
+	    for (int row = 0; row < data.length; row++) 
+	    {
+	        result[row] = data[row].clone();
+	    }
+	    return result;
 	}
 	
-	public Map<Character, Set<Box>> getBoxMap() {
-		return boxMap;
+	public static Goal[][] deepCopyGoals(Goal[][] data)
+	{
+		Goal[][] result = new Goal[data.length][];
+	    
+	    for (int row = 0; row < data.length; row++) 
+	    {
+	        result[row] = data[row].clone();
+	    }
+	    return result;
 	}
 	
-	public Set<Goal> getGoals(char letter) {
-		return goalMap.get(letter);
-	}
-	
-	public Set<Box> getBoxes(char letter) {
-		return boxMap.get(letter);
+	public static Box[][] deepCopyBoxes(Box[][] data)
+	{
+		Box[][] result = new Box[data.length][];
+	    
+	    for (int row = 0; row < data.length; row++) 
+	    {
+	        result[row] = data[row].clone();
+	    }
+	    return result;
 	}
 	
 	
@@ -141,55 +164,6 @@ public class DataWorldModel extends GridWorldModel {
 		}
 
 		super.move(obj, fr, to);
-	}
-	
-	protected void addAgent(int x, int y, char letter, Color color) 
-	{
-		Agent agent = new Agent(x, y, letter, color);
-		int number = agent.getNumber();
-		
-		add(AGENT, x, y);
-		agents[number] = agent;
-		agentArray[x][y] = agent;
-	}
-	
-	protected void addGoal(int x, int y, char letter) 
-	{
-		Goal goal = new Goal(x, y, letter);
-		
-		add(GOAL, x, y);
-		goals.add(goal);
-		goalArray[x][y] = goal;
-		addToMap(goalMap, letter, goal);
-	}
-	
-	protected void addBox(int x, int y, char upperCaseLetter, Color color) 
-	{
-		char letter = Character.toLowerCase(upperCaseLetter);
-		
-		Box box = new Box(x, y, letter, color);
-		
-		add(BOX, x, y);
-		boxes.add(box);
-		boxArray[x][y] = box;
-		addToMap(boxMap, letter, box);
-	}
-	
-	protected void addWall(int x, int y)
-	{
-		add(WALL, x, y);
-	}
-	
-	private <T> void addToMap(Map<Character, Set<T>> map, char letter, T object)
-	{
-		if (map.containsKey(letter))
-		{
-			map.get(letter).add(object);
-		}
-		else
-		{
-			map.put(letter, new HashSet<T>(Arrays.asList(object)));
-		}
 	}
 
 	public void doMove(MoveAction action, int agId) {

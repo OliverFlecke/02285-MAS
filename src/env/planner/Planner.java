@@ -4,13 +4,11 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map.Entry;
-import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import java.util.Optional;
 import java.util.Set;
 
 import env.model.DataWorldModel;
-import env.model.GridWorldModel;
 import env.model.WorldModel;
 import level.Location;
 import level.action.Action;
@@ -23,12 +21,12 @@ import srch.searches.closest.AgentSearch;
 
 public class Planner {
 	
-	private static final Logger logger = Logger.getLogger(Planner.class.getName());
+//	private static final Logger logger = Logger.getLogger(Planner.class.getName());
 	
-	private static DataWorldModel 	worldModel;	
+	private static WorldModel 	worldModel;	
 	private static Set<Goal> 	unsolvedGoals;
 
-	private static ArrayList<GridWorldModel> gridModels;
+	private static ArrayList<DataWorldModel> gridModels;
 	
 	public static ArrayList<ArrayList<Action>> actions;
 	
@@ -38,9 +36,9 @@ public class Planner {
 		
 		unsolvedGoals = new HashSet<>(worldModel.getGoals());
 		
-		gridModels = new ArrayList<GridWorldModel>();
+		gridModels = new ArrayList<DataWorldModel>();
 		
-		gridModels.add(new GridWorldModel(worldModel));
+		gridModels.add(new DataWorldModel(worldModel));
 		
 		actions = new ArrayList<ArrayList<Action>>(worldModel.getNbAgs());
 		
@@ -67,13 +65,15 @@ public class Planner {
 				Goal goal 	= goalOpt.get();
 				Box box 	= goal.getBox();
 				
-				Location agentLoc = AgentSearch.search(box.getColor(), box.getLocation());
+//				Location agentLoc = AgentSearch.search(box.getColor(), box.getLocation());
 				
-				Agent agent = worldModel.getAgent(agentLoc);
+//				Agent agent = worldModel.getAgent(agentLoc);
+				
+				Agent agent = worldModel.getAgent(0);
 				
 				int initialStep = getInitialStep(agent);
 				
-				List<Action> actions = PathfindingSearch.search(agentLoc, goal.getLocation(), initialStep, agent, box, getModel(initialStep));
+				List<Action> actions = PathfindingSearch.search(agent.getLocation(), goal.getLocation(), initialStep, agent, box, getModel(initialStep));
 				
 				System.err.println(actions);
 				Planner.actions.get(agent.getNumber()).addAll(actions);
@@ -94,7 +94,7 @@ public class Planner {
 		return actions.get(agent.getNumber()).size() + 1;
 	}
 	
-	public static GridWorldModel getModel(int step)
+	public static DataWorldModel getModel(int step)
 	{
 		if (step > gridModels.size())
 		{
@@ -103,7 +103,7 @@ public class Planner {
 		
 		if (step == gridModels.size())
 		{
-			gridModels.add(new GridWorldModel(gridModels.get(step - 1)));
+			gridModels.add(new DataWorldModel(gridModels.get(step - 1)));
 		}
 		
 		return gridModels.get(step);
