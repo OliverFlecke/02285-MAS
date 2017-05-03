@@ -53,4 +53,32 @@ public abstract class Action {
 		actions.add(new SkipAction(agentLocation));
 		return actions;
 	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((agentLocation == null) ? 0 : agentLocation.hashCode());
+		result = prime * result + ((type == null) ? 0 : type.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Action other = (Action) obj;
+		if (agentLocation == null) {
+			if (other.agentLocation != null)
+				return false;
+		} else if (!agentLocation.equals(other.agentLocation))
+			return false;
+		if (type != other.type)
+			return false;
+		return true;
+	}
 }
