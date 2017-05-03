@@ -12,6 +12,8 @@ public enum Color {
 
 	public static Color getColor(String color)
 	{
+		if (color == null) return Color.Blue;
+		
 		switch (color)
 		{
 		case "red":			return Color.Red;

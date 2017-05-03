@@ -39,9 +39,11 @@ public class Planner {
 		
 		gridModels = new ArrayList<GridWorldModel>();
 		
-		actions = new ArrayList<ArrayList<Action>>(worldModel.getAgents().length);
+		gridModels.add(new GridWorldModel(worldModel));
 		
-		for (int i = 0; i < actions.size(); i++)
+		actions = new ArrayList<ArrayList<Action>>(worldModel.getNbAgs());
+		
+		for (int i = 0; i < worldModel.getNbAgs(); i++)
 		{
 			actions.add(new ArrayList<Action>());
 		}
@@ -57,11 +59,12 @@ public class Planner {
 	{
 		while (!unsolvedGoals.isEmpty())
 		{
-			Optional<Goal> goal = unsolvedGoals.stream().filter(g -> !g.hasDependencies()).findFirst();
+			Optional<Goal> goalOpt = unsolvedGoals.stream().filter(g -> !g.hasDependencies()).findFirst();
 			
-			if (goal.isPresent())
+			if (goalOpt.isPresent())
 			{
-				Box box = goal.get().getBox();
+				Goal goal 	= goalOpt.get();
+				Box box 	= goal.getBox();
 				
 				Location agentLoc = AgentSearch.search(box.getColor(), box.getLocation());
 				
@@ -69,8 +72,9 @@ public class Planner {
 				
 				int initialStep = getInitialStep(agent);
 				
-				List<Action> actions = PathfindingSearch.search(agentLoc, box.getLocation(), initialStep, agent, getModel(initialStep));
+				List<Action> actions = PathfindingSearch.search(agentLoc, goal.getLocation(), initialStep, agent, box, getModel(initialStep));
 				
+				System.err.println(actions);
 				Planner.actions.get(agent.getNumber()).addAll(actions);
 				
 				for (Action action : actions)
@@ -78,25 +82,24 @@ public class Planner {
 					getModel(initialStep).doExecute(action);
 					
 					initialStep++;
-				}
-				
+				}				
 			}
 		}
 	}
 	
 	public static int getInitialStep(Agent agent)
 	{
-		return actions.get(agent.getNumber()).size();
+		return actions.get(agent.getNumber()).size() + 1;
 	}
 	
 	public static GridWorldModel getModel(int step)
 	{
-		if (step - gridModels.size() > 1)
+		if (step > gridModels.size())
 		{
 			throw new UnsupportedOperationException("getModel");
 		}
 		
-		if (step > gridModels.size())
+		if (step == gridModels.size())
 		{
 			gridModels.add(new GridWorldModel(gridModels.get(step - 1)));
 		}

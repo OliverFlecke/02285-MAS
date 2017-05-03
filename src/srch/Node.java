@@ -48,7 +48,7 @@ public abstract class Node {
 		return g;
 	}
 
-	public abstract List<Node> getExpandedNodes();
+	public abstract List<? extends Node> getExpandedNodes();
 
 	public abstract <T> T extractPlan();
 

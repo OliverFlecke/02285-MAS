@@ -5,7 +5,7 @@ import java.util.List;
 import env.model.GridWorldModel;
 import jason.environment.grid.Location;
 import level.Actions.Action;
-import level.cell.Agent;
+import level.cell.Cell;
 import srch.Node;
 import srch.Search;
 import srch.Strategy.BestFirst;
@@ -27,9 +27,9 @@ public class PathfindingSearch extends Search implements Heuristic {
 	 * With proximity = 1, the solution is a path to a cell adjacent to the goal location.
 	 * @return Ordered list of directions leading to the goal.
 	 */
-	public static List<Action> search(Location from, Location to, int initialStep, Agent agent, GridWorldModel model) 
+	public static List<Action> search(Location from, Location to, int initialStep, Cell agent, Cell tracked, GridWorldModel model) 
 	{
-		return new PathfindingSearch(to, 0).search(new PathfindingNode(from, initialStep, agent, model));
+		return new PathfindingSearch(to, 0).search(new PathfindingNode(from, initialStep, agent, tracked, model));
 	}
 	
 	private Location goalLocation;
@@ -46,12 +46,19 @@ public class PathfindingSearch extends Search implements Heuristic {
 	@Override
 	public boolean isGoalState(Node n) 
 	{
-		return n.getLocation().distance(goalLocation) == goalDistance;
+		return ((PathfindingNode) n).getTrackedLoc().distance(goalLocation) == goalDistance;
 	}
 
 	@Override
 	public int h(Node n) 
 	{
-		return n.getLocation().distance(goalLocation); 
+		int trackedDist = ((PathfindingNode) n).getTrackedLoc().distance(n.getLocation());
+		int goalDist    = ((PathfindingNode) n).getTrackedLoc().distance(goalLocation);
+		
+		if (trackedDist > 1)
+		{
+			return trackedDist + goalDist;
+		}		
+		return goalDist; 
 	}
 }

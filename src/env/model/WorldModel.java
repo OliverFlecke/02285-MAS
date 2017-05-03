@@ -4,6 +4,7 @@ import java.util.*;
 import jason.environment.grid.Location;
 import level.Level;
 import level.Actions.*;
+import level.Color;
 import level.Direction;
 
 public class WorldModel extends DataWorldModel {
@@ -46,11 +47,11 @@ public class WorldModel extends DataWorldModel {
 			{
 				char ch = data[x][y];
 				
-				if (Character.isDigit(ch)) addAgent(x, y, ch, colors.get(ch));
+				if (Character.isDigit(ch)) addAgent(x, y, ch, Color.getColor(colors.get(ch)));
 				
 				else if (Character.isLowerCase(ch)) addGoal(x, y, ch);
 				
-				else if (Character.isUpperCase(ch)) addBox(x, y, ch, colors.get(ch));
+				else if (Character.isUpperCase(ch)) addBox(x, y, ch, Color.getColor(colors.get(ch)));
 				
 				else if (ch == '+') addWall(x, y);
 			}

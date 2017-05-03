@@ -9,29 +9,32 @@ import env.model.SimulationWorldModel;
 import env.planner.Planner;
 import jason.environment.grid.Location;
 import level.Actions.Action;
-import level.cell.Agent;
+import level.cell.Cell;
 import srch.Node;
 import srch.interfaces.IActionNode;
 
 public class PathfindingNode extends StepNode implements IActionNode {
 
 	private Action action;
-	private SimulationWorldModel localModel;
+	private Location trackedLoc;
+	private SimulationWorldModel model;
 	
-	public PathfindingNode(Location initial, int initialStep, Agent agent, GridWorldModel model) 
+	public PathfindingNode(Location initial, int initialStep, Cell agent, Cell tracked, GridWorldModel model) 
 	{
 		super(initial, initialStep);
-		
-		this.localModel = new SimulationWorldModel(model, agent);
+
 		this.action 	= null;
+		this.trackedLoc = tracked.getLocation();
+		this.model 		= new SimulationWorldModel(model, agent, tracked);
 	}
 
 	public PathfindingNode(StepNode parent, Action action, SimulationWorldModel model) 
 	{
-		super(parent, model.getCellLocation());
-		
-		this.localModel = model;		
+		super(parent, model.getAgentLocation());
+
 		this.action 	= action;
+		this.trackedLoc = model.getCellLocation();
+		this.model 		= model;		
 	}
 
 	@Override
@@ -39,17 +42,22 @@ public class PathfindingNode extends StepNode implements IActionNode {
 	{
 		return action;
 	}
+	
+	public Location getTrackedLoc()
+	{
+		return trackedLoc;
+	}
 
 	@Override
 	public List<Node> getExpandedNodes()
 	{		
 		List<Node> expandedNodes = new ArrayList<Node>();
 		
-		for (Action action : Action.Every(localModel.getAgentLocation()))
+		for (Action action : Action.Every(model.getAgentLocation()))
 		{			
-			if (Planner.getModel(this.getStep()).canExecute(action));
+			if (Planner.getModel(this.getStep()).canExecute(action))
 			{
-				expandedNodes.add(new PathfindingNode(this, action, localModel.run(action)));
+				expandedNodes.add(new PathfindingNode(this, action, model.run(action)));
 			}
 		}
 		return expandedNodes;
@@ -63,9 +71,40 @@ public class PathfindingNode extends StepNode implements IActionNode {
 		
 		for (PathfindingNode n = this; n.getAction() != null; n = (PathfindingNode) n.getParent()) 
 		{
-			plan.addFirst(action);
+			plan.addFirst(n.action);
 		}
 		return plan;
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = super.hashCode();
+		result = prime * result + ((action == null) ? 0 : action.hashCode());
+		result = prime * result + ((trackedLoc == null) ? 0 : trackedLoc.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (!super.equals(obj))
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		PathfindingNode other = (PathfindingNode) obj;
+		if (action == null) {
+			if (other.action != null)
+				return false;
+		} else if (!action.equals(other.action))
+			return false;
+		if (trackedLoc == null) {
+			if (other.trackedLoc != null)
+				return false;
+		} else if (!trackedLoc.equals(other.trackedLoc))
+			return false;
+		return true;
 	}
 
 }

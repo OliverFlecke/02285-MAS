@@ -153,7 +153,7 @@ public class GridWorldModel {
         
         if (agLoc == null) 
         {
-            logger.warning("** Lost the location of agent");
+//            logger.warning("** Lost the location of agent");
             return false;
         }
         
@@ -161,13 +161,13 @@ public class GridWorldModel {
         
         if (nAgLoc == null)
         {
-            logger.warning("** Invalid direction: " + dir);
+//            logger.warning("** Invalid direction: " + dir);
             return false;
         }
         
         if (!isFree(nAgLoc))
         {
-            logger.warning("** Location not free: " + nAgLoc);   
+//            logger.warning("** Location not free: " + nAgLoc);   
             return false;
         }
 
@@ -190,7 +190,7 @@ public class GridWorldModel {
         
         if (agLoc == null) 
         {
-            logger.warning("** Lost the location of agent");          
+//            logger.warning("** Lost the location of agent");          
             return false;
         }
         
@@ -198,13 +198,13 @@ public class GridWorldModel {
         
         if (nAgLoc == null)
         {
-            logger.warning("** Invalid direction: " + dir1);
+//            logger.warning("** Invalid direction: " + dir1);
             return false;
         }
     	
     	if (isFree(BOX, nAgLoc))
     	{
-            logger.warning("** No box at: " + nAgLoc);            
+//            logger.warning("** No box at: " + nAgLoc);            
             return false;
     	}
     	
@@ -212,13 +212,13 @@ public class GridWorldModel {
         
         if (nBoxLoc == null)
         {
-            logger.warning("** Invalid direction: " + dir2);              
+//            logger.warning("** Invalid direction: " + dir2);              
             return false;
         }
         
         if (!isFree(nBoxLoc))
         {
-            logger.warning("** Location not free: " + nBoxLoc);   
+//            logger.warning("** Location not free: " + nBoxLoc);   
             return false;        	
         }
     	
@@ -241,7 +241,7 @@ public class GridWorldModel {
         
         if (agLoc == null) 
         {
-            logger.warning("** Lost the location of agent");            
+//            logger.warning("** Lost the location of agent");            
             return false;
         }
         
@@ -249,13 +249,13 @@ public class GridWorldModel {
     	
     	if (boxLoc == null)
     	{
-            logger.warning("** Invalid direction: " + dir2);              
+//            logger.warning("** Invalid direction: " + dir2);              
             return false;
     	}
     	
     	if (isFree(BOX, boxLoc))
     	{
-            logger.warning("** No box at: " + boxLoc);            
+//            logger.warning("** No box at: " + boxLoc);            
             return false;
     	}
     	
@@ -263,13 +263,13 @@ public class GridWorldModel {
     	
     	if (nAgLoc == null)
     	{
-            logger.warning("** Invalid direction: " + dir1);              
+//            logger.warning("** Invalid direction: " + dir1);              
             return false;
     	}
     	
     	if (!isFree(nAgLoc))
     	{
-            logger.warning("** Location not free: " + nAgLoc);   
+//            logger.warning("** Location not free: " + nAgLoc);   
             return false;        	
     	}
 

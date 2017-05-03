@@ -33,6 +33,7 @@ public class WorldEnv extends ServerEnv {
 		} 
 		catch (Exception e) 
 		{
+			e.printStackTrace();
 			logger.warning("Exception: " + e + " at init: " + e.getMessage());
 		}
     }

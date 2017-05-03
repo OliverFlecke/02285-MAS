@@ -2,7 +2,7 @@ package level.cell;
 
 import jason.environment.grid.Location;
 
-public abstract class Cell {
+public class Cell {
 	
 	private Location location;
 	
@@ -14,6 +14,11 @@ public abstract class Cell {
 	public Cell(int x, int y) 
 	{
 		this.location = new Location(x, y);
+	}
+	
+	public Cell(Cell cell)
+	{
+		this.location = new Location(cell.location.x, cell.location.y);
 	}
 
 	public Location getLocation() 

@@ -2,24 +2,23 @@ package env.model;
 
 import jason.environment.grid.Location;
 import level.Actions.Action;
-import level.cell.Agent;
 import level.cell.Cell;
 
 public class SimulationWorldModel extends GridWorldModel {
 	
-	private Cell cell;
-	private Agent agent;
+	private Cell agent, tracked;
 
-	public SimulationWorldModel(GridWorldModel model, Agent agent)
+	public SimulationWorldModel(GridWorldModel model, Cell agent, Cell tracked)
 	{
 		super(model);
 		
-		this.agent = new Agent(agent);
+		this.agent 		= new Cell(agent);
+		this.tracked  	= new Cell(tracked);
 	}
 	
 	public Location getCellLocation()
 	{
-		return cell.getLocation();
+		return tracked.getLocation();
 	}
 	
 	public Location getAgentLocation()
@@ -29,9 +28,9 @@ public class SimulationWorldModel extends GridWorldModel {
 	
 	public void move(int obj, Location fr, Location to)
 	{
-		if (cell.getLocation().equals(fr))
+		if (tracked.getLocation().equals(fr))
 		{
-			cell.setLocation(to);
+			tracked.setLocation(to);
 		}
 		
 		if (obj == AGENT)
@@ -44,7 +43,7 @@ public class SimulationWorldModel extends GridWorldModel {
     
     public SimulationWorldModel run(Action action)
     {    	
-    	SimulationWorldModel simulation = new SimulationWorldModel(this, this.agent);
+    	SimulationWorldModel simulation = new SimulationWorldModel(this, this.agent, this.tracked);
     	
     	simulation.doExecute(action);
     	
