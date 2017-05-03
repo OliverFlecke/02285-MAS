@@ -8,15 +8,30 @@ import env.model.WorldModel;
 import jason.environment.grid.Location;
 import level.Direction;
 import srch.Node;
+import srch.interfaces.IDirectionNode;
 
-public class LocationNode extends Node {
+public class LocationNode extends Node implements IDirectionNode {
+	
+	private Direction direction;
 
-	public LocationNode(Location initial, int initialStep) {
+	public LocationNode(Location initial, int initialStep) 
+	{
 		super(initial, initialStep);
+		
+		this.direction = null;
 	}
 
-	public LocationNode(Node parent, Direction direction, Location location) {
-		super(parent, direction, location);
+	public LocationNode(Node parent, Direction direction, Location location) 
+	{
+		super(parent, location);
+		
+		this.direction = direction;
+	}
+
+	@Override
+	public Direction getDirection() 
+	{
+		return direction;
 	}
 
 	@Override

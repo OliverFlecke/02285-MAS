@@ -9,24 +9,28 @@ import env.model.WorldModel;
 import jason.environment.grid.Location;
 import level.Direction;
 import srch.Node;
+import srch.interfaces.IDirectionNode;
 
-public class DependencyNode extends Node {
+public class DependencyNode extends Node implements IDirectionNode {
 
+	private Direction direction;
 	private int dependency;
 	private int dependencyCount;
 
-	public DependencyNode(Location initial, int dependency, int initialStep) 
+	public DependencyNode(Location initial, int dependency) 
 	{
-		super(initial, initialStep);
+		super(initial);
 		
+		this.direction 			= null;
 		this.dependency 		= dependency;
 		this.dependencyCount 	= 0;
 	}
 
 	public DependencyNode(Node parent, Direction dir, Location loc) 
 	{
-		super(parent, dir, loc);
+		super(parent, loc);
 		
+		this.direction			= dir;
 		this.dependency 		= ((DependencyNode) parent).dependency;
 		this.dependencyCount 	= ((DependencyNode) parent).dependencyCount;
 		
@@ -35,11 +39,17 @@ public class DependencyNode extends Node {
 			dependencyCount++;
 		}
 	}
+
+	@Override
+	public Direction getDirection() {
+		return direction;
+	}
 	
 	public int getDependencies() {
 		return dependencyCount;
 	}
 
+	@Override
 	public List<Node> getExpandedNodes() 
 	{
 		List<Node> expandedNodes = new ArrayList<Node>(Direction.EVERY.length);

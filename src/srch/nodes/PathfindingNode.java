@@ -23,16 +23,15 @@ public class PathfindingNode extends StepNode implements IActionNode {
 		super(initial, initialStep);
 		
 		this.localModel = new SimulationWorldModel(model, agent);
-		this.action = null;
+		this.action 	= null;
 	}
 
 	public PathfindingNode(StepNode parent, Action action, SimulationWorldModel model) 
 	{
 		super(parent, model.getCellLocation());
 		
-		this.localModel = model;
-		
-		this.action = action;
+		this.localModel = model;		
+		this.action 	= action;
 	}
 
 	@Override
