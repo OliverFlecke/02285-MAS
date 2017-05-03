@@ -2,7 +2,7 @@ package srch;
 
 import java.util.List;
 
-import env.model.WorldModel;
+import env.model.DataWorldModel;
 import level.Location;
 
 public abstract class Node {
@@ -20,7 +20,7 @@ public abstract class Node {
 	{
 		this.parent 	= null;
 		this.location 	= initial;
-		this.object		= object | WorldModel.WALL;
+		this.object		= object | DataWorldModel.WALL;
 		this.g 			= 0;
 	}
 	

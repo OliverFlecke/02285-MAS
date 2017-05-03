@@ -1,5 +1,6 @@
 package srch.searches.closest;
 
+import env.model.DataWorldModel;
 import env.model.WorldModel;
 import level.Location;
 import level.cell.Goal;
@@ -17,7 +18,7 @@ public class GoalSearch extends ClosestSearch {
 
 	public GoalSearch(String color) 
 	{
-		super(WorldModel.GOAL);
+		super(DataWorldModel.GOAL);
 		
 		this.color = color;
 	}

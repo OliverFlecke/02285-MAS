@@ -3,6 +3,7 @@ package env;
 
 import java.util.logging.Logger;
 
+import env.model.DataWorldModel;
 import env.model.WorldModel;
 import env.planner.Planner;
 import level.Level;
@@ -12,7 +13,7 @@ public class WorldEnv extends ServerEnv {
 
     private static final Logger logger = Logger.getLogger(WorldEnv.class.getName());
 	
-    private static WorldModel model;
+    private static DataWorldModel model;
     
     private static WorldEnv instance;
     

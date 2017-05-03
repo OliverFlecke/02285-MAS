@@ -1,7 +1,7 @@
 package srch.searches.closest;
 
+import env.model.DataWorldModel;
 import env.model.GridWorldModel;
-import env.model.WorldModel;
 import level.Location;
 import srch.Node;
 import srch.Search;
@@ -26,6 +26,6 @@ public class StorageSearch extends Search {
 
 	@Override
 	public boolean isGoalState(Node n) {
-		return localModel.isFree(WorldModel.LOCKED, n.getLocation());
+		return localModel.isFree(DataWorldModel.LOCKED, n.getLocation());
 	}
 }

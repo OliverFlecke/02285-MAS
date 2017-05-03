@@ -9,6 +9,7 @@ import java.util.stream.Collectors;
 import java.util.Optional;
 import java.util.Set;
 
+import env.model.DataWorldModel;
 import env.model.GridWorldModel;
 import env.model.WorldModel;
 import level.Location;
@@ -24,12 +25,12 @@ public class Planner {
 	
 	private static final Logger logger = Logger.getLogger(Planner.class.getName());
 	
-	private static WorldModel 	worldModel;	
+	private static DataWorldModel 	worldModel;	
 	private static Set<Goal> 	unsolvedGoals;
 
 	private static ArrayList<GridWorldModel> gridModels;
 	
-	private static ArrayList<ArrayList<Action>> actions;
+	public static ArrayList<ArrayList<Action>> actions;
 	
 	public static void plan()
 	{
@@ -82,7 +83,8 @@ public class Planner {
 					getModel(initialStep).doExecute(action);
 					
 					initialStep++;
-				}				
+				}	
+				return;
 			}
 		}
 	}
@@ -219,7 +221,7 @@ public class Planner {
 			Location from = goal.getBox().getLocation();	
 			Location to   = goal.getLocation();		
 
-	        List<Location> dependencies = DependencySearch.search(from, to, WorldModel.GOAL);
+	        List<Location> dependencies = DependencySearch.search(from, to, DataWorldModel.GOAL);
 	        
 	        List<Goal> goals = dependencies.stream().map(loc -> worldModel.getGoal(loc))
 	        										.collect(Collectors.toList());
