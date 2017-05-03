@@ -5,12 +5,15 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.PriorityQueue;
+import java.util.Queue;
 import java.util.Set;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 import env.model.DataWorldModel;
@@ -27,7 +30,7 @@ import srch.searches.PathfindingSearch;
 
 public class Planner {
 	
-//	private static final Logger logger = Logger.getLogger(Planner.class.getName());
+	private static final Logger logger = Logger.getLogger(Planner.class.getName());
 	
 	private static WorldModel 	worldModel;	
 
@@ -52,28 +55,28 @@ public class Planner {
 		
 		matchBoxesAndGoals();
 		
-		PriorityQueue<Agent> agents = new PriorityQueue<Agent>(new AgentComparator(this));
+		Queue<Agent> queue = new LinkedList<Agent>();
 		for (Agent agent : worldModel.getAgents()) 
-			agents.add(agent);
+			queue.add(agent);
 		
 //		List<Goal> goals = prioritizeGoals(goals);
 		
-		Agent agent = agents.poll();
 		
-		while (!getUnsolvedGoals(actions.get(agent.getNumber()).size()).isEmpty())
+		for (Collection<Goal> goals; !(goals = getUnsolvedGoals()).isEmpty();)
 		{
-			Goal goal = prioritizeGoals(getUnsolvedGoals(actions.get(agent.getNumber()).size())).stream().findFirst().get();
+			Agent agent = queue.poll();
+			
+			for (Goal goal : prioritizeGoals(goals))
 			{
-				sovleGoal(goal, agent);
-
-				agents.add(agent);
-				agent = agents.poll();
+				if (solveGoal(goal, agent)) break;
 			}
+			
+			queue.add(agent);
 		}
 	}
 	
 
-	public void sovleGoal(Goal goal, Agent agent)
+	public boolean solveGoal(Goal goal, Agent agent)
 	{
 		Box box = goal.getBox();
 
@@ -81,8 +84,11 @@ public class Planner {
 
 		List<Action> actions = PathfindingSearch.search(agent.getLocation(), goal.getLocation(), initialStep, agent, box, getModel(initialStep));
 
-		if (actions.isEmpty())
-			actions.add(new SkipAction(agent.getLocation()));
+		if (actions == null)
+		{
+			logger.info("Could not solve goal");
+			return false;			
+		}
 
 		System.err.println(actions);
 
@@ -92,11 +98,12 @@ public class Planner {
 		{
 			getModel(initialStep++).doExecute(action);
 		}
+		return true;
 	}
 	
-	public Collection<Goal> getUnsolvedGoals(int step)
+	public Collection<Goal> getUnsolvedGoals()
 	{
-		return getModel(step).getUnsolvedGoals();
+		return getModel(gridModels.size() - 1).getUnsolvedGoals();
 	}
 	
 	public int getInitialStep(Agent agent)
