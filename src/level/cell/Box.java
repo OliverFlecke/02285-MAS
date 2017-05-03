@@ -1,10 +1,11 @@
 package level.cell;
 
 import env.model.WorldModel;
+import level.Color;
 
 public class Box extends Colored {
 
-	public Box(int x, int y, char letter, String color)
+	public Box(int x, int y, char letter, Color color)
 	{
 		super(x, y, letter, color);
 	}

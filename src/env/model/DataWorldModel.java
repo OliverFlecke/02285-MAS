@@ -4,6 +4,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import jason.environment.grid.Location;
+import level.Color;
 import level.cell.*;
 
 public class DataWorldModel extends GridWorldModel {
@@ -138,7 +139,7 @@ public class DataWorldModel extends GridWorldModel {
 		super.move(obj, fr, to);
 	}
 	
-	protected void addAgent(int x, int y, char letter, String color) 
+	protected void addAgent(int x, int y, char letter, Color color) 
 	{
 		Agent agent = new Agent(x, y, letter, color);
 		int number = agent.getNumber();
@@ -158,7 +159,7 @@ public class DataWorldModel extends GridWorldModel {
 		addToMap(goalMap, letter, goal);
 	}
 	
-	protected void addBox(int x, int y, char upperCaseLetter, String color) 
+	protected void addBox(int x, int y, char upperCaseLetter, Color color) 
 	{
 		char letter = Character.toLowerCase(upperCaseLetter);
 		
