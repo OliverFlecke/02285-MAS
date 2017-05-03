@@ -37,6 +37,9 @@ public abstract class Action {
 	public static List<Action> Every(Location agentLocation)
 	{
 		LinkedList<Action> actions = new LinkedList<Action>();
+		for (Direction dir : Direction.EVERY) 
+			actions.add(new MoveAction(dir, agentLocation));
+		
 		for (Direction d1 : Direction.EVERY) 
 			for (Direction d2 : Direction.EVERY) 
 				if (!Direction.isOpposite(d1, d2)) 
@@ -46,9 +49,6 @@ public abstract class Action {
 			for (Direction d2 : Direction.EVERY)
 				if (d1 != d2) 
 					actions.add(new PullAction(d1, d2, agentLocation));
-		
-		for (Direction dir : Direction.EVERY) 
-			actions.add(new MoveAction(dir, agentLocation));
 		
 		actions.add(new SkipAction(agentLocation));
 		return actions;

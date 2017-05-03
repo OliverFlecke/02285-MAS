@@ -1,7 +1,5 @@
 package level;
 
-import level.Location;
-
 public enum Direction {
 
 	NORTH,
