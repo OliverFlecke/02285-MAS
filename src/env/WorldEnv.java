@@ -7,6 +7,8 @@ import env.model.DataWorldModel;
 import env.model.WorldModel;
 import env.planner.Planner;
 import level.Level;
+import level.action.Action;
+import level.action.SkipAction;
 import level.cell.*;
 
 public class WorldEnv extends ServerEnv {
@@ -42,6 +44,22 @@ public class WorldEnv extends ServerEnv {
     public static WorldEnv getInstance() 
     {
     	return instance;
+    }
+    
+    public void executePlanner()
+    {
+    	for (int i = 0; ; i++) 
+    	{
+			for (Agent agent : model.getAgents())
+			{
+				Action action;
+				if (i < Planner.actions.get(agent.getNumber()).size())
+					action = Planner.actions.get(agent.getNumber()).get(i);
+				else
+					action = new SkipAction(agent.getLocation());
+ 				scheduleAction(action, agent.getNumber());
+			}	
+		}
     }
     
     @Override

@@ -83,8 +83,7 @@ public class Planner {
 					getModel(initialStep).doExecute(action);
 					
 					initialStep++;
-				}	
-				return;
+				}
 			}
 		}
 	}
