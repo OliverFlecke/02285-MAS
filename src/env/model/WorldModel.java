@@ -119,7 +119,7 @@ public class WorldModel extends DataWorldModel {
 		add(WALL, x, y);
 	}
 	
-	private <T> void addToMap(Map<Character, Set<T>> map, char letter, T object)
+	private static <T> void addToMap(Map<Character, Set<T>> map, char letter, T object)
 	{
 		if (map.containsKey(letter))
 		{

@@ -19,6 +19,8 @@ public class WorldEnv extends ServerEnv {
     
     private static WorldEnv instance;
     
+    private Planner planner;
+    
     public WorldEnv()
     {
     	super();
@@ -32,7 +34,9 @@ public class WorldEnv extends ServerEnv {
 
 			updateNumberOfAgents();
 			
-			Planner.plan();
+			planner = new Planner();
+			
+			planner.plan();
 		} 
 		catch (Exception e) 
 		{
@@ -53,8 +57,8 @@ public class WorldEnv extends ServerEnv {
 			for (Agent agent : model.getAgents())
 			{
 				Action action;
-				if (i < Planner.actions.get(agent.getNumber()).size())
-					action = Planner.actions.get(agent.getNumber()).get(i);
+				if (i < planner.actions.get(agent.getNumber()).size())
+					action = planner.actions.get(agent.getNumber()).get(i);
 				else
 					action = new SkipAction(agent.getLocation());
  				scheduleAction(action, agent.getNumber());
