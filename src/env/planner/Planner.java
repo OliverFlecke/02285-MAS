@@ -52,44 +52,39 @@ public class Planner {
 		
 		matchBoxesAndGoals();
 		
-		for (List<Goal> goals; !(goals = getUnsolvedGoals()).isEmpty();)
-		{
-			execute(goals);
-		}
-	}
-	
-
-	public void execute(List<Goal> goals)
-	{
 		PriorityQueue<Agent> agents = new PriorityQueue<Agent>(new AgentComparator(this));
 		for (Agent agent : worldModel.getAgents()) 
 			agents.add(agent);
 		
-		for (Goal goal : goals)
+		for (List<Goal> goals; !(goals = getUnsolvedGoals()).isEmpty();)
 		{
-			
 			Agent agent = agents.poll();
 			
-			Box box = goal.getBox();
+			sovleGoal(goal, agent);
 			
-
-			int initialStep = getInitialStep(agent);
-
-			List<Action> actions = PathfindingSearch.search(agent.getLocation(), goal.getLocation(), initialStep, agent, box, getModel(initialStep));
-
-			if (actions.isEmpty())
-				actions.add(new SkipAction(agent.getLocation()));
-	
-			System.err.println(actions);
-			
-			this.actions.get(agent.getNumber()).addAll(actions);
-			
-			for (Action action : actions)
-			{
-				getModel(initialStep++).doExecute(action);
-			}
-
 			agents.add(agent);
+		}
+	}
+	
+
+	public void sovleGoal(Goal goal, Agent agent)
+	{
+		Box box = goal.getBox();
+
+		int initialStep = getInitialStep(agent);
+
+		List<Action> actions = PathfindingSearch.search(agent.getLocation(), goal.getLocation(), initialStep, agent, box, getModel(initialStep));
+
+		if (actions.isEmpty())
+			actions.add(new SkipAction(agent.getLocation()));
+
+		System.err.println(actions);
+
+		this.actions.get(agent.getNumber()).addAll(actions);
+
+		for (Action action : actions)
+		{
+			getModel(initialStep++).doExecute(action);
 		}
 	}
 	

@@ -49,7 +49,7 @@ public class WorldEnv extends ServerEnv {
     {
     	return instance;
     }
-    
+  
     public void executePlanner()
     {
     	for (int i = 0; ; i++) 
@@ -57,8 +57,8 @@ public class WorldEnv extends ServerEnv {
 			for (Agent agent : model.getAgents())
 			{
 				Action action;
-				if (i < planner.actions.get(agent.getNumber()).size())
-					action = planner.actions.get(agent.getNumber()).get(i);
+				if (i < this.planner.getActions().get(agent.getNumber()).size())
+					action = this.planner.getActions().get(agent.getNumber()).get(i);
 				else
 					action = new SkipAction(agent.getLocation());
  				scheduleAction(action, agent.getNumber());
