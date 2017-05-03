@@ -3,8 +3,11 @@ package env.planner;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -212,7 +215,7 @@ public class Planner {
 		}
 	}
 
-	private void createGoalDependencies(Collection<Goal> goals) 
+	private Collection<Goal> prioritizeGoals(Collection<Goal> goals) 
 	{
 		Map<Goal, Set<Goal>> goalDependencies = new HashMap<>();
 		
@@ -223,14 +226,14 @@ public class Planner {
 
 	        List<Location> locations = DependencySearch.search(from, to, DataWorldModel.GOAL);
 	        
-	        List<Goal> dependencies = locations.stream().map(loc -> worldModel.getGoal(loc))
-	        										    .collect(Collectors.toList());
-	        
-	        for (Goal dependency : dependencies)
-	        {
-	        	addToMap(goalDependencies, dependency, goal);
-	        }
+	        locations.stream().forEach(loc -> addToMap(goalDependencies, worldModel.getGoal(loc), goal));
 		}
+		
+		return goalDependencies.entrySet().stream()
+//		        .sorted(Comparator.comparingInt(e -> e.getValue().size()))
+				.filter(e -> e.getValue().isEmpty())
+		        .map(Map.Entry::getKey)
+		        .collect(Collectors.toList());
 	}
 	
 	private static <K, V> void addToMap(Map<K, Set<V>> map, K key, V value)
