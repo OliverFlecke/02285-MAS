@@ -17,10 +17,8 @@ import level.cell.Agent;
 import level.cell.Box;
 import level.cell.Goal;
 import srch.searches.DependencySearch;
-import srch.searches.LocationSearch;
+import srch.searches.PathfindingSearch;
 import srch.searches.closest.AgentSearch;
-import srch.searches.closest.ClosestSearch;
-import srch.searches.closest.GoalSearch;
 
 public class Planner {
 	
@@ -43,6 +41,11 @@ public class Planner {
 		
 		actions = new ArrayList<ArrayList<Action>>(worldModel.getAgents().length);
 		
+		for (int i = 0; i < actions.size(); i++)
+		{
+			actions.add(new ArrayList<Action>());
+		}
+		
 		matchBoxesAndGoals();
 		
 		createGoalDependencies();
@@ -64,13 +67,40 @@ public class Planner {
 				
 				Agent agent = worldModel.getAgent(agentLoc);
 				
+				int initialStep = getInitialStep(agent);
+				
+				List<Action> actions = PathfindingSearch.search(agentLoc, box.getLocation(), initialStep, agent, getModel(initialStep));
+				
+				Planner.actions.get(agent.getNumber()).addAll(actions);
+				
+				for (Action action : actions)
+				{
+					getModel(initialStep).doExecute(action);
+					
+					initialStep++;
+				}
 				
 			}
 		}
 	}
 	
+	public static int getInitialStep(Agent agent)
+	{
+		return actions.get(agent.getNumber()).size();
+	}
+	
 	public static GridWorldModel getModel(int step)
 	{
+		if (step - gridModels.size() > 1)
+		{
+			throw new UnsupportedOperationException("getModel");
+		}
+		
+		if (step > gridModels.size())
+		{
+			gridModels.add(new GridWorldModel(gridModels.get(step - 1)));
+		}
+		
 		return gridModels.get(step);
 	}
 	

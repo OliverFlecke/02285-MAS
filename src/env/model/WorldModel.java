@@ -4,7 +4,6 @@ import java.util.*;
 import jason.environment.grid.Location;
 import level.Level;
 import level.Actions.*;
-import level.Color;
 import level.Direction;
 
 public class WorldModel extends DataWorldModel {
@@ -47,11 +46,11 @@ public class WorldModel extends DataWorldModel {
 			{
 				char ch = data[x][y];
 				
-				if (Character.isDigit(ch)) addAgent(x, y, ch, Color.getColor(colors.get(ch)));
+				if (Character.isDigit(ch)) addAgent(x, y, ch, colors.get(ch));
 				
 				else if (Character.isLowerCase(ch)) addGoal(x, y, ch);
 				
-				else if (Character.isUpperCase(ch)) addBox(x, y, ch, Color.getColor(colors.get(ch)));
+				else if (Character.isUpperCase(ch)) addBox(x, y, ch, colors.get(ch));
 				
 				else if (ch == '+') addWall(x, y);
 			}
@@ -83,15 +82,6 @@ public class WorldModel extends DataWorldModel {
         move(BOX, nAgLoc, nBoxLoc);
         remove(LOCKED, agLoc.x, agLoc.y);
     }
-    
-    /**
-     * Pulls a box based on the direction of the agent 
-     * and the direction of the box?
-     * @param dir1 - Direction of the agent
-     * @param dir2 - Direction of the box
-     * @param agId - Agent ID
-     * @return True if and only if the action succeeds.
-     */
     
     public void doPull(PullAction action, int agId)
     {

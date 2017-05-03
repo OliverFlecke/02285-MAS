@@ -12,7 +12,7 @@ public class SimulationWorldModel extends GridWorldModel {
 
 	public SimulationWorldModel(GridWorldModel model, Agent agent)
 	{
-		super(model.deepCopyData());
+		super(model);
 		
 		this.agent = new Agent(agent);
 	}

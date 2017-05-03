@@ -9,7 +9,7 @@ public class LocationSearch {
 
 	public static List<Location> search(Location from, Location to, int proximity, int initialStep) 
 	{
-		return new DirectionSearch(to, proximity).search(new LocationNode(from, initialStep));
+		return new PathfindingSearch(to, proximity).search(new LocationNode(from, initialStep));
 	}
 	
 }

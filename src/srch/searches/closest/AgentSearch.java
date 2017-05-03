@@ -2,20 +2,21 @@ package srch.searches.closest;
 
 import env.model.WorldModel;
 import jason.environment.grid.Location;
+import level.Color;
 import level.cell.Agent;
 import srch.Node;
 import srch.nodes.ClosestNode;
 
 public class AgentSearch extends ClosestSearch {
 
-	public static Location search(String color, Location from) 
+	public static Location search(Color color, Location from) 
 	{
 		return new AgentSearch(color).search(new ClosestNode(from));
 	}
 	
-	private String color;
+	private Color color;
 
-	public AgentSearch(String color) 
+	public AgentSearch(Color color) 
 	{
 		super(WorldModel.AGENT);
 		

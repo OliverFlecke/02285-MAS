@@ -31,12 +31,12 @@ public class GridWorldModel {
 		this.data 	= new int[width][height];
 	}
 	
-	public GridWorldModel(int[][] data)
-	{
+	public GridWorldModel(GridWorldModel model)
+	{		
+		this.data 	= model.deepCopyData();
+		
 		this.width 	= data.length;
 		this.height = data[0].length;
-		
-		this.data 	= data;
 	}
     
     public int getWidth() {
@@ -50,16 +50,6 @@ public class GridWorldModel {
     public int[][] getDate()
     {
     	return this.data;
-    }
-    
-    public void lock(Location location)
-    {
-    	add(LOCKED, location);
-    }
-    
-    public void unlock(Location location)
-    {
-    	remove(LOCKED, location);
     }
     
     public boolean inGrid(int x, int y) {
@@ -79,7 +69,7 @@ public class GridWorldModel {
     }
 
     public boolean isFree(int x, int y) {
-        return inGrid(x, y) && (data[x][y] & (WALL | AGENT | BOX)) == 0;
+        return inGrid(x, y) && (data[x][y] & (WALL | AGENT | BOX | LOCKED)) == 0;
     }
 
     public boolean isFree(int obj, Location l) {
@@ -108,8 +98,8 @@ public class GridWorldModel {
 	
 	public void move(int obj, Location fr, Location to)
 	{		
-		remove	(obj, fr);
-		add		(obj, to);
+		remove	(obj | LOCKED, fr);
+		add		(obj | LOCKED, to);
 	}
 	
 	public void printLevel()
@@ -306,7 +296,6 @@ public class GridWorldModel {
         Location 	nAgLoc 	= Direction.newLocation(dir, agLoc);
     	
         move(AGENT, agLoc, nAgLoc);
-        remove(LOCKED, agLoc.x, agLoc.y);
     }
     
     public void doPush(PushAction action)
@@ -320,7 +309,6 @@ public class GridWorldModel {
 
         move(AGENT, agLoc, nAgLoc);
         move(BOX, nAgLoc, nBoxLoc);
-        remove(LOCKED, agLoc.x, agLoc.y);
     }
     
     public void doPull(PullAction action)
@@ -334,6 +322,5 @@ public class GridWorldModel {
 
     	move(AGENT, agLoc, nAgLoc);
     	move(BOX, boxLoc, agLoc);
-    	remove(LOCKED, boxLoc.x, boxLoc.y);
     }
 }
