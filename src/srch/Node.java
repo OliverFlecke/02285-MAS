@@ -3,7 +3,7 @@ package srch;
 import java.util.List;
 
 import env.model.WorldModel;
-import jason.environment.grid.Location;
+import level.Location;
 
 public abstract class Node {
 	

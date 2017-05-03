@@ -2,12 +2,12 @@ package env.model;
 
 import java.util.logging.Logger;
 
-import jason.environment.grid.Location;
+import level.Location;
+import level.action.Action;
+import level.action.MoveAction;
+import level.action.PullAction;
+import level.action.PushAction;
 import level.Direction;
-import level.Actions.Action;
-import level.Actions.MoveAction;
-import level.Actions.PullAction;
-import level.Actions.PushAction;
 
 public class GridWorldModel {
 	
@@ -167,7 +167,7 @@ public class GridWorldModel {
             return false;
         }
         
-        Location nAgLoc = Direction.newLocation(dir, agLoc);
+        Location nAgLoc = Location.newLocation(dir, agLoc);
         
         if (nAgLoc == null)
         {
@@ -204,7 +204,7 @@ public class GridWorldModel {
             return false;
         }
         
-    	Location nAgLoc = Direction.newLocation(dir1, agLoc);
+    	Location nAgLoc = Location.newLocation(dir1, agLoc);
         
         if (nAgLoc == null)
         {
@@ -218,7 +218,7 @@ public class GridWorldModel {
             return false;
     	}
     	
-    	Location nBoxLoc = Direction.newLocation(dir2, nAgLoc);
+    	Location nBoxLoc = Location.newLocation(dir2, nAgLoc);
         
         if (nBoxLoc == null)
         {
@@ -255,7 +255,7 @@ public class GridWorldModel {
             return false;
         }
         
-    	Location boxLoc = Direction.newLocation(dir2, agLoc);
+    	Location boxLoc = Location.newLocation(dir2, agLoc);
     	
     	if (boxLoc == null)
     	{
@@ -269,7 +269,7 @@ public class GridWorldModel {
             return false;
     	}
     	
-    	Location nAgLoc = Direction.newLocation(dir1, agLoc);
+    	Location nAgLoc = Location.newLocation(dir1, agLoc);
     	
     	if (nAgLoc == null)
     	{
@@ -303,7 +303,7 @@ public class GridWorldModel {
     	Location agLoc = action.getAgentLocation();
     	Direction 	dir 	= action.getDirection();
     	
-        Location 	nAgLoc 	= Direction.newLocation(dir, agLoc);
+        Location 	nAgLoc 	= Location.newLocation(dir, agLoc);
     	
         move(AGENT, agLoc, nAgLoc);
         remove(LOCKED, agLoc.x, agLoc.y);
@@ -315,8 +315,8 @@ public class GridWorldModel {
     	Direction 	dir1 	= action.getAgentDir();
     	Direction 	dir2 	= action.getBoxDir();
 
-    	Location 	nAgLoc 	= Direction.newLocation(dir1, agLoc);
-    	Location 	nBoxLoc = Direction.newLocation(dir2, nAgLoc);
+    	Location 	nAgLoc 	= Location.newLocation(dir1, agLoc);
+    	Location 	nBoxLoc = Location.newLocation(dir2, nAgLoc);
 
         move(AGENT, agLoc, nAgLoc);
         move(BOX, nAgLoc, nBoxLoc);
@@ -329,8 +329,8 @@ public class GridWorldModel {
     	Direction dir1 = action.getAgentDir();
     	Direction dir2 = action.getBoxDir();
     	      
-    	Location boxLoc = Direction.newLocation(dir2, agLoc);    	
-    	Location nAgLoc = Direction.newLocation(dir1, agLoc);
+    	Location boxLoc = Location.newLocation(dir2, agLoc);    	
+    	Location nAgLoc = Location.newLocation(dir1, agLoc);
 
     	move(AGENT, agLoc, nAgLoc);
     	move(BOX, boxLoc, agLoc);

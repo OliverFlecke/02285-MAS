@@ -1,9 +1,9 @@
-package level.Actions;
+package level.action;
 
 import java.util.LinkedList;
 import java.util.List;
 
-import jason.environment.grid.Location;
+import level.Location;
 import level.Direction;
 
 public abstract class Action {

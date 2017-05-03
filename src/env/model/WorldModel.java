@@ -1,9 +1,9 @@
 package env.model;
 
 import java.util.*;
-import jason.environment.grid.Location;
+import level.Location;
+import level.action.*;
 import level.Level;
-import level.Actions.*;
 import level.Color;
 import level.Direction;
 
@@ -64,7 +64,7 @@ public class WorldModel extends DataWorldModel {
     	Direction 	dir 	= action.getDirection();
     	
         Location 	agLoc 	= getAgPos(agId);
-        Location 	nAgLoc 	= Direction.newLocation(dir, agLoc);
+        Location 	nAgLoc 	= Location.newLocation(dir, agLoc);
     	
         move(AGENT, agLoc, nAgLoc);
         remove(LOCKED, agLoc.x, agLoc.y);
@@ -76,8 +76,8 @@ public class WorldModel extends DataWorldModel {
     	Direction 	dir2 	= action.getBoxDir();
 
         Location 	agLoc 	= getAgPos(agId);
-    	Location 	nAgLoc 	= Direction.newLocation(dir1, agLoc);
-    	Location 	nBoxLoc = Direction.newLocation(dir2, nAgLoc);
+    	Location 	nAgLoc 	= Location.newLocation(dir1, agLoc);
+    	Location 	nBoxLoc = Location.newLocation(dir2, nAgLoc);
 
         move(AGENT, agLoc, nAgLoc);
         move(BOX, nAgLoc, nBoxLoc);
@@ -99,8 +99,8 @@ public class WorldModel extends DataWorldModel {
     	Direction dir2 = action.getBoxDir();
     	
         Location agLoc 	= getAgPos(agId);        
-    	Location boxLoc = Direction.newLocation(dir2, agLoc);    	
-    	Location nAgLoc = Direction.newLocation(dir1, agLoc);
+    	Location boxLoc = Location.newLocation(dir2, agLoc);    	
+    	Location nAgLoc = Location.newLocation(dir1, agLoc);
 
     	move(AGENT, agLoc, nAgLoc);
     	move(BOX, boxLoc, agLoc);

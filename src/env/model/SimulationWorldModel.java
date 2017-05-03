@@ -1,7 +1,7 @@
 package env.model;
 
-import jason.environment.grid.Location;
-import level.Actions.Action;
+import level.Location;
+import level.action.Action;
 import level.cell.Agent;
 import level.cell.Cell;
 

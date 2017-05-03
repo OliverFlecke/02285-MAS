@@ -2,7 +2,7 @@ package srch.searches;
 
 import java.util.List;
 
-import jason.environment.grid.Location;
+import level.Location;
 import srch.nodes.LocationNode;
 
 public class LocationSearch {

@@ -1,7 +1,7 @@
 package srch.nodes;
 
 import env.model.WorldModel;
-import jason.environment.grid.Location;
+import level.Location;
 import level.Direction;
 import srch.Node;
 

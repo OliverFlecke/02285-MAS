@@ -3,7 +3,7 @@ package srch.searches;
 import java.util.List;
 
 import env.model.GridWorldModel;
-import jason.environment.grid.Location;
+import level.Location;
 import level.cell.Agent;
 import srch.Node;
 import srch.Search;

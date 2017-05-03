@@ -1,6 +1,6 @@
-package level.Actions;
+package level.action;
 
-import jason.environment.grid.Location;
+import level.Location;
 
 public class SkipAction extends Action {
 

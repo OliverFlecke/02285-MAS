@@ -1,6 +1,6 @@
 package srch.nodes;
 
-import jason.environment.grid.Location;
+import level.Location;
 import srch.Node;
 
 public abstract class StepNode extends Node {
