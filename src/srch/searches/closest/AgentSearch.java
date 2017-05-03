@@ -1,5 +1,6 @@
 package srch.searches.closest;
 
+import env.model.DataWorldModel;
 import env.model.WorldModel;
 import level.Color;
 import level.Location;
@@ -18,7 +19,7 @@ public class AgentSearch extends ClosestSearch {
 
 	public AgentSearch(Color color) 
 	{
-		super(WorldModel.AGENT);
+		super(DataWorldModel.AGENT);
 		
 		this.color = color;
 	}

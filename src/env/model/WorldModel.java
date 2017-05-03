@@ -1,11 +1,9 @@
 package env.model;
 
 import java.util.*;
-import level.Location;
-import level.action.*;
+
 import level.Level;
 import level.Color;
-import level.Direction;
 
 public class WorldModel extends DataWorldModel {
 	
@@ -58,43 +56,4 @@ public class WorldModel extends DataWorldModel {
 		}
 		printLevel();
 	}
-    
-    public void doMove(MoveAction action, int agId)
-    {
-    	Direction 	dir 	= action.getDirection();
-    	
-        Location 	agLoc 	= getAgPos(agId);
-        Location 	nAgLoc 	= Location.newLocation(dir, agLoc);
-    	
-        move(AGENT, agLoc, nAgLoc);
-        remove(LOCKED, agLoc.x, agLoc.y);
-    }
-    
-    public void doPush(PushAction action, int agId)
-    {
-    	Direction 	dir1 	= action.getAgentDir();
-    	Direction 	dir2 	= action.getBoxDir();
-
-        Location 	agLoc 	= getAgPos(agId);
-    	Location 	nAgLoc 	= Location.newLocation(dir1, agLoc);
-    	Location 	nBoxLoc = Location.newLocation(dir2, nAgLoc);
-
-        move(AGENT, agLoc, nAgLoc);
-        move(BOX, nAgLoc, nBoxLoc);
-        remove(LOCKED, agLoc.x, agLoc.y);
-    }
-    
-    public void doPull(PullAction action, int agId)
-    {
-    	Direction dir1 = action.getAgentDir();
-    	Direction dir2 = action.getBoxDir();
-    	
-        Location agLoc 	= getAgPos(agId);        
-    	Location boxLoc = Location.newLocation(dir2, agLoc);    	
-    	Location nAgLoc = Location.newLocation(dir1, agLoc);
-
-    	move(AGENT, agLoc, nAgLoc);
-    	move(BOX, boxLoc, agLoc);
-    	remove(LOCKED, boxLoc.x, boxLoc.y);
-    }
 }
