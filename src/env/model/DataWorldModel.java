@@ -1,6 +1,8 @@
 package env.model;
 
 import java.util.*;
+import java.util.stream.Collectors;
+
 import level.Location;
 import level.action.MoveAction;
 import level.action.PullAction;
@@ -63,14 +65,14 @@ public class DataWorldModel extends GridWorldModel {
 //	{
 //		return boxes.stream().filter(box -> !box.onGoal()).collect(Collectors.toSet());
 //	}
-//	
-//	/**
-//	 * @return Get all the goals that has not been solved yet
-//	 */
-//	public Set<Goal> getUnsolvedGoals()
-//	{
-//		return goals.stream().filter(goal -> !goal.isSolved()).collect(Collectors.toSet());
-//	}
+	
+	/**
+	 * @return Get all the goals that has not been solved yet
+	 */
+	public Set<Goal> getUnsolvedGoals()
+	{
+		return goals.stream().filter(goal -> isSolved(goal)).collect(Collectors.toSet());
+	}
     
     public int getNbAgs() {
     	return agents.length;
