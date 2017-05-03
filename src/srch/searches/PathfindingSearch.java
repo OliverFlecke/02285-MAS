@@ -65,7 +65,7 @@ public class PathfindingSearch extends Search implements Heuristic {
 		
 		if (type == ActionType.PUSH || type == ActionType.PULL)
 		{
-			goalDist += 2;
+			goalDist += 5;
 		}
 		
 		return goalDist; 

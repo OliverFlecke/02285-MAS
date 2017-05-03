@@ -24,6 +24,7 @@ import level.action.SkipAction;
 import level.cell.Agent;
 import level.cell.AgentComparator;
 import level.cell.Box;
+import level.cell.Cell;
 import level.cell.Goal;
 import srch.searches.DependencySearch;
 import srch.searches.PathfindingSearch;
@@ -66,7 +67,7 @@ public class Planner {
 		{
 			Agent agent = queue.poll();
 			
-			for (Goal goal : prioritizeGoals(goals))
+			for (Goal goal : prioritizeGoals(goals, agent))
 			{
 				if (solveGoal(goal, agent)) break;
 			}
@@ -235,12 +236,14 @@ public class Planner {
 		}
 	}
 
-	private Collection<Goal> prioritizeGoals(Collection<Goal> goals) 
+	private Collection<Goal> prioritizeGoals(Collection<Goal> goals, Agent agent) 
 	{
 		Map<Goal, Set<Goal>> goalDependencies = new HashMap<>();
 		
 		for (Goal goal : goals)
 		{
+			goalDependencies.put(goal, new HashSet<Goal>());
+			
 			Location from = goal.getLocation();		
 			Location to   = goal.getBox().getLocation();
 
@@ -253,6 +256,7 @@ public class Planner {
 //		        .sorted(Comparator.comparingInt(e -> e.getValue().size()))
 				.filter(e -> e.getValue().isEmpty())
 		        .map(Map.Entry::getKey)
+		        .sorted((g1, g2) -> d(g1, agent) - d(g2, agent))
 		        .collect(Collectors.toList());
 	}
 	
@@ -268,8 +272,8 @@ public class Planner {
 		}
 	}
 
-	private static int d(Goal goal, Box box) {
-		return goal.getLocation().distance(box.getLocation());
+	private static int d(Cell c1, Cell c2) {
+		return c1.getLocation().distance(c2.getLocation());
 	}
 }
 

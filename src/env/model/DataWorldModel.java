@@ -71,7 +71,7 @@ public class DataWorldModel extends GridWorldModel {
 	 */
 	public Set<Goal> getUnsolvedGoals()
 	{
-		return goals.stream().filter(goal -> isSolved(goal)).collect(Collectors.toSet());
+		return goals.stream().filter(goal -> !isSolved(goal)).collect(Collectors.toSet());
 	}
     
     public int getNbAgs() {
