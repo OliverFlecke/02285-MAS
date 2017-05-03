@@ -140,8 +140,9 @@ public class GridWorldModel {
 
     public synchronized boolean canMove(MoveAction action) 
     {
-    	Location agLoc = action.getAgentLocation();
-    	Direction dir = action.getDirection();
+    	Direction 	dir 	= action.getDirection();
+    	
+    	Location 	agLoc 	= action.getAgentLocation();
     	
 //        if (agId < 0) 
 //        {
@@ -176,9 +177,10 @@ public class GridWorldModel {
     
     public boolean canPush(PushAction action)
     {
-    	Location agLoc = action.getAgentLocation();
-    	Direction dir1 = action.getAgentDir();
-    	Direction dir2 = action.getBoxDir();
+    	Direction 	dir1 	= action.getAgentDir();
+    	Direction 	dir2 	= action.getBoxDir();
+    	
+    	Location 	agLoc 	= action.getAgentLocation();
     	
 //        if (agId < 0) 
 //        {
@@ -227,9 +229,10 @@ public class GridWorldModel {
     
     public boolean canPull(PullAction action)
     {
-    	Location agLoc = action.getAgentLocation();
-    	Direction dir1 = action.getAgentDir();
-    	Direction dir2 = action.getBoxDir();
+    	Direction 	dir1 	= action.getAgentDir();
+    	Direction 	dir2 	= action.getBoxDir();
+    	
+    	Location 	agLoc 	= action.getAgentLocation();
     	
 //        if (agId < 0) 
 //        {
@@ -289,21 +292,21 @@ public class GridWorldModel {
 	}
     
     public void doMove(MoveAction action)
-    {
-    	Location agLoc = action.getAgentLocation();
+    {    	
     	Direction 	dir 	= action.getDirection();
-    	
+
+    	Location 	agLoc 	= action.getAgentLocation();
         Location 	nAgLoc 	= Location.newLocation(dir, agLoc);
     	
         move(AGENT, agLoc, nAgLoc);
     }
     
     public void doPush(PushAction action)
-    {
-    	Location agLoc = action.getAgentLocation();
+    {    	
     	Direction 	dir1 	= action.getAgentDir();
     	Direction 	dir2 	= action.getBoxDir();
 
+    	Location 	agLoc 	= action.getAgentLocation();
     	Location 	nAgLoc 	= Location.newLocation(dir1, agLoc);
     	Location 	nBoxLoc = Location.newLocation(dir2, nAgLoc);
 
@@ -313,12 +316,12 @@ public class GridWorldModel {
     
     public void doPull(PullAction action)
     {
-    	Location agLoc = action.getAgentLocation();
-    	Direction dir1 = action.getAgentDir();
-    	Direction dir2 = action.getBoxDir();
-    	      
-    	Location boxLoc = Location.newLocation(dir2, agLoc);    	
-    	Location nAgLoc = Location.newLocation(dir1, agLoc);
+    	Direction 	dir1 	= action.getAgentDir();
+    	Direction 	dir2 	= action.getBoxDir();
+
+    	Location 	agLoc  	= action.getAgentLocation();
+    	Location 	boxLoc 	= Location.newLocation(dir2, agLoc);    	
+    	Location 	nAgLoc 	= Location.newLocation(dir1, agLoc);
 
     	move(AGENT, agLoc, nAgLoc);
     	move(BOX, boxLoc, agLoc);
