@@ -5,7 +5,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import env.model.WorldModel;
-import jason.environment.grid.Location;
+import level.Location;
 import level.Direction;
 import srch.Node;
 import srch.interfaces.IDirectionNode;
@@ -41,7 +41,7 @@ public class LocationNode extends Node implements IDirectionNode {
 		
 		for (Direction dir : Direction.EVERY)
 		{
-			Location loc = Direction.newLocation(dir, this.getLocation());
+			Location loc = Location.newLocation(dir, this.getLocation());
 			
 			if (WorldModel.getInstance().isFree(this.getObject(), loc))
 			{

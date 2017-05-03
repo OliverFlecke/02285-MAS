@@ -1,8 +1,8 @@
 package srch.searches.closest;
 
 import env.model.WorldModel;
-import jason.environment.grid.Location;
 import level.Color;
+import level.Location;
 import level.cell.Agent;
 import srch.Node;
 import srch.nodes.ClosestNode;

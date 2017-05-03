@@ -1,6 +1,6 @@
 package level.cell;
 
-import jason.environment.grid.Location;
+import level.Location;
 
 public class Cell {
 	

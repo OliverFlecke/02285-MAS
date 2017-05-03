@@ -15,7 +15,7 @@ import java.util.logging.Logger;
 
 import env.model.WorldModel;
 import jason.asSyntax.Structure;
-import level.Actions.Action;
+import level.action.Action;
 
 /**
  * Derived from TimeSteppedEnvironment

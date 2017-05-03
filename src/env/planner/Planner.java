@@ -11,8 +11,8 @@ import java.util.Set;
 
 import env.model.GridWorldModel;
 import env.model.WorldModel;
-import jason.environment.grid.Location;
-import level.Actions.Action;
+import level.Location;
+import level.action.Action;
 import level.cell.Agent;
 import level.cell.Box;
 import level.cell.Goal;

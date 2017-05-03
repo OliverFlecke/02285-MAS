@@ -3,7 +3,7 @@ package env.model;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import jason.environment.grid.Location;
+import level.Location;
 import level.Color;
 import level.cell.*;
 

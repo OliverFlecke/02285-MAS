@@ -1,6 +1,6 @@
 package level.cell;
 
-import jason.environment.grid.Location;
+import level.Location;
 import level.Color;
 
 public class Agent extends Colored {

@@ -1,7 +1,7 @@
 package srch.searches.closest;
 
 import env.model.WorldModel;
-import jason.environment.grid.Location;
+import level.Location;
 import srch.Node;
 import srch.Search;
 import srch.Strategy.BFS;

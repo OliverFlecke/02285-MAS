@@ -1,6 +1,6 @@
 package srch.interfaces;
 
-import level.Actions.Action;
+import level.action.Action;
 
 public interface IActionNode {
 

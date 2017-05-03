@@ -3,9 +3,9 @@ package srch.searches;
 import java.util.List;
 
 import env.model.GridWorldModel;
-import jason.environment.grid.Location;
-import level.Actions.Action;
 import level.cell.Cell;
+import level.Location;
+import level.action.Action;
 import srch.Node;
 import srch.Search;
 import srch.Strategy.BestFirst;
