@@ -26,14 +26,15 @@ public class GoalSearch extends ClosestSearch {
 	@Override
 	public boolean isGoalState(Node n) 
 	{
-		if (!super.isGoalState(n))
-		{
-			return false;
-		}
-		
-		Goal goal = WorldModel.getInstance().getGoal(n.getLocation());		
-		
-		return !goal.isSolved() && goal.getBox().getColor().equals(color);
+//		if (!super.isGoalState(n))
+//		{
+//			return false;
+//		}
+//		
+//		Goal goal = WorldModel.getInstance().getGoal(n.getLocation());		
+//		
+//		return !goal.isSolved() && goal.getBox().getColor().equals(color);
+		return true;
 	}
 
 }

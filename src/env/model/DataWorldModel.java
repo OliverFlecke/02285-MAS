@@ -43,24 +43,24 @@ public class DataWorldModel extends GridWorldModel {
 		
 		agentArray 	= deepCopyAgents(model.agentArray);
 		goalArray 	= deepCopyGoals(model.goalArray);
-		boxArray 	= deepCopyBoxes(boxArray);		
+		boxArray 	= deepCopyBoxes(model.boxArray);		
 	}
 	
-	/**
-	 * @return All the boxes in the world, which is not already on a goal
-	 */
-	public Set<Box> getBoxesNotOnGoal()
-	{
-		return boxes.stream().filter(box -> !box.onGoal()).collect(Collectors.toSet());
-	}
-	
-	/**
-	 * @return Get all the goals that has not been solved yet
-	 */
-	public Set<Goal> getUnsolvedGoals()
-	{
-		return goals.stream().filter(goal -> !goal.isSolved()).collect(Collectors.toSet());
-	}
+//	/**
+//	 * @return All the boxes in the world, which is not already on a goal
+//	 */
+//	public Set<Box> getBoxesNotOnGoal()
+//	{
+//		return boxes.stream().filter(box -> !box.onGoal()).collect(Collectors.toSet());
+//	}
+//	
+//	/**
+//	 * @return Get all the goals that has not been solved yet
+//	 */
+//	public Set<Goal> getUnsolvedGoals()
+//	{
+//		return goals.stream().filter(goal -> !goal.isSolved()).collect(Collectors.toSet());
+//	}
     
     public int getNbAgs() {
     	return agents.length;
@@ -173,7 +173,6 @@ public class DataWorldModel extends GridWorldModel {
 	    Location 	nAgLoc 	= Location.newLocation(dir, agLoc);
 		
 	    move(AGENT, agLoc, nAgLoc);
-	    remove(LOCKED, agLoc.x, agLoc.y);
 	}
 
 	public void doPush(PushAction action, int agId) {
@@ -186,7 +185,6 @@ public class DataWorldModel extends GridWorldModel {
 	
 	    move(AGENT, agLoc, nAgLoc);
 	    move(BOX, nAgLoc, nBoxLoc);
-	    remove(LOCKED, agLoc.x, agLoc.y);
 	}
 
 	public void doPull(PullAction action, int agId) {
@@ -199,6 +197,5 @@ public class DataWorldModel extends GridWorldModel {
 	
 		move(AGENT, agLoc, nAgLoc);
 		move(BOX, boxLoc, agLoc);
-		remove(LOCKED, boxLoc.x, boxLoc.y);
 	}
 }

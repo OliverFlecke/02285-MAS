@@ -4,27 +4,23 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map.Entry;
-import java.util.stream.Collectors;
 import java.util.Optional;
 import java.util.Set;
 
 import env.model.DataWorldModel;
 import env.model.WorldModel;
-import level.Location;
 import level.action.Action;
 import level.cell.Agent;
 import level.cell.Box;
 import level.cell.Goal;
-import srch.searches.DependencySearch;
 import srch.searches.PathfindingSearch;
-import srch.searches.closest.AgentSearch;
 
 public class Planner {
 	
 //	private static final Logger logger = Logger.getLogger(Planner.class.getName());
 	
 	private static WorldModel 	worldModel;	
-	private static Set<Goal> 	unsolvedGoals;
+//	private static Set<Goal> 	unsolvedGoals;
 
 	private static ArrayList<DataWorldModel> gridModels;
 	
@@ -34,7 +30,7 @@ public class Planner {
 	{
 		worldModel = WorldModel.getInstance();
 		
-		unsolvedGoals = new HashSet<>(worldModel.getGoals());
+//		unsolvedGoals = new HashSet<>(worldModel.getGoals());
 		
 		gridModels = new ArrayList<DataWorldModel>();
 		
@@ -49,42 +45,44 @@ public class Planner {
 		
 		matchBoxesAndGoals();
 		
-		createGoalDependencies();
+//		createGoalDependencies();
 		
 		execute();
 	}
 	
 	public static void execute()
 	{
-		while (!unsolvedGoals.isEmpty())
+//		while (!unsolvedGoals.isEmpty())
+//		{
+//			Optional<Goal> goalOpt = unsolvedGoals.stream().filter(g -> !g.hasDependencies()).findFirst();
+//			
+//			if (goalOpt.isPresent())
+//			{
+//				Goal goal 	= goalOpt.get();
+		
+		for (Goal goal : worldModel.getGoals())
 		{
-			Optional<Goal> goalOpt = unsolvedGoals.stream().filter(g -> !g.hasDependencies()).findFirst();
+			Box box 	= goal.getBox();
 			
-			if (goalOpt.isPresent())
-			{
-				Goal goal 	= goalOpt.get();
-				Box box 	= goal.getBox();
-				
 //				Location agentLoc = AgentSearch.search(box.getColor(), box.getLocation());
-				
+			
 //				Agent agent = worldModel.getAgent(agentLoc);
+			
+			Agent agent = worldModel.getAgent(0);
+			
+			int initialStep = getInitialStep(agent);
+			
+			List<Action> actions = PathfindingSearch.search(agent.getLocation(), goal.getLocation(), initialStep, agent, box, getModel(initialStep));
+			
+			System.err.println(actions);
+			
+			Planner.actions.get(agent.getNumber()).addAll(actions);
+			
+			for (Action action : actions)
+			{
+				getModel(initialStep).doExecute(action);
 				
-				Agent agent = worldModel.getAgent(0);
-				
-				int initialStep = getInitialStep(agent);
-				
-				List<Action> actions = PathfindingSearch.search(agent.getLocation(), goal.getLocation(), initialStep, agent, box, getModel(initialStep));
-				
-				System.err.println(actions);
-				Planner.actions.get(agent.getNumber()).addAll(actions);
-				
-				for (Action action : actions)
-				{
-					getModel(initialStep).doExecute(action);
-					
-					initialStep++;
-				}	
-				return;
+				initialStep++;
 			}
 		}
 	}
@@ -213,25 +211,25 @@ public class Planner {
 		}
 	}
 
-	private static void createGoalDependencies() 
-	{
-		for (Goal goal : worldModel.getGoals())
-		{
-			// Important to search from box to goal
-			Location from = goal.getBox().getLocation();	
-			Location to   = goal.getLocation();		
-
-	        List<Location> dependencies = DependencySearch.search(from, to, DataWorldModel.GOAL);
-	        
-	        List<Goal> goals = dependencies.stream().map(loc -> worldModel.getGoal(loc))
-	        										.collect(Collectors.toList());
-	        // Add the dependency chain
-	        for (int i = 0; i < goals.size() - 1; i++) 
-	        {
-	        	goals.get(i).addDependency(goals.get(i + 1));
-	        }
-		}
-	}
+//	private static void createGoalDependencies() 
+//	{
+//		for (Goal goal : worldModel.getGoals())
+//		{
+//			// Important to search from box to goal
+//			Location from = goal.getBox().getLocation();	
+//			Location to   = goal.getLocation();		
+//
+//	        List<Location> dependencies = DependencySearch.search(from, to, DataWorldModel.GOAL);
+//	        
+//	        List<Goal> goals = dependencies.stream().map(loc -> worldModel.getGoal(loc))
+//	        										.collect(Collectors.toList());
+//	        // Add the dependency chain
+//	        for (int i = 0; i < goals.size() - 1; i++) 
+//	        {
+//	        	goals.get(i).addDependency(goals.get(i + 1));
+//	        }
+//		}
+//	}
 
 	private static int d(Goal goal, Box box) {
 		return goal.getLocation().distance(box.getLocation());
