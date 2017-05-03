@@ -7,19 +7,25 @@ import env.model.WorldModel;
 import jason.environment.grid.Location;
 import level.Direction;
 import srch.Node;
+import srch.interfaces.IDirectionNode;
 
-public class ClosestNode extends Node {
+public class ClosestNode extends Node implements IDirectionNode {
+	
+	private Direction direction;
 	
 	public ClosestNode(Location initial) {
 		super(initial);
+		this.direction = null;
 	}
 	
 	public ClosestNode(Location initial, int object) {
 		super(initial, object);
+		this.direction = null;
 	}
 
 	public ClosestNode(Node parent, Direction direction, Location location) {
-		super(parent, direction, location);
+		super(parent, location);
+		this.direction = direction;
 	}
 
 	@Override
@@ -44,6 +50,11 @@ public class ClosestNode extends Node {
 	public Location extractPlan() 
 	{
 		return this.getLocation();
+	}
+
+	@Override
+	public Direction getDirection() {
+		return this.direction;
 	}
 
 }
