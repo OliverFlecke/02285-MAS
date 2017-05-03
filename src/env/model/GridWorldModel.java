@@ -3,10 +3,7 @@ package env.model;
 import java.util.logging.Logger;
 
 import level.Location;
-import level.action.Action;
-import level.action.MoveAction;
-import level.action.PullAction;
-import level.action.PushAction;
+import level.action.*;
 import level.Direction;
 
 public class GridWorldModel {
@@ -38,6 +35,7 @@ public class GridWorldModel {
 		this.width 	= data.length;
 		this.height = data[0].length;
 	}
+	
     
     public int getWidth() {
     	return width;

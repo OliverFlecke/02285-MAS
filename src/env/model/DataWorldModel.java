@@ -1,8 +1,6 @@
 package env.model;
 
 import java.util.*;
-import java.util.stream.Collectors;
-
 import level.Location;
 import level.action.MoveAction;
 import level.action.PullAction;
@@ -46,6 +44,18 @@ public class DataWorldModel extends GridWorldModel {
 		boxArray 	= deepCopyBoxes(model.boxArray);		
 	}
 	
+	/**
+	 * @param goal
+	 * @return True if the passed goal is solved
+	 */
+	public boolean isSolved(Goal goal)
+	{
+		Box box = this.getBox(goal.getLocation());
+		if (box == null)
+			return false;
+		else
+			return Character.toLowerCase(box.getLetter()) == Character.toLowerCase(goal.getLetter());
+	}
 //	/**
 //	 * @return All the boxes in the world, which is not already on a goal
 //	 */

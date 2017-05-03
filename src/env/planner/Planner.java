@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
+import java.util.PriorityQueue;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -19,7 +20,9 @@ import env.model.DataWorldModel;
 import env.model.WorldModel;
 import level.Location;
 import level.action.Action;
+import level.action.SkipAction;
 import level.cell.Agent;
+import level.cell.AgentComparator;
 import level.cell.Box;
 import level.cell.Goal;
 import srch.searches.DependencySearch;
@@ -58,22 +61,28 @@ public class Planner {
 		}
 	}
 	
+
 	public void execute(List<Goal> goals)
 	{
+		PriorityQueue<Agent> agents = new PriorityQueue<Agent>(new AgentComparator(this));
+		for (Agent agent : worldModel.getAgents()) 
+			agents.add(agent);
+		
 		for (Goal goal : goals)
 		{
+			
+			Agent agent = agents.poll();
+			
 			Box box = goal.getBox();
 			
-//				Location agentLoc = AgentSearch.search(box.getColor(), box.getLocation());
-			
-//				Agent agent = worldModel.getAgent(agentLoc);
-			
-			Agent agent = worldModel.getAgent(0);
-			
+
 			int initialStep = getInitialStep(agent);
-			
+
 			List<Action> actions = PathfindingSearch.search(agent.getLocation(), goal.getLocation(), initialStep, agent, box, getModel(initialStep));
-			
+
+			if (actions.isEmpty())
+				actions.add(new SkipAction(agent.getLocation()));
+	
 			System.err.println(actions);
 			
 			this.actions.get(agent.getNumber()).addAll(actions);
@@ -82,6 +91,8 @@ public class Planner {
 			{
 				getModel(initialStep++).doExecute(action);
 			}
+
+			agents.add(agent);
 		}
 	}
 	
@@ -109,6 +120,11 @@ public class Planner {
 		}
 		
 		return gridModels.get(step);
+	}
+	
+	public ArrayList<ArrayList<Action>> getActions()
+	{
+		return actions;
 	}
 	
 //	public static synchronized Goal selectGoal(int agX, int agY)
@@ -252,3 +268,4 @@ public class Planner {
 		return goal.getLocation().distance(box.getLocation());
 	}
 }
+

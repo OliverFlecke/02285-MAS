@@ -1,9 +1,7 @@
 package srch.searches.closest;
 
 import env.model.DataWorldModel;
-import env.model.WorldModel;
 import level.Location;
-import level.cell.Goal;
 import srch.Node;
 import srch.nodes.ClosestNode;
 
