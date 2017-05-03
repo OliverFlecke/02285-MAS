@@ -6,6 +6,7 @@ import env.model.GridWorldModel;
 import level.cell.Cell;
 import level.Location;
 import level.action.Action;
+import level.action.Action.ActionType;
 import srch.Node;
 import srch.Search;
 import srch.Strategy.BestFirst;
@@ -57,8 +58,16 @@ public class PathfindingSearch extends Search implements Heuristic {
 		
 		if (trackedDist > 1)
 		{
-			return trackedDist + goalDist;
-		}		
+			goalDist += trackedDist;
+		}
+		
+		ActionType type = ((PathfindingNode) n).getAction().getType();
+		
+		if (type == ActionType.PUSH || type == ActionType.PULL)
+		{
+			goalDist += 2;
+		}
+		
 		return goalDist; 
 	}
 }
