@@ -1,6 +1,7 @@
 package env.model;
 
 import java.util.*;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 import level.Location;
@@ -11,6 +12,8 @@ import level.Direction;
 import level.cell.*;
 
 public class DataWorldModel extends GridWorldModel {
+
+	protected static final Logger logger = Logger.getLogger(DataWorldModel.class.getName());
 	
 	protected Agent[]					agents;
 	protected Set<Goal>					goals;
@@ -163,6 +166,7 @@ public class DataWorldModel extends GridWorldModel {
 		switch (obj)
 		{
 		case AGENT: 
+//			logger.info(fr.x + "," + fr.y + " has " + agentArray[fr.x][fr.y]);
 			agentArray[fr.x][fr.y].setLocation(to); 
 			agentArray[to.x][to.y] = agentArray[fr.x][fr.y];
 			agentArray[fr.x][fr.y] = null;
