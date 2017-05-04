@@ -27,4 +27,9 @@ public abstract class Colored extends Lettered {
 	{
 		return color;
 	}
+	
+	@Override
+	public String toString() {
+		return color + " " + super.toString();
+	}
 }

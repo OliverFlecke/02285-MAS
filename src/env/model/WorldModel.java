@@ -1,6 +1,7 @@
 package env.model;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 import level.Level;
 import level.cell.Agent;
@@ -33,6 +34,9 @@ public class WorldModel extends DataWorldModel {
 		boxMap		= new HashMap<>();
 		
 		initData(level.data, level.colors);
+		
+		setGoalLocations(goals.stream().map(goal -> goal.getLocation())
+									   .collect(Collectors.toSet()));
 		
 		instance = this;
 	}
@@ -96,7 +100,7 @@ public class WorldModel extends DataWorldModel {
 	{
 		Goal goal = new Goal(x, y, letter);
 		
-		add(GOAL, x, y);
+		addLettered(GOAL, letter, x, y);
 		goals.add(goal);
 		goalArray[x][y] = goal;
 		addToMap(goalMap, letter, goal);
@@ -107,8 +111,8 @@ public class WorldModel extends DataWorldModel {
 		char letter = Character.toLowerCase(upperCaseLetter);
 		
 		Box box = new Box(x, y, letter, color);
-		
-		add(BOX, x, y);
+
+		addLettered(BOX, letter, x, y);
 		boxes.add(box);
 		boxArray[x][y] = box;
 		addToMap(boxMap, letter, box);

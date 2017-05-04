@@ -28,6 +28,11 @@ public class Goal extends Lettered {
 		this.box = box;
 	}
 	
+	@Override
+	public String toString() {
+		return "Goal: " + super.toString();
+	}
+	
 //	public boolean hasDependencies(DataWorldModel model) {
 //		
 //		Iterator<Goal> it = dependencies.iterator();

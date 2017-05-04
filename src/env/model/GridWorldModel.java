@@ -1,5 +1,7 @@
 package env.model;
 
+import java.util.Arrays;
+import java.util.Set;
 import java.util.logging.Logger;
 
 import level.Location;
@@ -14,11 +16,23 @@ public class GridWorldModel {
 	public static final int		GOAL 	=  2;
 	public static final int		BOX		=  4;
     public static final int 	WALL 	=  8;
-    public static final int 	LOCKED  = 16;
-	
-	protected int				width, height;
+    public static final int 	LOCKED 	= 16;
+
+	// First byte is cell type
+    public static final int 	TYPE_MASK	= 0xFF;
     
-    private int[][]             data;
+    // Third byte is goal character
+    public static final int		GOAL_MASK 	= 0xFF0000;
+    
+    // Fourth byte is box character
+    public static final int		BOX_MASK 	= 0xFF000000;
+	
+	protected int					width, height;
+    
+    private int[][]             	data;
+    
+    private static Set<Location> 	goalLocations;
+    
 	
 	public GridWorldModel(int width, int height)
 	{
@@ -28,6 +42,10 @@ public class GridWorldModel {
 		this.data 	= new int[width][height];
 	}
 	
+	/**
+	 * Copy constructor
+	 * @param model
+	 */
 	public GridWorldModel(GridWorldModel model)
 	{		
 		this.data 	= model.deepCopyData();
@@ -36,19 +54,10 @@ public class GridWorldModel {
 		this.height = data[0].length;
 	}
 	
-    
-    public int getWidth() {
-    	return width;
-    }
-    
-    public int getHeight() {
-    	return height;
-    }
-    
-    public int[][] getDate()
-    {
-    	return this.data;
-    }
+	protected void setGoalLocations(Set<Location> locations)
+	{
+		goalLocations = locations;
+	}
     
     public boolean inGrid(int x, int y) {
         return y >= 0 && y < height && x >= 0 && x < width;
@@ -71,24 +80,15 @@ public class GridWorldModel {
     }
 
     public boolean isFree(int obj, Location l) {
-        return isFree(obj, l.x, l.y);   
+        return isFree(obj, l.x, l.y);
     }
     
     public boolean isFree(int obj, int x, int y) {
     	return inGrid(x, y) && (data[x][y] & obj) == 0;
     }
     
-    public void lock(Location l)
-    {
-    	add(LOCKED, l);
-    }
-    
-    public void unlock(Location l)
-    {
-    	remove(LOCKED, l);
-    }
-    
-    protected void add(int obj, Location l) {
+
+    protected void add(int obj, Location l) {	
         add(obj, l.x, l.y);
     }
 
@@ -103,11 +103,59 @@ public class GridWorldModel {
     protected void remove(int obj, int x, int y) {
         data[x][y] &= ~obj;
     }
+    
+    protected void addLettered(int obj, char letter, int x, int y) 
+    {
+    	int ch = 0;
+		
+		if ((obj & GOAL) != 0)
+		{
+			ch = ((int) letter) << 16;
+		}
+		else if ((obj & BOX) != 0)
+		{
+			ch = ((int) letter) << 24;
+		}
+		
+		add(ch | obj, x, y);
+    }
+	
+	private int getChar(int mask, Location l)	{
+		return getChar(mask, l.x, l.y);
+	}
+	
+	private int getChar(int mask, int x, int y) {
+		return data[x][y] & mask;
+	}
 	
 	public void move(int obj, Location fr, Location to)
+	{
+		int ch = 0;
+		
+		if ((obj & GOAL) != 0)
+		{
+			ch = getChar(GOAL_MASK, fr);
+		}
+		else if ((obj & BOX) != 0)
+		{
+			ch = getChar(BOX_MASK, fr);
+		}
+				
+		remove	(obj | ch | LOCKED, fr);
+		add		(obj | ch | LOCKED, to);
+	}
+	
+	public boolean isSolved(Location l) {
+		return isSolved(l.x, l.y);
+	}
+	
+	public boolean isSolved(int x, int y) {
+		return (data[x][y] & GOAL_MASK) == ((data[x][y] & BOX_MASK) >> 8);
+	}
+	
+	public long countUnsolvedGoals()
 	{		
-		remove	(obj | LOCKED, fr);
-		add		(obj | LOCKED, to);
+		return goalLocations.stream().filter(goal -> !isSolved(goal)).count();
 	}
 	
 	public void printLevel()
@@ -334,4 +382,26 @@ public class GridWorldModel {
     	move(AGENT, agLoc, nAgLoc);
     	move(BOX, boxLoc, agLoc);
     }
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + Arrays.deepHashCode(data);
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		GridWorldModel other = (GridWorldModel) obj;
+		if (!Arrays.deepEquals(data, other.data))
+			return false;
+		return true;
+	}
 }

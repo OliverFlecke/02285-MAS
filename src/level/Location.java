@@ -21,6 +21,11 @@ public class Location {
 		return Math.abs(this.x - other.x) + Math.abs(this.y - other.y);
 	}
 	
+	@Override
+	public String toString() {
+		return "(" + x + ", " + y + ")";
+	}
+	
 	/**
 	 * Computes a new Location based on current direction 
 	 * and location.
