@@ -78,6 +78,16 @@ public class GridWorldModel {
     	return inGrid(x, y) && (data[x][y] & obj) == 0;
     }
     
+    public void lock(Location l)
+    {
+    	add(LOCKED, l);
+    }
+    
+    public void unlock(Location l)
+    {
+    	remove(LOCKED, l);
+    }
+    
     protected void add(int obj, Location l) {
         add(obj, l.x, l.y);
     }
