@@ -21,4 +21,9 @@ public class Box extends Colored {
 		else
 			return false;
 	}
+	
+	@Override
+	public String toString() {
+		return "Box: " + super.toString();
+	}
 }

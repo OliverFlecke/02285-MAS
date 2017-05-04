@@ -15,24 +15,21 @@ import srch.interfaces.IActionNode;
 public class PathfindingNode extends StepNode implements IActionNode {
 
 	private Action action;
-	private Location trackedLoc;
 	private SimulationWorldModel model;
 	
-	public PathfindingNode(Location initial, int initialStep, Cell agent, Cell tracked, GridWorldModel model) 
+	public PathfindingNode(GridWorldModel model, Cell agent, Cell tracked, int initialStep) 
 	{
-		super(initial, initialStep);
+		super(agent.getLocation(), initialStep);
 
 		this.action 	= null;
-		this.trackedLoc = tracked.getLocation();
 		this.model 		= new SimulationWorldModel(model, agent, tracked);
 	}
 
 	public PathfindingNode(StepNode parent, Action action, SimulationWorldModel model) 
 	{
-		super(parent, model.getAgentLocation());
+		super(parent, null);
 
 		this.action 	= action;
-		this.trackedLoc = model.getCellLocation();
 		this.model 		= model;		
 	}
 
@@ -44,7 +41,12 @@ public class PathfindingNode extends StepNode implements IActionNode {
 	
 	public Location getTrackedLoc()
 	{
-		return trackedLoc;
+		return model.getTrackedLocation();
+	}
+	
+	public SimulationWorldModel getModel() 
+	{
+		return model;
 	}
 
 	@Override
@@ -80,7 +82,7 @@ public class PathfindingNode extends StepNode implements IActionNode {
 		final int prime = 31;
 		int result = super.hashCode();
 		result = prime * result + ((action == null) ? 0 : action.hashCode());
-		result = prime * result + ((trackedLoc == null) ? 0 : trackedLoc.hashCode());
+		result = prime * result + ((model == null) ? 0 : model.hashCode());
 		return result;
 	}
 
@@ -98,10 +100,10 @@ public class PathfindingNode extends StepNode implements IActionNode {
 				return false;
 		} else if (!action.equals(other.action))
 			return false;
-		if (trackedLoc == null) {
-			if (other.trackedLoc != null)
+		if (model == null) {
+			if (other.model != null)
 				return false;
-		} else if (!trackedLoc.equals(other.trackedLoc))
+		} else if (!model.equals(other.model))
 			return false;
 		return true;
 	}

@@ -22,5 +22,10 @@ public abstract class Lettered extends Cell {
 	{
 		return letter;
 	}
+	
+	@Override
+	public String toString() {
+		return letter + " " + super.toString();
+	}
 
 }

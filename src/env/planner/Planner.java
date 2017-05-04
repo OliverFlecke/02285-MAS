@@ -83,7 +83,7 @@ public class Planner {
 
 		int initialStep = getInitialStep(agent);
 
-		List<Action> actions = PathfindingSearch.search(agent.getLocation(), goal.getLocation(), initialStep, agent, box, getModel(initialStep));
+		List<Action> actions = PathfindingSearch.search(getModel(initialStep), agent, box, goal.getLocation(), initialStep);
 
 		if (actions == null)
 		{
@@ -242,9 +242,12 @@ public class Planner {
 		
 		for (Goal goal : goals)
 		{
-			goalDependencies.put(goal, new HashSet<Goal>());
+			if (!goalDependencies.containsKey(goal))
+			{
+				goalDependencies.put(goal, new HashSet<Goal>());
+			}
 			
-			Location from = goal.getLocation();		
+			Location from = goal.getLocation();
 			Location to   = goal.getBox().getLocation();
 
 	        List<Location> locations = DependencySearch.search(from, to, DataWorldModel.GOAL);

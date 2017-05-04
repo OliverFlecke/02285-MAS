@@ -3,10 +3,10 @@ package srch.searches;
 import java.util.List;
 
 import env.model.GridWorldModel;
+import env.model.SimulationWorldModel;
 import level.cell.Cell;
 import level.Location;
 import level.action.Action;
-import level.action.Action.ActionType;
 import srch.Node;
 import srch.Search;
 import srch.Strategy.BestFirst;
@@ -28,9 +28,9 @@ public class PathfindingSearch extends Search implements Heuristic {
 	 * With proximity = 1, the solution is a path to a cell adjacent to the goal location.
 	 * @return Ordered list of directions leading to the goal.
 	 */
-	public static List<Action> search(Location from, Location to, int initialStep, Cell agent, Cell tracked, GridWorldModel model) 
+	public static List<Action> search(GridWorldModel model, Cell agent, Cell tracked, Location to, int initialStep) 
 	{
-		return new PathfindingSearch(to, 0).search(new PathfindingNode(from, initialStep, agent, tracked, model));
+		return new PathfindingSearch(to, 0).search(new PathfindingNode(model, agent, tracked, initialStep));
 	}
 	
 	private Location goalLocation;
@@ -53,20 +53,17 @@ public class PathfindingSearch extends Search implements Heuristic {
 	@Override
 	public int h(Node n) 
 	{
-		int trackedDist = ((PathfindingNode) n).getTrackedLoc().distance(n.getLocation());
-		int goalDist    = ((PathfindingNode) n).getTrackedLoc().distance(goalLocation);
+		SimulationWorldModel model = ((PathfindingNode) n).getModel();
+		
+		int trackedDist = model.getTrackedLocation().distance(model.getAgentLocation());
+		int goalDist    = model.getTrackedLocation().distance(goalLocation);
 		
 		if (trackedDist > 1)
 		{
 			goalDist += trackedDist;
 		}
-		
-		ActionType type = ((PathfindingNode) n).getAction().getType();
-		
-		if (type == ActionType.PUSH || type == ActionType.PULL)
-		{
-			goalDist += 5;
-		}
+
+		goalDist += 10 * model.countUnsolvedGoals();
 		
 		return goalDist; 
 	}

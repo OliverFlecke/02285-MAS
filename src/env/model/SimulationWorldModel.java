@@ -16,7 +16,7 @@ public class SimulationWorldModel extends GridWorldModel {
 		this.tracked  	= new Cell(tracked);
 	}
 	
-	public Location getCellLocation()
+	public Location getTrackedLocation()
 	{
 		return tracked.getLocation();
 	}
