@@ -6,6 +6,7 @@ import java.util.logging.Logger;
 
 import level.Location;
 import level.action.*;
+import level.Color;
 import level.Direction;
 
 public class GridWorldModel {
@@ -18,13 +19,9 @@ public class GridWorldModel {
     public static final int 	WALL 	=  8;
     public static final int 	LOCKED 	= 16;
 
-	// First byte is cell type
     public static final int 	TYPE_MASK	= 0xFF;
-    
-    // Third byte is goal character
+    public static final int 	COLOR_MASK	= 0xFF00;
     public static final int		GOAL_MASK 	= 0xFF0000;
-    
-    // Fourth byte is box character
     public static final int		BOX_MASK 	= 0xFF000000;
 	
 	protected int					width, height;
@@ -103,7 +100,12 @@ public class GridWorldModel {
         data[x][y] &= ~obj;
     }
     
-    protected void addLettered(int obj, char letter, int x, int y) 
+    protected void addColor(Color color, int x, int y)
+    {
+    	add(Color.getValue(color) << 8, x , y);
+    }
+    
+    protected void addLetter(char letter, int obj, int x, int y) 
     {
     	int ch = 0;
 		
@@ -116,32 +118,37 @@ public class GridWorldModel {
 			ch = ((int) letter) << 24;
 		}
 		
-		add(ch | obj, x, y);
+		add(ch, x, y);
     }
 	
-	private int getChar(int mask, Location l)	{
-		return getChar(mask, l.x, l.y);
+	private int getMasked(int mask, Location l)	{
+		return getMasked(mask, l.x, l.y);
 	}
 	
-	private int getChar(int mask, int x, int y) {
+	private int getMasked(int mask, int x, int y) {
 		return data[x][y] & mask;
 	}
 	
 	public void move(int obj, Location fr, Location to)
 	{
-		int ch = 0;
+		obj |= LOCKED;
 		
 		if ((obj & GOAL) != 0)
 		{
-			ch = getChar(GOAL_MASK, fr);
+			obj |= getMasked(GOAL_MASK, fr);
 		}
 		else if ((obj & BOX) != 0)
 		{
-			ch = getChar(BOX_MASK, fr);
+			obj |= getMasked(BOX_MASK, fr);
+			obj |= getMasked(COLOR_MASK, fr);
+		}
+		else if ((obj & AGENT) != 0)
+		{
+			obj |= getMasked(COLOR_MASK, fr);			
 		}
 				
-		remove	(obj | ch | LOCKED, fr);
-		add		(obj | ch | LOCKED, to);
+		remove	(obj, fr);
+		add		(obj, to);
 	}
 	
 	public boolean isSolved(Location l) {
@@ -198,34 +205,14 @@ public class GridWorldModel {
     	Direction 	dir 	= action.getDirection();
     	
     	Location 	agLoc 	= action.getAgentLocation();
-    	
-//        if (agId < 0) 
-//        {
-//            logger.warning("** Invalid agent number: " + agId);            
-//            return false;
-//        }
-//    	
-//        Location agLoc = getAgPos(agId);
         
-        if (agLoc == null) 
-        {
-//            logger.warning("** Lost the location of agent");
-            return false;
-        }
+        if (agLoc == null) return false;
         
         Location nAgLoc = Location.newLocation(dir, agLoc);
         
-        if (nAgLoc == null)
-        {
-//            logger.warning("** Invalid direction: " + dir);
-            return false;
-        }
+        if (nAgLoc == null) return false;
         
-        if (!isFree(nAgLoc))
-        {
-//            logger.warning("** Location not free: " + nAgLoc);   
-            return false;
-        }
+        if (!isFree(nAgLoc)) return false;
 
         return true;
     }	
@@ -236,48 +223,26 @@ public class GridWorldModel {
     	Direction 	dir2 	= action.getBoxDir();
     	
     	Location 	agLoc 	= action.getAgentLocation();
+        
+        if (agLoc == null) return false;
+        
+        int agColor = getMasked(COLOR_MASK, agLoc);
+        
+    	Location boxLoc = Location.newLocation(dir1, agLoc);
+        
+        if (boxLoc == null) return false;
     	
-//        if (agId < 0) 
-//        {
-//            logger.warning("** Invalid agent number: " + agId);            
-//            return false;
-//        }
-//    	
-//        Location agLoc = getAgPos(agId);
+    	if (isFree(BOX, boxLoc)) return false;
         
-        if (agLoc == null) 
-        {
-//            logger.warning("** Lost the location of agent");          
-            return false;
-        }
+        int boxColor = getMasked(COLOR_MASK, boxLoc);
         
-    	Location nAgLoc = Location.newLocation(dir1, agLoc);
-        
-        if (nAgLoc == null)
-        {
-//            logger.warning("** Invalid direction: " + dir1);
-            return false;
-        }
+        if (agColor != boxColor) return false;
     	
-    	if (isFree(BOX, nAgLoc))
-    	{
-//            logger.warning("** No box at: " + nAgLoc);            
-            return false;
-    	}
-    	
-    	Location nBoxLoc = Location.newLocation(dir2, nAgLoc);
+    	Location nBoxLoc = Location.newLocation(dir2, boxLoc);
         
-        if (nBoxLoc == null)
-        {
-//            logger.warning("** Invalid direction: " + dir2);              
-            return false;
-        }
+        if (nBoxLoc == null) return false;
         
-        if (!isFree(nBoxLoc))
-        {
-//            logger.warning("** Location not free: " + nBoxLoc);   
-            return false;        	
-        }
+        if (!isFree(nBoxLoc)) return false;
     	
 		return true;
     }
@@ -288,48 +253,26 @@ public class GridWorldModel {
     	Direction 	dir2 	= action.getBoxDir();
     	
     	Location 	agLoc 	= action.getAgentLocation();
-    	
-//        if (agId < 0) 
-//        {
-//            logger.warning("** Invalid agent number: " + agId);            
-//            return false;
-//        }
-//    	
-//        Location agLoc = getAgPos(agId);
         
-        if (agLoc == null) 
-        {
-//            logger.warning("** Lost the location of agent");            
-            return false;
-        }
+        if (agLoc == null) return false;
+        
+        int agColor = getMasked(COLOR_MASK, agLoc);
         
     	Location boxLoc = Location.newLocation(dir2, agLoc);
     	
-    	if (boxLoc == null)
-    	{
-//            logger.warning("** Invalid direction: " + dir2);              
-            return false;
-    	}
+    	if (boxLoc == null) return false;
     	
-    	if (isFree(BOX, boxLoc))
-    	{
-//            logger.warning("** No box at: " + boxLoc);            
-            return false;
-    	}
+    	if (isFree(BOX, boxLoc)) return false;
+    	
+    	int boxColor = getMasked(COLOR_MASK, boxLoc);
+    	
+    	if (agColor != boxColor) return false;
     	
     	Location nAgLoc = Location.newLocation(dir1, agLoc);
     	
-    	if (nAgLoc == null)
-    	{
-//            logger.warning("** Invalid direction: " + dir1);              
-            return false;
-    	}
+    	if (nAgLoc == null) return false;
     	
-    	if (!isFree(nAgLoc))
-    	{
-//            logger.warning("** Location not free: " + nAgLoc);   
-            return false;        	
-    	}
+    	if (!isFree(nAgLoc)) return false; 
 
         return true;
     }
@@ -362,11 +305,11 @@ public class GridWorldModel {
     	Direction 	dir2 	= action.getBoxDir();
 
     	Location 	agLoc 	= action.getAgentLocation();
-    	Location 	nAgLoc 	= Location.newLocation(dir1, agLoc);
-    	Location 	nBoxLoc = Location.newLocation(dir2, nAgLoc);
+    	Location 	boxLoc 	= Location.newLocation(dir1, agLoc);
+    	Location 	nBoxLoc = Location.newLocation(dir2, boxLoc);
 
-        move(AGENT, agLoc, nAgLoc);
-        move(BOX, nAgLoc, nBoxLoc);
+        move(AGENT, agLoc, boxLoc);
+        move(BOX, boxLoc, nBoxLoc);
     }
     
     public void doPull(PullAction action)
