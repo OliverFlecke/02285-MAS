@@ -92,6 +92,7 @@ public class WorldModel extends DataWorldModel {
 		int number = agent.getNumber();
 		
 		add(AGENT, x, y);
+		addColor(color, x, y);
 		agents[number] = agent;
 		agentArray[x][y] = agent;
 	}
@@ -115,6 +116,7 @@ public class WorldModel extends DataWorldModel {
 
 		add(BOX, x, y);
 		addLetter(letter, BOX, x, y);
+		addColor(color, x, y);
 		boxes.add(box);
 		boxArray[x][y] = box;
 		addToMap(boxMap, letter, box);
