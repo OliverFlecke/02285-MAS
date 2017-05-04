@@ -28,4 +28,22 @@ public enum Color {
 			return Color.Blue;
 		}
 	}
+	
+	public static int getValue(Color color)
+	{
+		if (color == null) return 1;
+		
+		switch (color)
+		{
+		case Blue: 		return 1;
+		case Cyan:     	return 2;
+		case Green:    	return 3;
+		case Magenta:  	return 4;
+		case Orange: 	return 5;
+		case Pink:		return 6;
+		case Red:		return 7;
+		case Yellow: 	return 8;
+		default: 		return 1;
+		}
+	}
 }

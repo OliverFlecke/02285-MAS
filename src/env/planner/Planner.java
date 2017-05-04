@@ -81,7 +81,7 @@ public class Planner {
 
 		int initialStep = getInitialStep(agent);
 
-		List<Action> actions = PathfindingSearch.search(getModel(initialStep), agent, box, goal.getLocation(), initialStep);
+		List<Action> actions = PathfindingSearch.search(getModel(initialStep), agent, box, goal.getLocation(), initialStep, this);
 
 		if (actions == null)
 		{
@@ -93,19 +93,32 @@ public class Planner {
 
 		this.actions.get(agent.getNumber()).addAll(actions);
 
+		int step = initialStep;
+		// Update the grid models with the actions
 		for (Action action : actions)
 		{
-			getModel(initialStep++).doExecute(action);
+			getModel(step++).doExecute(action);
 		
 			// If there are future models, update these with the action
-			if (initialStep < gridModels.size())
+			if (step < gridModels.size())
 			{				
-				for (int step = initialStep; step < gridModels.size(); step++)
+				for (int futureStep = step; futureStep < gridModels.size(); futureStep++)
 				{
-					getModel(step).doExecute(action);				
+					getModel(futureStep).doExecute(action);				
 				}
 			}
 		}
+		
+//		step = initialStep;
+//		for (Action action : actions)
+//		{
+//			for (int futureStep = step; futureStep < step + actions.size(); futureStep++)
+//			{
+//				getModel(futureStep).lock(action.getAgentLocation());				
+//			}
+//			
+//			step++;	
+//		}
 		return true;
 	}
 	
