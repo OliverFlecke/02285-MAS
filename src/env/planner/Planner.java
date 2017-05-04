@@ -10,7 +10,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
-import java.util.PriorityQueue;
 import java.util.Queue;
 import java.util.Set;
 import java.util.logging.Logger;
@@ -20,9 +19,7 @@ import env.model.DataWorldModel;
 import env.model.WorldModel;
 import level.Location;
 import level.action.Action;
-import level.action.SkipAction;
 import level.cell.Agent;
-import level.cell.AgentComparator;
 import level.cell.Box;
 import level.cell.Cell;
 import level.cell.Goal;
@@ -69,7 +66,8 @@ public class Planner {
 			
 			for (Goal goal : prioritizeGoals(goals, agent))
 			{
-				if (solveGoal(goal, agent)) break;
+				if (solveGoal(goal, agent)) 
+					break;
 			}
 			
 			queue.add(agent);
@@ -98,6 +96,15 @@ public class Planner {
 		for (Action action : actions)
 		{
 			getModel(initialStep++).doExecute(action);
+		
+			// If there are future models, update these with the action
+			if (initialStep < gridModels.size())
+			{				
+				for (int step = initialStep; step < gridModels.size(); step++)
+				{
+					getModel(step).doExecute(action);				
+				}
+			}
 		}
 		return true;
 	}
@@ -116,7 +123,7 @@ public class Planner {
 	{
 		if (step > gridModels.size())
 		{
-			throw new UnsupportedOperationException("getModel");
+			throw new UnsupportedOperationException("getModel - step is too large: " + step + " Size is only: " + gridModels.size());
 		}
 		
 		if (step == gridModels.size())
