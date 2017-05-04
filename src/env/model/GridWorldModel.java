@@ -6,6 +6,7 @@ import java.util.logging.Logger;
 
 import level.Location;
 import level.action.*;
+import level.Color;
 import level.Direction;
 
 public class GridWorldModel {
@@ -20,6 +21,9 @@ public class GridWorldModel {
 
 	// First byte is cell type
     public static final int 	TYPE_MASK	= 0xFF;
+    
+    // Second byte is color
+    public static final int 	COLOR_MASK	= 0xFF00;
     
     // Third byte is goal character
     public static final int		GOAL_MASK 	= 0xFF0000;
@@ -103,7 +107,12 @@ public class GridWorldModel {
         data[x][y] &= ~obj;
     }
     
-    protected void addLettered(int obj, char letter, int x, int y) 
+    protected void addColor(Color color, int x, int y)
+    {
+    	
+    }
+    
+    protected void addLetter(char letter, int obj, int x, int y) 
     {
     	int ch = 0;
 		
@@ -116,7 +125,7 @@ public class GridWorldModel {
 			ch = ((int) letter) << 24;
 		}
 		
-		add(ch | obj, x, y);
+		add(ch, x, y);
     }
 	
 	private int getChar(int mask, Location l)	{

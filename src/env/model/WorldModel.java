@@ -100,7 +100,8 @@ public class WorldModel extends DataWorldModel {
 	{
 		Goal goal = new Goal(x, y, letter);
 		
-		addLettered(GOAL, letter, x, y);
+		add(GOAL, x, y);
+		addLetter(letter, GOAL, x, y);
 		goals.add(goal);
 		goalArray[x][y] = goal;
 		addToMap(goalMap, letter, goal);
@@ -112,7 +113,8 @@ public class WorldModel extends DataWorldModel {
 		
 		Box box = new Box(x, y, letter, color);
 
-		addLettered(BOX, letter, x, y);
+		add(BOX, x, y);
+		addLetter(letter, BOX, x, y);
 		boxes.add(box);
 		boxArray[x][y] = box;
 		addToMap(boxMap, letter, box);
