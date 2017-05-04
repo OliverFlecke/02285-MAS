@@ -32,7 +32,7 @@ public class PathfindingSearch extends Search implements Heuristic {
 	 */
 	public static List<Action> search(Agent agent, Cell tracked, Location to, int initialStep, Planner planner) 
 	{
-		return new PathfindingSearch(to, agent.getLocation()).search(new PathfindingNode(agent, tracked, initialStep, planner));
+		return new PathfindingSearch(agent.getLocation(), to).search(new PathfindingNode(agent, tracked, initialStep, planner));
 	}
 	
 	private Map<Location, Integer> distances;
@@ -60,20 +60,23 @@ public class PathfindingSearch extends Search implements Heuristic {
 	{
 		SimulationWorldModel model = ((PathfindingNode) n).getModel();
 		
-//		int trackedDist = model.getTrackedLocation().distance(model.getAgentLocation());
+		int goalDist = 0;
 //		int goalDist    = model.getTrackedLocation().distance(goalLocation);
-		
-//		if (trackedDist > 1)
-//		{
-//			goalDist += trackedDist;
-//		}
-		
-		int goalDist = distances.get(n.getLocation());
+
+		goalDist += distances.getOrDefault(n.getLocation(), Integer.MAX_VALUE);
+		if (goalDist == Integer.MAX_VALUE) 
+			goalDist = 5 * model.getTrackedLocation().distance(goalLocation);
 
 		goalDist += 10 * model.countUnsolvedGoals();
 		
 //		goalDist += 10 * ((PathfindingNode) n).getSkipCount();
 		
+//		int trackedDist = model.getTrackedLocation().distance(model.getAgentLocation());
+//		if (trackedDist > 1)
+//		{
+//			goalDist += trackedDist;
+//		}
+
 		return goalDist; 
 	}
 }

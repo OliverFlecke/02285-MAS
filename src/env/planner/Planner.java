@@ -88,7 +88,7 @@ public class Planner {
 
 		if (actions == null)
 		{
-			logger.info("Could not solve goal");
+			logger.info(agent.getName() + " could not solve goal " + goal.getLetter());
 			return false;			
 		}
 

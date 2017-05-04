@@ -60,7 +60,7 @@ public class DistanceNode extends Node implements IDirectionNode {
 		
 		int distance = 0;
 		
-		for (Node n = this; n.getParent() != null; n = n.getParent())
+		for (Node n = this; n != null; n = n.getParent())
 		{
 			distances.put(n.getLocation(), distance++);
 		}
