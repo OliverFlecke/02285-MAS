@@ -2,7 +2,6 @@ package srch.searches;
 
 import java.util.List;
 
-import env.model.GridWorldModel;
 import env.model.SimulationWorldModel;
 import env.planner.Planner;
 import level.cell.Cell;
@@ -29,9 +28,9 @@ public class PathfindingSearch extends Search implements Heuristic {
 	 * With proximity = 1, the solution is a path to a cell adjacent to the goal location.
 	 * @return Ordered list of directions leading to the goal.
 	 */
-	public static List<Action> search(GridWorldModel model, Cell agent, Cell tracked, Location to, int initialStep, Planner planner) 
+	public static List<Action> search(Cell agent, Cell tracked, Location to, int initialStep, Planner planner) 
 	{
-		return new PathfindingSearch(to, 0).search(new PathfindingNode(model, agent, tracked, initialStep, planner));
+		return new PathfindingSearch(to, 0).search(new PathfindingNode(agent, tracked, initialStep, planner));
 	}
 	
 	private Location goalLocation;
