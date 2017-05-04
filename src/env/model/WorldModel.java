@@ -83,7 +83,7 @@ public class WorldModel extends DataWorldModel {
 				else if (ch == '+') addWall(x, y);
 			}
 		}
-		printLevel();
+		System.err.println(toString());
 	}
 	
 	protected void addAgent(int x, int y, char letter, Color color) 
@@ -92,6 +92,7 @@ public class WorldModel extends DataWorldModel {
 		int number = agent.getNumber();
 		
 		add(AGENT, x, y);
+		addLetter(letter, BOX, x, y);
 		addColor(color, x, y);
 		agents[number] = agent;
 		agentArray[x][y] = agent;

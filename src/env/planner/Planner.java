@@ -16,6 +16,7 @@ import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 import env.model.DataWorldModel;
+import env.model.SimulationWorldModel;
 import env.model.WorldModel;
 import level.Location;
 import level.action.Action;
@@ -38,6 +39,8 @@ public class Planner {
 	
 	public void plan()
 	{
+		SimulationWorldModel.setPlanner(this);
+		
 		worldModel = WorldModel.getInstance();
 		
 		gridModels = new ArrayList<DataWorldModel>();
@@ -132,6 +135,11 @@ public class Planner {
 		return actions.get(agent.getNumber()).size() + 1;
 	}
 	
+	public boolean hasModel(int step)
+	{
+		return step < gridModels.size();
+	}
+	
 	public DataWorldModel getModel(int step)
 	{
 		if (step > gridModels.size())
@@ -139,7 +147,7 @@ public class Planner {
 			throw new UnsupportedOperationException("getModel - step is too large: " + step + " Size is only: " + gridModels.size());
 		}
 		
-		if (step == gridModels.size())
+		if (!hasModel(step))
 		{
 			gridModels.add(new DataWorldModel(gridModels.get(step - 1)));
 		}
@@ -277,7 +285,7 @@ public class Planner {
 		
 		return goalDependencies.entrySet().stream()
 //		        .sorted(Comparator.comparingInt(e -> e.getValue().size()))
-				.filter(e -> e.getValue().isEmpty())
+				.filter(e -> e.getValue().isEmpty() && e.getKey().getBox().getColor().equals(agent.getColor()))
 		        .map(Map.Entry::getKey)
 		        .sorted((g1, g2) -> d(g1, agent) - d(g2, agent))
 		        .collect(Collectors.toList());

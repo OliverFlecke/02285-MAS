@@ -1,9 +1,11 @@
 package srch.searches;
 
 import java.util.List;
+import java.util.Map;
 
 import env.model.SimulationWorldModel;
 import env.planner.Planner;
+import level.cell.Agent;
 import level.cell.Cell;
 import level.Location;
 import level.action.Action;
@@ -28,20 +30,23 @@ public class PathfindingSearch extends Search implements Heuristic {
 	 * With proximity = 1, the solution is a path to a cell adjacent to the goal location.
 	 * @return Ordered list of directions leading to the goal.
 	 */
-	public static List<Action> search(Cell agent, Cell tracked, Location to, int initialStep, Planner planner) 
+	public static List<Action> search(Agent agent, Cell tracked, Location to, int initialStep, Planner planner) 
 	{
-		return new PathfindingSearch(to, 0).search(new PathfindingNode(agent, tracked, initialStep, planner));
+		return new PathfindingSearch(to, agent.getLocation()).search(new PathfindingNode(agent, tracked, initialStep, planner));
 	}
 	
+	private Map<Location, Integer> distances;
 	private Location goalLocation;
 	private int 	 goalDistance;
 	
-	public PathfindingSearch(Location to, int proximity)
+	public PathfindingSearch(Location from, Location to)
 	{
+		distances = DistanceSearch.search(to, from);
+		
 		this.setStrategy(new BestFirst(new AStar(this)));
 		
 		this.goalLocation = to;
-		this.goalDistance = proximity;
+		this.goalDistance = 0;
 	}
 
 	@Override
@@ -55,15 +60,19 @@ public class PathfindingSearch extends Search implements Heuristic {
 	{
 		SimulationWorldModel model = ((PathfindingNode) n).getModel();
 		
-		int trackedDist = model.getTrackedLocation().distance(model.getAgentLocation());
-		int goalDist    = model.getTrackedLocation().distance(goalLocation);
+//		int trackedDist = model.getTrackedLocation().distance(model.getAgentLocation());
+//		int goalDist    = model.getTrackedLocation().distance(goalLocation);
 		
-		if (trackedDist > 1)
-		{
-			goalDist += trackedDist;
-		}
+//		if (trackedDist > 1)
+//		{
+//			goalDist += trackedDist;
+//		}
+		
+		int goalDist = distances.get(n.getLocation());
 
 		goalDist += 10 * model.countUnsolvedGoals();
+		
+//		goalDist += 10 * ((PathfindingNode) n).getSkipCount();
 		
 		return goalDist; 
 	}

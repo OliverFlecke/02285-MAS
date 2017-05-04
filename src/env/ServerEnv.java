@@ -24,7 +24,7 @@ public class ServerEnv {
 	
     private static final Logger logger = Logger.getLogger(ServerEnv.class.getName());
     
-    private static final boolean TEST = false;
+    private static final boolean TEST = true;
 
 	private int 						nbAgs;	  
 	private HashMap<Integer, Action> 	requests;	

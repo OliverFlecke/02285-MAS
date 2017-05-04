@@ -113,7 +113,7 @@ public class GridWorldModel {
 		{
 			ch = ((int) letter) << 16;
 		}
-		else if ((obj & BOX) != 0)
+		else if ((obj & BOX) != 0 || (obj & AGENT) != 0)
 		{
 			ch = ((int) letter) << 24;
 		}
@@ -121,15 +121,15 @@ public class GridWorldModel {
 		add(ch, x, y);
     }
 	
-	private int getMasked(int mask, Location l)	{
+	protected int getMasked(int mask, Location l)	{
 		return getMasked(mask, l.x, l.y);
 	}
 	
-	private int getMasked(int mask, int x, int y) {
+	protected int getMasked(int mask, int x, int y) {
 		return data[x][y] & mask;
 	}
 	
-	public void move(int obj, Location fr, Location to)
+	protected void move(int obj, Location fr, Location to)
 	{
 		obj |= LOCKED;
 		
@@ -144,6 +144,7 @@ public class GridWorldModel {
 		}
 		else if ((obj & AGENT) != 0)
 		{
+			obj |= getMasked(BOX_MASK, fr);
 			obj |= getMasked(COLOR_MASK, fr);			
 		}
 				
@@ -164,17 +165,26 @@ public class GridWorldModel {
 		return goalLocations.stream().filter(goal -> !isSolved(goal)).count();
 	}
 	
-	public void printLevel()
+	@Override
+	public String toString()
 	{
+		StringBuilder str = new StringBuilder();
+		
 		// Print integer representation of level
 		for (int y = 0; y < height; y++) 
 		{
 			for (int x = 0; x < width; x++) 
 			{
-				System.err.print(data[x][y]);
+				if (hasObject(AGENT, x, y)) str.append((char) ((data[x][y] & BOX_MASK) >> 24));
+				else if (hasObject(BOX, x, y)) str.append(Character.toUpperCase((char) ((data[x][y] & BOX_MASK) >> 24)));
+				else if (hasObject(GOAL, x, y)) str.append((char) ((data[x][y] & GOAL_MASK) >> 16));
+				else if (hasObject(WALL, x, y)) str.append('+');
+				else if (hasObject(LOCKED, x, y)) str.append('-');
+				else str.append(' ');
 			}
-			System.err.println();
+			str.append("\n");
 		}
+		return str.toString();
 	}
 	
 	public int[][] deepCopyData() 
@@ -187,95 +197,6 @@ public class GridWorldModel {
 	    }
 	    return result;
 	}
-
-	public boolean canExecute(Action action) 
-	{		
-        switch(action.getType())
-        {
-        case MOVE: return canMove((MoveAction) action);
-        case PUSH: return canPush((PushAction) action);
-        case PULL: return canPull((PullAction) action);
-        case SKIP: return true;
-        }
-        throw new UnsupportedOperationException("Invalid action: " + action.getType());        
-	}
-
-    public synchronized boolean canMove(MoveAction action) 
-    {
-    	Direction 	dir 	= action.getDirection();
-    	
-    	Location 	agLoc 	= action.getAgentLocation();
-        
-        if (agLoc == null) return false;
-        
-        Location nAgLoc = Location.newLocation(dir, agLoc);
-        
-        if (nAgLoc == null) return false;
-        
-        if (!isFree(nAgLoc)) return false;
-
-        return true;
-    }	
-    
-    public boolean canPush(PushAction action)
-    {
-    	Direction 	dir1 	= action.getAgentDir();
-    	Direction 	dir2 	= action.getBoxDir();
-    	
-    	Location 	agLoc 	= action.getAgentLocation();
-        
-        if (agLoc == null) return false;
-        
-        int agColor = getMasked(COLOR_MASK, agLoc);
-        
-    	Location boxLoc = Location.newLocation(dir1, agLoc);
-        
-        if (boxLoc == null) return false;
-    	
-    	if (isFree(BOX, boxLoc)) return false;
-        
-        int boxColor = getMasked(COLOR_MASK, boxLoc);
-        
-        if (agColor != boxColor) return false;
-    	
-    	Location nBoxLoc = Location.newLocation(dir2, boxLoc);
-        
-        if (nBoxLoc == null) return false;
-        
-        if (!isFree(nBoxLoc)) return false;
-    	
-		return true;
-    }
-    
-    public boolean canPull(PullAction action)
-    {
-    	Direction 	dir1 	= action.getAgentDir();
-    	Direction 	dir2 	= action.getBoxDir();
-    	
-    	Location 	agLoc 	= action.getAgentLocation();
-        
-        if (agLoc == null) return false;
-        
-        int agColor = getMasked(COLOR_MASK, agLoc);
-        
-    	Location boxLoc = Location.newLocation(dir2, agLoc);
-    	
-    	if (boxLoc == null) return false;
-    	
-    	if (isFree(BOX, boxLoc)) return false;
-    	
-    	int boxColor = getMasked(COLOR_MASK, boxLoc);
-    	
-    	if (agColor != boxColor) return false;
-    	
-    	Location nAgLoc = Location.newLocation(dir1, agLoc);
-    	
-    	if (nAgLoc == null) return false;
-    	
-    	if (!isFree(nAgLoc)) return false; 
-
-        return true;
-    }
 	
 	public void doExecute(Action action)
 	{
