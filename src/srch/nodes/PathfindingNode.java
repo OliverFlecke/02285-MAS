@@ -6,6 +6,7 @@ import java.util.List;
 
 import env.model.GridWorldModel;
 import env.model.SimulationWorldModel;
+import env.planner.Planner;
 import level.Location;
 import level.action.Action;
 import level.cell.Cell;
@@ -16,11 +17,13 @@ public class PathfindingNode extends StepNode implements IActionNode {
 
 	private Action action;
 	private SimulationWorldModel model;
+	private static Planner planner;
 	
-	public PathfindingNode(GridWorldModel model, Cell agent, Cell tracked, int initialStep) 
+	public PathfindingNode(GridWorldModel model, Cell agent, Cell tracked, int initialStep, Planner plan) 
 	{
 		super(agent.getLocation(), initialStep);
-
+		
+		planner = plan;
 		this.action 	= null;
 		this.model 		= new SimulationWorldModel(model, agent, tracked);
 	}
@@ -56,7 +59,7 @@ public class PathfindingNode extends StepNode implements IActionNode {
 		
 		for (Action action : Action.Every(model.getAgentLocation()))
 		{			
-			if (model.canExecute(action))
+			if (model.canExecute(action) && planner.getModel(getStep()).canExecute(action))
 			{
 				expandedNodes.add(new PathfindingNode(this, action, model.run(action)));
 			}

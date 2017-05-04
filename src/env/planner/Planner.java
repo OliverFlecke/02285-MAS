@@ -81,7 +81,7 @@ public class Planner {
 
 		int initialStep = getInitialStep(agent);
 
-		List<Action> actions = PathfindingSearch.search(getModel(initialStep), agent, box, goal.getLocation(), initialStep);
+		List<Action> actions = PathfindingSearch.search(getModel(initialStep), agent, box, goal.getLocation(), initialStep, this);
 
 		if (actions == null)
 		{

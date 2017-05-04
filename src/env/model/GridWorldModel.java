@@ -87,8 +87,7 @@ public class GridWorldModel {
     	return inGrid(x, y) && (data[x][y] & obj) == 0;
     }
     
-
-    protected void add(int obj, Location l) {	
+    protected void add(int obj, Location l) {
         add(obj, l.x, l.y);
     }
 
