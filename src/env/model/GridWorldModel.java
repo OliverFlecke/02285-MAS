@@ -198,6 +198,19 @@ public class GridWorldModel {
 	    return result;
 	}
 	
+	public void deepAddData(GridWorldModel model)
+	{	    
+		int[][] data = model.data;
+		
+	    for (int x = 0; x < data.length; x++) 
+	    {
+	    	for (int y = 0; y < data[0].length; y++)
+	    	{
+	    		this.data[x][y] |= data[x][y];
+	    	}
+	    }
+	}
+	
 	public void doExecute(Action action)
 	{
         switch(action.getType())
@@ -229,8 +242,8 @@ public class GridWorldModel {
     	Location 	boxLoc 	= Location.newLocation(dir1, agLoc);
     	Location 	nBoxLoc = Location.newLocation(dir2, boxLoc);
 
-        move(AGENT, agLoc, boxLoc);
         move(BOX, boxLoc, nBoxLoc);
+        move(AGENT, agLoc, boxLoc);
     }
     
     public void doPull(PullAction action)
