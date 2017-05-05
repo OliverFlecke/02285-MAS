@@ -29,6 +29,11 @@ public class ClosestNode extends Node implements IDirectionNode {
 	}
 
 	@Override
+	public Direction getDirection() {
+		return this.direction;
+	}
+
+	@Override
 	public List<Node> getExpandedNodes()
 	{
 		List<Node> expandedNodes = new ArrayList<Node>(Direction.EVERY.length);
@@ -50,11 +55,6 @@ public class ClosestNode extends Node implements IDirectionNode {
 	public Location extractPlan() 
 	{
 		return this.getLocation();
-	}
-
-	@Override
-	public Direction getDirection() {
-		return this.direction;
 	}
 
 }

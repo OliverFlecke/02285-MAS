@@ -1,38 +1,37 @@
 package srch.nodes;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.LinkedList;
 import java.util.List;
 
 import env.model.WorldModel;
+import level.DependencyPath;
 import level.Direction;
 import level.Location;
 import srch.Node;
 import srch.interfaces.IDirectionNode;
 
-public class DependencyNode extends Node implements IDirectionNode {
+public class DependencyPathNode extends StepNode implements IDirectionNode {
 
 	private Direction direction;
 	private int dependency;
 	private int dependencyCount;
 
-	public DependencyNode(Location initial, int dependency) 
+	public DependencyPathNode(Location initial, int dependency, int initialStep) 
 	{
-		super(initial);
+		super(initial, initialStep);
 		
 		this.direction 			= null;
 		this.dependency 		= dependency;
 		this.dependencyCount 	= 0;
 	}
 
-	public DependencyNode(Node parent, Direction dir, Location loc) 
+	public DependencyPathNode(StepNode parent, Direction dir, Location loc) 
 	{
 		super(parent, loc);
 		
 		this.direction			= dir;
-		this.dependency 		= ((DependencyNode) parent).dependency;
-		this.dependencyCount 	= ((DependencyNode) parent).dependencyCount;
+		this.dependency 		= ((DependencyPathNode) parent).dependency;
+		this.dependencyCount 	= ((DependencyPathNode) parent).dependencyCount;
 		
 		if (WorldModel.getInstance().hasObject(dependency, loc)) 
 		{
@@ -60,22 +59,17 @@ public class DependencyNode extends Node implements IDirectionNode {
 			
 			if (WorldModel.getInstance().isFree(this.getObject(), loc))
 			{
-				expandedNodes.add(new DependencyNode(this, dir, loc));
+				expandedNodes.add(new DependencyPathNode(this, dir, loc));
 			}
 		}
 		return expandedNodes;
 	}
-
-	/**
-	 * Override to extract dependency
-	 */
+	
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<Location> extractPlan() 
-	{
-		if (this.getDependencies() == 0) return Collections.emptyList();
-		
-		LinkedList<Location> plan = new LinkedList<Location>();
+	public DependencyPath extractPlan() 
+	{		
+		DependencyPath path = new DependencyPath();
 		
 		for (Node n = this; n.getParent() != null; n = n.getParent()) 
 		{
@@ -83,9 +77,14 @@ public class DependencyNode extends Node implements IDirectionNode {
 			
 			if (WorldModel.getInstance().hasObject(dependency, loc))
 			{
-				plan.addFirst(loc);
+				path.addDependency(loc);
+			}
+			else
+			{
+				path.addToPath(loc);
 			}
 		}
-		return plan;
+		return path;
 	}
+
 }

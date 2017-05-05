@@ -1,7 +1,6 @@
 package srch.nodes;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -11,7 +10,6 @@ import level.Location;
 import level.action.Action;
 import level.action.Action.ActionType;
 import level.action.SkipAction;
-import level.cell.Agent;
 import level.cell.Cell;
 import srch.Node;
 import srch.interfaces.IActionNode;
@@ -21,29 +19,22 @@ public class PathfindingNode extends Node implements IActionNode {
 	private Action action;
 	private SimulationWorldModel model;
 	private static Planner planner;
-	private boolean plannerHasFailed = false;
-	private int skipCount;
 	
-	public PathfindingNode(Agent agent, Cell tracked, int initialStep, Planner plan) 
+	public PathfindingNode(Cell agent, Cell tracked, int initialStep, Planner plan) 
 	{
 		super(agent.getLocation());
 
 		planner = plan;
-		skipCount = 0;
-		this.action 	= null;
-		this.model 		= new SimulationWorldModel(planner.getModel(initialStep), initialStep, agent, tracked);
+		action 	= null;
+		model 	= new SimulationWorldModel(planner.getModel(initialStep), initialStep, tracked);
 	}
 
 	public PathfindingNode(Node parent, Action action, SimulationWorldModel model) 
 	{
-		super(parent, model.getAgentLocation());
-
-		skipCount = ((PathfindingNode) parent).skipCount;
+		super(parent, action.getNewAgentLocation());
 		
-		if (action.getType() == ActionType.SKIP) skipCount++;
-		
-		this.action 	= action;
-		this.model 		= model;		
+		this.action = action;
+		this.model 	= model;
 	}
 
 	@Override
@@ -63,11 +54,6 @@ public class PathfindingNode extends Node implements IActionNode {
 		return model.getTrackedLocation();
 	}
 	
-	public int getSkipCount()
-	{
-		return skipCount;
-	}
-	
 	public SimulationWorldModel getModel() 
 	{
 		return model;
@@ -75,12 +61,7 @@ public class PathfindingNode extends Node implements IActionNode {
 
 	@Override
 	public List<Node> getExpandedNodes()
-	{		
-//		if (this.action != null && this.action.getType() == ActionType.SKIP && ((PathfindingNode) this.getParent()).plannerHasFailed)
-//		{
-//			return Collections.emptyList();
-//		}
-			
+	{			
 		List<Node> expandedNodes = new ArrayList<Node>();
 		
 		for (Action action : Action.Every(this.getLocation(), this.getAction()))
@@ -89,14 +70,10 @@ public class PathfindingNode extends Node implements IActionNode {
 			{
 				expandedNodes.add(new PathfindingNode(this, action, model.run(action)));
 			}
-//			else
-//			{
-//				plannerHasFailed = model.hasFailed();
-//			}
 		}
 		if (this.isSkipNode())
 		{
-			Action action = new SkipAction(model.getAgentLocation());
+			Action action = new SkipAction(this.getLocation());
 			
 			expandedNodes.add(new PathfindingNode(this, action, model.run(action)));
 		}

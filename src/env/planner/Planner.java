@@ -16,16 +16,21 @@ import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 import env.model.DataWorldModel;
+import env.model.GridWorldModel;
 import env.model.SimulationWorldModel;
 import env.model.WorldModel;
+import level.DependencyPath;
 import level.Location;
 import level.action.Action;
 import level.cell.Agent;
 import level.cell.Box;
 import level.cell.Cell;
 import level.cell.Goal;
+import srch.searches.DependencyPathSearch;
 import srch.searches.DependencySearch;
 import srch.searches.PathfindingSearch;
+import srch.searches.closest.AgentSearch;
+import srch.searches.closest.StorageSearch;
 
 public class Planner {
 	
@@ -67,10 +72,57 @@ public class Planner {
 		{
 			Agent agent = queue.poll();
 			
-			for (Goal goal : prioritizeGoals(goals, agent))
+			DataWorldModel model = getModel(getInitialStep(agent));
+			
+			Collection<Goal> solvableGoals = getSolvableGoals(goals, agent);
+			
+			for (Goal goal : solvableGoals)
 			{
-				if (solveGoal(goal, agent)) 
+				DependencyPath dependencyPath = getBoxDependencyPath(agent, goal.getBox());
+				
+				dependencyPath.addDependencyPath(getGoalDependencyPath(agent, goal));
+				
+				for (Location path : dependencyPath.getPath())
+				{
+					model.add(GridWorldModel.IN_USE, path);
+				}
+				
+				for (Location dependency : dependencyPath.getDependencies())
+				{
+					if (model.hasObject(GridWorldModel.BOX, dependency))
+					{
+						Box box = model.getBox(dependency);
+						
+						if (!box.getColor().equals(agent.getColor()))
+						{							
+							Location storage = StorageSearch.search(box.getLocation(), model);
+							
+							Agent otherAgent = model.getAgent(AgentSearch.search(box.getColor(), box.getLocation()));
+							
+							getAgentToBox(box, otherAgent);
+							getObjectToLocation(box, storage, otherAgent);
+						}
+					}
+					else if (model.hasObject(GridWorldModel.AGENT, dependency))
+					{
+						Agent otherAgent = model.getAgent(dependency);
+
+						Location storage = StorageSearch.search(agent.getLocation(), model);
+						
+						getObjectToLocation(otherAgent, storage, otherAgent);
+					}
+				}
+
+				for (Location path : dependencyPath.getPath())
+				{
+					model.remove(GridWorldModel.IN_USE, path);
+				}				
+
+				if (getAgentToBox(goal.getBox(), agent))
+				{
+					getObjectToLocation(goal.getBox(), goal.getLocation(), agent);
 					break;
+				}
 			}
 			
 			queue.add(agent);
@@ -78,21 +130,19 @@ public class Planner {
 	}
 	
 
-	public boolean solveGoal(Goal goal, Agent agent)
+	public boolean getAgentToBox(Box box, Agent agent)
 	{
-		Box box = goal.getBox();
-
 		int initialStep = getInitialStep(agent);
 
-		List<Action> actions = PathfindingSearch.search(agent, box, goal.getLocation(), initialStep, this);
+		List<Action> actions = PathfindingSearch.search(agent, agent, box.getLocation(), 1, initialStep, this);
 
 		if (actions == null)
 		{
-			logger.info(agent.getName() + " could not solve goal " + goal.getLetter());
+			logger.info(agent.getName() + " could not find path to box " + box.getLetter());
 			return false;			
 		}
 
-		System.err.println(actions);
+		System.err.print  (actions );
 
 		this.actions.get(agent.getNumber()).addAll(actions);
 
@@ -111,17 +161,40 @@ public class Planner {
 				}
 			}
 		}
+		return true;
+	}
+	
+	public boolean getObjectToLocation(Cell tracked, Location loc, Agent agent)
+	{
+		int initialStep = getInitialStep(agent);
 		
-//		step = initialStep;
-//		for (Action action : actions)
-//		{
-//			for (int futureStep = step; futureStep < step + actions.size(); futureStep++)
-//			{
-//				getModel(futureStep).lock(action.getAgentLocation());				
-//			}
-//			
-//			step++;	
-//		}
+		List<Action> actions = PathfindingSearch.search(agent, tracked, loc, 0, initialStep, this);
+
+		if (actions == null)
+		{
+			logger.info(agent.getName() + " could not find path to location " + loc);
+			return false;			
+		}
+		
+		System.err.println(actions);
+		
+		this.actions.get(agent.getNumber()).addAll(actions);
+
+		int step = initialStep;
+		// Update the grid models with the actions
+		for (Action action : actions)
+		{
+			getModel(step++).doExecute(action);
+		
+			// If there are future models, update these with the action
+			if (step < gridModels.size())
+			{
+				for (int futureStep = step; futureStep < gridModels.size(); futureStep++)
+				{
+					getModel(futureStep).doExecute(action);				
+				}
+			}
+		}
 		return true;
 	}
 	
@@ -183,88 +256,6 @@ public class Planner {
 		return actions;
 	}
 	
-//	public static synchronized Goal selectGoal(int agX, int agY)
-//	{
-//		Agent agent = worldModel.getAgent(agX, agY);
-//		
-//		Location closestLoc = GoalSearch.search(agent.getColor(), agent.getLocation());
-//		if (closestLoc == null) return null;
-//		
-//		Goal goal = worldModel.getGoal(closestLoc);
-//		
-//		while (goal.hasDependencies())
-//		{
-//			goal = goal.getDependency();
-//		}		
-//		
-//		if (!agent.getColor().equals(goal.getBox().getColor())) 
-//		{
-//			logger.warning("Could not find solvable goal");
-//			return null;
-//		}
-//		
-//		List<Location> path = LocationSearch.search(goal.getLocation(), goal.getBox().getLocation(), 0);
-//		
-//		for (Location l : path)
-//		{
-////			localModel.lock(l);
-//		}
-//		
-//		// Merge plan with other agents
-//
-////		unsolvedGoals.remove(goal);
-//		return goal;
-//	}
-	
-//	public static synchronized void solveDependencies(int agX, int agY, int boxX, int boxY)
-//	{
-//		Agent agent = worldModel.getAgent(agX, agY);
-//		
-//		Box box = worldModel.getBox(boxX, boxY);
-//        List<Location> dependencies = DependencySearch.search(box.getLocation(), agent.getLocation(), WorldModel.BOX | WorldModel.AGENT);
-//        
-//        if (dependencies.size() == 0) return;
-//        
-//		List<Location> path = LocationSearch.search(box.getLocation(), agent.getLocation(), 1);
-//		
-//		for (Location l : path)
-//		{
-////			localModel.lock(l);
-//		}
-//        
-//		// TODO: Include agents
-//        
-//        for (Location l : dependencies)
-//        {
-////        	Location storage = StorageSearch.search(l, localModel);
-////        	
-////        	logger.info("Found storage at: " + storage.toString());
-//        	
-////        	logger.info(l.x + ", " + l.y + " is a dependency");
-//        	if (worldModel.hasObject(WorldModel.AGENT, l))
-//        	{
-//        		Agent otherAgent = worldModel.getAgent(l);
-//        		
-//        		if (otherAgent.getNumber() > agent.getNumber()) // Need a better way to figure out who should move out of the way
-//        		{
-////        			Literal helpPercept = WorldEnv.createMovePerception(storage);
-////        			WorldEnv.getInstance().addAgentPercept(otherAgent.getName(), helpPercept);
-//        		}
-//        	}
-////        	else 
-//        	if (worldModel.hasObject(WorldModel.BOX, l))
-//        	{
-////        		Literal helpPercept = WorldEnv.createMoveBoxPerception(l, storage);
-////        		
-////        		Location agentLoc = AgentSearch.search(model.getBox(l).getColor(), l);
-////        		
-////        		String agentName = model.getAgent(agentLoc).getName();
-////        		
-////        		WorldEnv.getInstance().addAgentPercept(agentName, helpPercept);
-//        	}
-//        }
-//	}
-	
 	private void matchBoxesAndGoals()
 	{		
 		for (Entry<Character, Set<Goal>> entry : worldModel.getGoalMap().entrySet())
@@ -286,8 +277,18 @@ public class Planner {
 			}
 		}
 	}
+	
+	private DependencyPath getGoalDependencyPath(Agent agent, Goal goal)
+	{
+		return DependencyPathSearch.search(goal.getLocation(), goal.getBox().getLocation(), GridWorldModel.BOX | GridWorldModel.AGENT, 0, getInitialStep(agent));		
+	}
+	
+	private DependencyPath getBoxDependencyPath(Agent agent, Box box)
+	{		
+		return DependencyPathSearch.search(box.getLocation(), agent.getLocation(), GridWorldModel.BOX | GridWorldModel.AGENT, 1, getInitialStep(agent));		
+	}
 
-	private Collection<Goal> prioritizeGoals(Collection<Goal> goals, Agent agent) 
+	private Collection<Goal> getSolvableGoals(Collection<Goal> goals, Agent agent) 
 	{
 		Map<Goal, Set<Goal>> goalDependencies = new HashMap<>();
 		
@@ -310,7 +311,7 @@ public class Planner {
 //		        .sorted(Comparator.comparingInt(e -> e.getValue().size()))
 				.filter(e -> e.getValue().isEmpty() && e.getKey().getBox().getColor().equals(agent.getColor()))
 		        .map(Map.Entry::getKey)
-		        .sorted((g1, g2) -> d(g1, agent) - d(g2, agent))
+//		        .sorted((g1, g2) -> d(g1, agent) - d(g2, agent))
 		        .collect(Collectors.toList());
 	}
 	

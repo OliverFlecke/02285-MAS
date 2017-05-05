@@ -7,23 +7,20 @@ import level.action.Action;
 import level.action.MoveAction;
 import level.action.PullAction;
 import level.action.PushAction;
-import level.cell.Agent;
 import level.cell.Cell;
 
 public class SimulationWorldModel extends GridWorldModel {
 	
 	private int step;
-	private Agent agent;
 	private Cell tracked;
 	private static Planner planner;
 	private boolean isUpdated = false;
 
-	public SimulationWorldModel(GridWorldModel model, int step, Agent agent, Cell tracked)
+	public SimulationWorldModel(GridWorldModel model, int step, Cell tracked)
 	{
 		super(model);
 		
 		this.step		= step;
-		this.agent 		= new Agent(agent);
 		this.tracked  	= new Cell(tracked);
 	}
 	
@@ -37,9 +34,9 @@ public class SimulationWorldModel extends GridWorldModel {
 		return tracked.getLocation();
 	}
 	
-	public Location getAgentLocation()
+	public int getStep()
 	{
-		return agent.getLocation();
+		return step;
 	}
 	
 	public void move(int obj, Location fr, Location to)
@@ -49,17 +46,12 @@ public class SimulationWorldModel extends GridWorldModel {
 			tracked.setLocation(to);
 		}
 		
-		if (obj == AGENT)
-		{
-			agent.setLocation(to);
-		}
-		
 		super.move(obj, fr, to);
 	}
     
     public SimulationWorldModel run(Action action)
     {    	
-    	SimulationWorldModel simulation = new SimulationWorldModel(this, step + 1, this.agent, this.tracked);
+    	SimulationWorldModel simulation = new SimulationWorldModel(this, step + 1, this.tracked);
     	
     	simulation.doExecute(action);
     	
@@ -90,7 +82,7 @@ public class SimulationWorldModel extends GridWorldModel {
         
         if (nAgLoc == null) return false;
         
-        if (!isFree(nAgLoc)) return false;
+        if (!isFree(WALL, nAgLoc)) return false;
         
         if (planner.hasModel(step - 1) && !planner.getModel(step - 1).isFree(nAgLoc)) return false;
         
@@ -126,7 +118,7 @@ public class SimulationWorldModel extends GridWorldModel {
         
         if (nBoxLoc == null) return false;
         
-        if (!isFree(nBoxLoc)) return false;
+        if (!isFree(WALL, nBoxLoc)) return false;
         
         if (planner.hasModel(step) && !planner.getModel(step).isFree(nBoxLoc)) return false;
     	
@@ -157,8 +149,8 @@ public class SimulationWorldModel extends GridWorldModel {
     	Location nAgLoc = Location.newLocation(dir1, agLoc);
     	
     	if (nAgLoc == null) return false;
-    	
-    	if (!isFree(nAgLoc)) return false; 
+        
+        if (!isFree(WALL, nAgLoc)) return false;
         
         if (planner.hasModel(step) && !planner.getModel(step).isFree(nAgLoc)) return false;
 

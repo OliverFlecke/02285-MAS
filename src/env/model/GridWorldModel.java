@@ -18,6 +18,7 @@ public class GridWorldModel {
 	public static final int		BOX		=  4;
     public static final int 	WALL 	=  8;
     public static final int 	LOCKED 	= 16;
+    public static final int 	IN_USE	= 32;
 
     public static final int 	TYPE_MASK	= 0xFF;
     public static final int 	COLOR_MASK	= 0xFF00;
@@ -84,7 +85,7 @@ public class GridWorldModel {
     	return inGrid(x, y) && (data[x][y] & obj) == 0;
     }
     
-    protected void add(int obj, Location l) {
+    public void add(int obj, Location l) {
         add(obj, l.x, l.y);
     }
 
@@ -92,7 +93,7 @@ public class GridWorldModel {
         data[x][y] |= obj;
     }
 
-    protected void remove(int obj, Location l) {
+    public void remove(int obj, Location l) {
         remove(obj, l.x, l.y);
     }
 

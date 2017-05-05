@@ -6,7 +6,6 @@ import java.util.Optional;
 
 import env.model.SimulationWorldModel;
 import env.planner.Planner;
-import level.cell.Agent;
 import level.cell.Cell;
 import level.Location;
 import level.action.Action;
@@ -31,23 +30,23 @@ public class PathfindingSearch extends Search implements Heuristic {
 	 * With proximity = 1, the solution is a path to a cell adjacent to the goal location.
 	 * @return Ordered list of directions leading to the goal.
 	 */
-	public static List<Action> search(Agent agent, Cell tracked, Location to, int initialStep, Planner planner) 
+	public static List<Action> search(Cell agent, Cell tracked, Location to, int proximity, int initialStep, Planner planner) 
 	{
-		return new PathfindingSearch(agent.getLocation(), to).search(new PathfindingNode(agent, tracked, initialStep, planner));
+		return new PathfindingSearch(tracked.getLocation(), to, proximity).search(new PathfindingNode(agent, tracked, initialStep, planner));
 	}
 	
 	private Map<Location, Integer> distances;
 	private Location goalLocation;
 	private int 	 goalDistance;
 	
-	public PathfindingSearch(Location from, Location to)
+	public PathfindingSearch(Location from, Location to, int proximity)
 	{
 		distances = DistanceSearch.search(from, to);
 		
 		this.setStrategy(new BestFirst(new AStar(this)));
 		
 		this.goalLocation = to;
-		this.goalDistance = 0;
+		this.goalDistance = proximity;
 	}
 
 	@Override
@@ -62,11 +61,6 @@ public class PathfindingSearch extends Search implements Heuristic {
 		SimulationWorldModel model = ((PathfindingNode) n).getModel();
 		
 		int goalDist = 0;
-//		int goalDist    = model.getTrackedLocation().distance(goalLocation);
-
-//		goalDist += distances.getOrDefault(n.getLocation(), Integer.MAX_VALUE);
-//		if (goalDist == Integer.MAX_VALUE) 
-//			goalDist = 5 * model.getTrackedLocation().distance(goalLocation);
 		
 		Location agLoc = n.getLocation();
 		
