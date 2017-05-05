@@ -97,26 +97,9 @@ public class SimulationWorldModel extends GridWorldModel {
         
         if (!isFree(nAgLoc)) return false;
         
-        if (planner.hasModel(step) && !planner.getModel(step).isFree(nAgLoc)) 
-    	{
-        	hasFailed = true;
-        	return false;
-    	}
+        if (planner.hasModel(step) && !planner.getModel(step).isFree(nAgLoc)) return false;
         
-        if (planner.hasModel(step))
-        {
-            int agNumber = this.agent.getNumber();
-            
-            DataWorldModel model = planner.getModel(step);
-            
-            int otherAgNumber = Character.getNumericValue((char) (model.getMasked(BOX_MASK, agLoc) >> 24));            
-            
-            if (model.hasObject(AGENT, agLoc) && agNumber != otherAgNumber)
-        	{
-            	hasFailed = true;
-            	return false;
-        	}
-        }
+        if (planner.hasAgentWithOppositeAction(step, action)) return false;
 
         return true;
     }	
@@ -148,11 +131,7 @@ public class SimulationWorldModel extends GridWorldModel {
         
         if (!isFree(nBoxLoc)) return false;
         
-        if (planner.hasModel(step) && !planner.getModel(step).isFree(nBoxLoc))
-    	{
-        	hasFailed = true;
-        	return false;
-    	}
+        if (planner.hasModel(step) && !planner.getModel(step).isFree(nBoxLoc)) return false;
     	
 		return true;
     }
@@ -184,11 +163,7 @@ public class SimulationWorldModel extends GridWorldModel {
     	
     	if (!isFree(nAgLoc)) return false; 
         
-        if (planner.hasModel(step) && !planner.getModel(step).isFree(nAgLoc))
-    	{
-        	hasFailed = true;
-        	return false;
-    	}
+        if (planner.hasModel(step) && !planner.getModel(step).isFree(nAgLoc)) return false;
 
         return true;
     }

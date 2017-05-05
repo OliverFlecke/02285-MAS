@@ -24,4 +24,9 @@ public class SkipAction extends Action {
 	public boolean isOpposite(Action action) {
 		return false;
 	}
+	
+	@Override
+	public Location getNewAgentLocation() {
+		return this.getAgentLocation();
+	}
 }

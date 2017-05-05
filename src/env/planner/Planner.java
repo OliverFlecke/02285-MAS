@@ -135,6 +135,29 @@ public class Planner {
 		return actions.get(agent.getNumber()).size() + 1;
 	}
 	
+	public boolean hasAgentWithOppositeAction(int step, Action action)
+	{
+		if (!hasModel(step))
+		{
+			return false;
+		}
+		else
+		{
+			DataWorldModel model = getModel(step);
+			
+			Agent agent = model.getAgent(action.getNewAgentLocation());
+			
+			if (agent == null)
+			{
+				return false;
+			}
+			else
+			{
+				return action.isOpposite(actions.get(agent.getNumber()).get(step));
+			}
+		}
+	}
+	
 	public boolean hasModel(int step)
 	{
 		return step < gridModels.size();
