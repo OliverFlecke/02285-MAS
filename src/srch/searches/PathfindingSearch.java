@@ -62,22 +62,23 @@ public class PathfindingSearch extends Search implements Heuristic {
 		
 		int goalDist = 0;
 		
-		Location agLoc = n.getLocation();
+		Location loc = model.getTrackedLocation();
 		
-		if (distances.containsKey(agLoc))
+		if (distances.containsKey(loc))
 		{
-			goalDist += distances.get(agLoc);
+			goalDist += distances.get(loc);
 		}
 		else
 		{
-			Optional<Location> closestOpt = distances.keySet().stream().min((l1, l2) -> l1.distance(agLoc) - l2.distance(agLoc));
+			Optional<Location> closestOpt = distances.keySet().stream().min((l1, l2) -> l1.distance(loc) - l2.distance(loc));
 			
 			if (closestOpt.isPresent())
 			{
 				Location closest = closestOpt.get();
 				
 				goalDist += distances.get(closest);
-				goalDist += agLoc.distance(closest);
+				goalDist += loc.distance(closest);
+				goalDist += 5;
 			}
 			else
 			{

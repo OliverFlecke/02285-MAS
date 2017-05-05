@@ -120,6 +120,8 @@ public class SimulationWorldModel extends GridWorldModel {
         
         if (!isFree(WALL, nBoxLoc)) return false;
         
+        if (planner.hasModel(step - 1) && !planner.getModel(step - 1).isFree(nBoxLoc)) return false;
+        
         if (planner.hasModel(step) && !planner.getModel(step).isFree(nBoxLoc)) return false;
     	
 		return true;
@@ -151,6 +153,8 @@ public class SimulationWorldModel extends GridWorldModel {
     	if (nAgLoc == null) return false;
         
         if (!isFree(WALL, nAgLoc)) return false;
+        
+        if (planner.hasModel(step - 1) && !planner.getModel(step - 1).isFree(nAgLoc)) return false;
         
         if (planner.hasModel(step) && !planner.getModel(step).isFree(nAgLoc)) return false;
 
