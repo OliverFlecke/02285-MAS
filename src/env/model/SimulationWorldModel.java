@@ -94,9 +94,7 @@ public class SimulationWorldModel extends GridWorldModel {
         
         if (nAgLoc == null) return false;
         
-        if (!isFree(WALL, nAgLoc)) return false;
-        
-        if (planner.hasModel(currentStep) && !planner.getModel(currentStep).isFree(nAgLoc)) return false;
+        if (!isFree(nAgLoc)) return false;
         
         if (planner.hasModel(nextStep) && !planner.getModel(nextStep).isFree(nAgLoc)) return false;
         
@@ -130,9 +128,7 @@ public class SimulationWorldModel extends GridWorldModel {
         
         if (nBoxLoc == null) return false;
         
-        if (!isFree(WALL, nBoxLoc)) return false;
-        
-        if (planner.hasModel(currentStep) && !planner.getModel(currentStep).isFree(nBoxLoc)) return false;
+        if (!isFree(nBoxLoc)) return false;
         
         if (planner.hasModel(nextStep) && !planner.getModel(nextStep).isFree(nBoxLoc)) return false;
     	
@@ -164,30 +160,10 @@ public class SimulationWorldModel extends GridWorldModel {
     	
     	if (nAgLoc == null) return false;
         
-        if (!isFree(WALL, nAgLoc)) return false;
-        
-        if (planner.hasModel(currentStep) && !planner.getModel(currentStep).isFree(nAgLoc)) return false;
+        if (!isFree(nAgLoc)) return false;
         
         if (planner.hasModel(nextStep) && !planner.getModel(nextStep).isFree(nAgLoc)) return false;
 
         return true;
-    }
-    
-    @Override
-    public boolean equals(Object obj) 
-    {
-    	if (planner.hasModel(nextStep))
-    	{
-    		return false;
-    	}
-    	else if (!isUpdated)
-    	{
-    		GridWorldModel model = planner.getModel(currentStep);
-    		
-    		this.deepAddData(model);
-    		
-    		isUpdated = true;
-    	}
-    	return super.equals(obj);
     }
 }
