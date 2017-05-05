@@ -42,7 +42,7 @@ public class PathfindingSearch extends Search implements Heuristic {
 	
 	public PathfindingSearch(Location from, Location to)
 	{
-		distances = DistanceSearch.search(to, from);
+		distances = DistanceSearch.search(from, to);
 		
 		this.setStrategy(new BestFirst(new AStar(this)));
 		

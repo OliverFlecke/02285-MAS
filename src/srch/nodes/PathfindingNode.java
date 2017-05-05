@@ -10,6 +10,7 @@ import env.planner.Planner;
 import level.Location;
 import level.action.Action;
 import level.action.Action.ActionType;
+import level.action.SkipAction;
 import level.cell.Agent;
 import level.cell.Cell;
 import srch.Node;
@@ -51,6 +52,12 @@ public class PathfindingNode extends Node implements IActionNode {
 		return action;
 	}
 	
+	public boolean isSkipNode()
+	{
+		if (action == null) return true;
+		return action.getType() == ActionType.SKIP;
+	}
+	
 	public Location getTrackedLoc()
 	{
 		return model.getTrackedLocation();
@@ -69,23 +76,29 @@ public class PathfindingNode extends Node implements IActionNode {
 	@Override
 	public List<Node> getExpandedNodes()
 	{		
-		if (this.action != null && this.action.getType() == ActionType.SKIP && ((PathfindingNode) this.getParent()).plannerHasFailed)
-		{
-			return Collections.emptyList();
-		}
+//		if (this.action != null && this.action.getType() == ActionType.SKIP && ((PathfindingNode) this.getParent()).plannerHasFailed)
+//		{
+//			return Collections.emptyList();
+//		}
 			
 		List<Node> expandedNodes = new ArrayList<Node>();
 		
-		for (Action action : Action.Every(model.getAgentLocation()))
+		for (Action action : Action.Every(this.getLocation(), this.getAction()))
 		{			
 			if (model.canExecute(action))
 			{
 				expandedNodes.add(new PathfindingNode(this, action, model.run(action)));
 			}
-			else
-			{
-				plannerHasFailed = model.hasFailed();
-			}
+//			else
+//			{
+//				plannerHasFailed = model.hasFailed();
+//			}
+		}
+		if (this.isSkipNode())
+		{
+			Action action = new SkipAction(model.getAgentLocation());
+			
+			expandedNodes.add(new PathfindingNode(this, action, model.run(action)));
 		}
 		return expandedNodes;
 	}

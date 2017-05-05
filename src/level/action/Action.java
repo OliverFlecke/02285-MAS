@@ -34,7 +34,7 @@ public abstract class Action {
 		return this.agentLocation;
 	}
 	
-	public static List<Action> Every(Location agentLocation)
+	public static List<Action> Every(Location agentLocation, Action agentAction)
 	{
 		LinkedList<Action> actions = new LinkedList<Action>();
 		for (Direction dir : Direction.EVERY) 
@@ -50,7 +50,8 @@ public abstract class Action {
 				if (d1 != d2) 
 					actions.add(new PullAction(d1, d2, agentLocation));
 		
-		actions.add(new SkipAction(agentLocation));
+		actions.remove(agentAction);
+//		actions.add(new SkipAction(agentLocation));
 		return actions;
 	}
 
