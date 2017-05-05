@@ -212,7 +212,7 @@ public class Planner {
 	 */
 	public int getInitialStep(Agent agent)
 	{
-		return actions.get(agent.getNumber()).size() + 1;
+		return actions.get(agent.getNumber()).size();
 	}
 	
 	public boolean hasAgentWithOppositeAction(int step, Action action)

@@ -27,8 +27,8 @@ public class SimulationWorldModel extends GridWorldModel {
 	{
 		super(model);
 		
-		this.currentStep 	= step - 1;
-		this.nextStep		= step;
+		this.currentStep 	= step;
+		this.nextStep		= step + 1;
 		this.tracked  		= new Cell(tracked);
 	}
 	
@@ -59,13 +59,13 @@ public class SimulationWorldModel extends GridWorldModel {
     
     public SimulationWorldModel run(Action action)
     {    	
-    	SimulationWorldModel simulation = new SimulationWorldModel(this, nextStep + 1, this.tracked);
+    	SimulationWorldModel simulation = new SimulationWorldModel(this, nextStep, this.tracked);
     	
     	for (Agent agent : WorldModel.getInstance().getAgents())
     	{
-    		if (planner.getActions().get(agent.getNumber()).size() > nextStep)
+    		if (currentStep < planner.getActions().get(agent.getNumber()).size())
     		{
-    			Action otherAction = planner.getActions().get(agent.getNumber()).get(nextStep);
+    			Action otherAction = planner.getActions().get(agent.getNumber()).get(currentStep);
     			
     			simulation.doExecute(otherAction);
     		}
@@ -102,6 +102,8 @@ public class SimulationWorldModel extends GridWorldModel {
         
         if (!isFree(nAgLoc)) return false;
         
+        if (planner.hasModel(currentStep) && !planner.getModel(currentStep).isFree(nAgLoc)) return false;
+        
         if (planner.hasModel(nextStep) && !planner.getModel(nextStep).isFree(nAgLoc)) return false;
         
         if (planner.hasAgentWithOppositeAction(currentStep, action)) return false;
@@ -136,6 +138,8 @@ public class SimulationWorldModel extends GridWorldModel {
         
         if (!isFree(nBoxLoc)) return false;
         
+        if (planner.hasModel(currentStep) && !planner.getModel(currentStep).isFree(nBoxLoc)) return false;
+        
         if (planner.hasModel(nextStep) && !planner.getModel(nextStep).isFree(nBoxLoc)) return false;
     	
 		return true;
@@ -167,6 +171,8 @@ public class SimulationWorldModel extends GridWorldModel {
     	if (nAgLoc == null) return false;
         
         if (!isFree(nAgLoc)) return false;
+        
+        if (planner.hasModel(currentStep) && !planner.getModel(currentStep).isFree(nAgLoc)) return false;
         
         if (planner.hasModel(nextStep) && !planner.getModel(nextStep).isFree(nAgLoc)) return false;
 
