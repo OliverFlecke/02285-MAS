@@ -123,5 +123,11 @@ public class PathfindingNode extends Node implements IActionNode {
 			return false;
 		return true;
 	}
+	
+	@Override
+	public String toString() 
+	{
+		return this.getAction().toString() + " - " + super.toString();
+	}
 
 }

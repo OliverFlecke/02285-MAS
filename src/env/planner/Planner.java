@@ -198,11 +198,18 @@ public class Planner {
 		return true;
 	}
 	
+	/**
+	 * @return The unsolved goals of the last model in this planner
+	 */
 	public Collection<Goal> getUnsolvedGoals()
 	{
 		return getModel(gridModels.size() - 1).getUnsolvedGoals();
 	}
 	
+	/**
+	 * @param agent
+	 * @return The initial step of the agent, which is the length of the agent's actions + 1
+	 */
 	public int getInitialStep(Agent agent)
 	{
 		return actions.get(agent.getNumber()).size() + 1;

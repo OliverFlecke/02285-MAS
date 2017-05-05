@@ -76,4 +76,9 @@ public abstract class Node {
 			return false;
 		return true;
 	}	
+	
+	@Override
+	public String toString() {
+		return this.getLocation().toString();
+	}
 }
