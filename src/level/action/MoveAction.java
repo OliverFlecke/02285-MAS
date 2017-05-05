@@ -23,4 +23,14 @@ public class MoveAction extends Action {
 	{
 		return "Move(" + Direction.toString(this.direction) + ")";
 	}
+	
+	@Override
+	public Action getOpposite() {
+		return new MoveAction(Direction.getOpposite(this.getDirection()), Location.newLocation(this.getDirection(), this.getAgentLocation()));
+	}
+	
+	@Override
+	public boolean isOpposite(Action action) {
+		return Direction.isOpposite(((MoveAction) action).getDirection(), this.getDirection());
+	}
 }
