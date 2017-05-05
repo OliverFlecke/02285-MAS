@@ -52,9 +52,7 @@ public class WorldEnv extends ServerEnv {
   
     public void executePlanner()
     {
-    	int steps = this.planner.getActions().stream().max((a1, a2) -> a1.size() - a2.size()).get().size();
-    	
-    	for (int i = 0; i < steps; i++) 
+    	for (int i = 0; ; i++) 
     	{
 			for (Agent agent : model.getAgents())
 			{

@@ -7,6 +7,7 @@ import level.action.Action;
 import level.action.MoveAction;
 import level.action.PullAction;
 import level.action.PushAction;
+import level.cell.Agent;
 import level.cell.Cell;
 
 public class SimulationWorldModel extends GridWorldModel {
@@ -52,6 +53,16 @@ public class SimulationWorldModel extends GridWorldModel {
     public SimulationWorldModel run(Action action)
     {    	
     	SimulationWorldModel simulation = new SimulationWorldModel(this, step + 1, this.tracked);
+    	
+    	for (Agent agent : WorldModel.getInstance().getAgents())
+    	{
+    		if (planner.getActions().get(agent.getNumber()).size() > step)
+    		{
+    			Action otherAction = planner.getActions().get(agent.getNumber()).get(step);
+    			
+    			simulation.doExecute(otherAction);    			
+    		}
+    	}
     	
     	simulation.doExecute(action);
     	
