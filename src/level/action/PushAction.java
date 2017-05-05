@@ -53,4 +53,29 @@ public class PushAction extends Action {
 		}
 	}
 
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = super.hashCode();
+		result = prime * result + ((agentDir == null) ? 0 : agentDir.hashCode());
+		result = prime * result + ((boxDir == null) ? 0 : boxDir.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (!super.equals(obj))
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		PushAction other = (PushAction) obj;
+		if (agentDir != other.agentDir)
+			return false;
+		if (boxDir != other.boxDir)
+			return false;
+		return true;
+	}
+
 }

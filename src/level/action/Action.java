@@ -50,7 +50,10 @@ public abstract class Action {
 				if (d1 != d2) 
 					actions.add(new PullAction(d1, d2, agentLocation));
 		
-		actions.remove(agentAction);
+		if (agentAction != null)
+		{
+			actions.remove(agentAction.getOpposite());
+		}
 //		actions.add(new SkipAction(agentLocation));
 		return actions;
 	}
