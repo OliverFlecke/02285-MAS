@@ -11,11 +11,17 @@ import level.cell.Agent;
 import level.cell.Cell;
 
 public class SimulationWorldModel extends GridWorldModel {
-	
-	private int currentStep, nextStep;
-	private Cell tracked;
+
 	private static Planner planner;
-	private boolean isUpdated = false;
+	
+	private int 	currentStep, 
+					nextStep;
+	private Cell 	tracked;
+
+	public SimulationWorldModel(int step, Cell tracked)
+	{
+		this(planner.getModel(step), step, tracked);
+	}
 
 	public SimulationWorldModel(GridWorldModel model, int step, Cell tracked)
 	{
@@ -61,7 +67,7 @@ public class SimulationWorldModel extends GridWorldModel {
     		{
     			Action otherAction = planner.getActions().get(agent.getNumber()).get(nextStep);
     			
-    			simulation.doExecute(otherAction);    			
+    			simulation.doExecute(otherAction);
     		}
     	}
     	
@@ -171,23 +177,5 @@ public class SimulationWorldModel extends GridWorldModel {
         if (planner.hasModel(nextStep) && !planner.getModel(nextStep).isFree(nAgLoc)) return false;
 
         return true;
-    }
-    
-    @Override
-    public boolean equals(Object obj) 
-    {
-    	if (planner.hasModel(nextStep))
-    	{
-    		return false;
-    	}
-    	else if (!isUpdated)
-    	{
-    		GridWorldModel model = planner.getModel(currentStep);
-    		
-    		this.deepAddData(model);
-    		
-    		isUpdated = true;
-    	}
-    	return super.equals(obj);
     }
 }
