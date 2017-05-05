@@ -134,7 +134,7 @@ public class Planner {
 	{
 		int initialStep = getInitialStep(agent);
 
-		List<Action> actions = PathfindingSearch.search(agent, agent, box.getLocation(), 1, initialStep, this);
+		List<Action> actions = PathfindingSearch.search(agent, agent, box.getLocation(), 1, initialStep);
 
 		if (actions == null)
 		{
@@ -168,7 +168,7 @@ public class Planner {
 	{
 		int initialStep = getInitialStep(agent);
 		
-		List<Action> actions = PathfindingSearch.search(agent, tracked, loc, 0, initialStep, this);
+		List<Action> actions = PathfindingSearch.search(agent, tracked, loc, 0, initialStep);
 
 		if (actions == null)
 		{

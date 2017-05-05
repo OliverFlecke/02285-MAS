@@ -11,11 +11,17 @@ import level.cell.Agent;
 import level.cell.Cell;
 
 public class SimulationWorldModel extends GridWorldModel {
-	
-	private int currentStep, nextStep;
-	private Cell tracked;
+
 	private static Planner planner;
-	private boolean isUpdated = false;
+	
+	private int 	currentStep, 
+					nextStep;
+	private Cell 	tracked;
+
+	public SimulationWorldModel(int step, Cell tracked)
+	{
+		this(planner.getModel(step), step, tracked);
+	}
 
 	public SimulationWorldModel(GridWorldModel model, int step, Cell tracked)
 	{
@@ -61,7 +67,7 @@ public class SimulationWorldModel extends GridWorldModel {
     		{
     			Action otherAction = planner.getActions().get(agent.getNumber()).get(nextStep);
     			
-    			simulation.doExecute(otherAction);    			
+    			simulation.doExecute(otherAction);
     		}
     	}
     	

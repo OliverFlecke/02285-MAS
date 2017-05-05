@@ -18,15 +18,13 @@ public class PathfindingNode extends Node implements IActionNode {
 
 	private Action action;
 	private SimulationWorldModel model;
-	private static Planner planner;
 	
-	public PathfindingNode(Cell agent, Cell tracked, int initialStep, Planner plan) 
+	public PathfindingNode(Cell agent, Cell tracked, int initialStep) 
 	{
 		super(agent.getLocation());
 
-		planner = plan;
 		action 	= null;
-		model 	= new SimulationWorldModel(planner.getModel(initialStep), initialStep, tracked);
+		model 	= new SimulationWorldModel(initialStep, tracked);
 	}
 
 	public PathfindingNode(Node parent, Action action, SimulationWorldModel model) 
