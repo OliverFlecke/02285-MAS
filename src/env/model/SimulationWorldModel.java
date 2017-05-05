@@ -11,7 +11,7 @@ import level.cell.Cell;
 
 public class SimulationWorldModel extends GridWorldModel {
 	
-	private int step;
+	private int currentStep, nextStep;
 	private Cell tracked;
 	private static Planner planner;
 	private boolean isUpdated = false;
@@ -20,8 +20,9 @@ public class SimulationWorldModel extends GridWorldModel {
 	{
 		super(model);
 		
-		this.step		= step;
-		this.tracked  	= new Cell(tracked);
+		this.currentStep 	= step - 1;
+		this.nextStep		= step;
+		this.tracked  		= new Cell(tracked);
 	}
 	
 	public static void setPlanner(Planner planner)
@@ -36,7 +37,7 @@ public class SimulationWorldModel extends GridWorldModel {
 	
 	public int getStep()
 	{
-		return step;
+		return nextStep;
 	}
 	
 	public void move(int obj, Location fr, Location to)
@@ -51,7 +52,7 @@ public class SimulationWorldModel extends GridWorldModel {
     
     public SimulationWorldModel run(Action action)
     {    	
-    	SimulationWorldModel simulation = new SimulationWorldModel(this, step + 1, this.tracked);
+    	SimulationWorldModel simulation = new SimulationWorldModel(this, nextStep + 1, this.tracked);
     	
     	simulation.doExecute(action);
     	
@@ -84,11 +85,11 @@ public class SimulationWorldModel extends GridWorldModel {
         
         if (!isFree(WALL, nAgLoc)) return false;
         
-        if (planner.hasModel(step - 1) && !planner.getModel(step - 1).isFree(nAgLoc)) return false;
+        if (planner.hasModel(currentStep) && !planner.getModel(currentStep).isFree(nAgLoc)) return false;
         
-        if (planner.hasModel(step) && !planner.getModel(step).isFree(nAgLoc)) return false;
+        if (planner.hasModel(nextStep) && !planner.getModel(nextStep).isFree(nAgLoc)) return false;
         
-        if (planner.hasAgentWithOppositeAction(step - 1, action)) return false;
+        if (planner.hasAgentWithOppositeAction(currentStep, action)) return false;
 
         return true;
     }	
@@ -120,9 +121,9 @@ public class SimulationWorldModel extends GridWorldModel {
         
         if (!isFree(WALL, nBoxLoc)) return false;
         
-        if (planner.hasModel(step - 1) && !planner.getModel(step - 1).isFree(nBoxLoc)) return false;
+        if (planner.hasModel(currentStep) && !planner.getModel(currentStep).isFree(nBoxLoc)) return false;
         
-        if (planner.hasModel(step) && !planner.getModel(step).isFree(nBoxLoc)) return false;
+        if (planner.hasModel(nextStep) && !planner.getModel(nextStep).isFree(nBoxLoc)) return false;
     	
 		return true;
     }
@@ -154,9 +155,9 @@ public class SimulationWorldModel extends GridWorldModel {
         
         if (!isFree(WALL, nAgLoc)) return false;
         
-        if (planner.hasModel(step - 1) && !planner.getModel(step - 1).isFree(nAgLoc)) return false;
+        if (planner.hasModel(currentStep) && !planner.getModel(currentStep).isFree(nAgLoc)) return false;
         
-        if (planner.hasModel(step) && !planner.getModel(step).isFree(nAgLoc)) return false;
+        if (planner.hasModel(nextStep) && !planner.getModel(nextStep).isFree(nAgLoc)) return false;
 
         return true;
     }
@@ -164,13 +165,13 @@ public class SimulationWorldModel extends GridWorldModel {
     @Override
     public boolean equals(Object obj) 
     {
-    	if (planner.hasModel(step))
+    	if (planner.hasModel(nextStep))
     	{
     		return false;
     	}
     	else if (!isUpdated)
     	{
-    		GridWorldModel model = planner.getModel(step - 1);
+    		GridWorldModel model = planner.getModel(currentStep);
     		
     		this.deepAddData(model);
     		
