@@ -97,11 +97,11 @@ public class SimulationWorldModel extends GridWorldModel {
         
         if (!isFree(nAgLoc)) return false;
         
-//        if (planner.hasModel(step) && !planner.getModel(step).isFree(nAgLoc)) 
-//    	{
-//        	hasFailed = true;
-//        	return false;
-//    	}
+        if (planner.hasModel(step) && !planner.getModel(step).isFree(nAgLoc)) 
+    	{
+        	hasFailed = true;
+        	return false;
+    	}
         
         if (planner.hasModel(step))
         {
@@ -116,13 +116,6 @@ public class SimulationWorldModel extends GridWorldModel {
             	hasFailed = true;
             	return false;
         	}
-            
-            otherAgNumber = Character.getNumericValue((char) (model.getMasked(BOX_MASK, nAgLoc) >> 24));
-            if (model.hasObject(BOX | LOCKED, nAgLoc) || (model.hasObject(AGENT, nAgLoc) && agNumber != otherAgNumber))
-            {
-            	hasFailed = true;
-            	return false;
-            }
         }
 
         return true;

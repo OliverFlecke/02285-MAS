@@ -14,4 +14,9 @@ public class SkipAction extends Action {
 	{
 		return "NoOp";
 	}
+	
+	@Override
+	public boolean isOpposite(Action action) {
+		return false;
+	}
 }

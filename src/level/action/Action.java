@@ -54,6 +54,8 @@ public abstract class Action {
 		return actions;
 	}
 
+	public abstract boolean isOpposite(Action action);
+	
 	@Override
 	public int hashCode() {
 		final int prime = 31;

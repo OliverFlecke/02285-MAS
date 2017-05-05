@@ -31,5 +31,19 @@ public class PushAction extends Action {
 		return "Push(" + Direction.toString(agentDir) + "," 
 				+ Direction.toString(boxDir) + ")";
 	}
+	
+	@Override
+	public boolean isOpposite(Action action) {
+		if (action instanceof PullAction)
+		{
+			PullAction other = (PullAction) action;
+			return Direction.isOpposite(this.getAgentDir(), other.getAgentDir()) 
+					&& this.getBoxDir().equals(other.getBoxDir());
+		}
+		else
+		{
+			return false;			
+		}
+	}
 
 }
