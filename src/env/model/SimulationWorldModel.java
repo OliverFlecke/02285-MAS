@@ -57,9 +57,9 @@ public class SimulationWorldModel extends GridWorldModel {
     	
     	for (Agent agent : WorldModel.getInstance().getAgents())
     	{
-    		if (planner.getActions().get(agent.getNumber()).size() > step)
+    		if (planner.getActions().get(agent.getNumber()).size() > nextStep)
     		{
-    			Action otherAction = planner.getActions().get(agent.getNumber()).get(step);
+    			Action otherAction = planner.getActions().get(agent.getNumber()).get(nextStep);
     			
     			simulation.doExecute(otherAction);    			
     		}
