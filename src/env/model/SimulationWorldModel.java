@@ -16,7 +16,7 @@ public class SimulationWorldModel extends GridWorldModel {
 	private Agent agent;
 	private Cell tracked;
 	private static Planner planner;
-	private boolean hasFailed = false;
+	private boolean isUpdated = false;
 
 	public SimulationWorldModel(GridWorldModel model, int step, Agent agent, Cell tracked)
 	{
@@ -40,11 +40,6 @@ public class SimulationWorldModel extends GridWorldModel {
 	public Location getAgentLocation()
 	{
 		return agent.getLocation();
-	}
-	
-	public boolean hasFailed() 
-	{
-		return hasFailed;
 	}
 	
 	public void move(int obj, Location fr, Location to)
@@ -97,9 +92,11 @@ public class SimulationWorldModel extends GridWorldModel {
         
         if (!isFree(nAgLoc)) return false;
         
+        if (planner.hasModel(step - 1) && !planner.getModel(step - 1).isFree(nAgLoc)) return false;
+        
         if (planner.hasModel(step) && !planner.getModel(step).isFree(nAgLoc)) return false;
         
-        if (planner.hasAgentWithOppositeAction(step, action)) return false;
+        if (planner.hasAgentWithOppositeAction(step - 1, action)) return false;
 
         return true;
     }	
@@ -169,7 +166,20 @@ public class SimulationWorldModel extends GridWorldModel {
     }
     
     @Override
-    public boolean equals(Object obj) {
-    	return !planner.hasModel(step) && super.equals(obj);
+    public boolean equals(Object obj) 
+    {
+    	if (planner.hasModel(step))
+    	{
+    		return false;
+    	}
+    	else if (!isUpdated)
+    	{
+    		GridWorldModel model = planner.getModel(step - 1);
+    		
+    		this.deepAddData(model);
+    		
+    		isUpdated = true;
+    	}
+    	return super.equals(obj);
     }
 }
