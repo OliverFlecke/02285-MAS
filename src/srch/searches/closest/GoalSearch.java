@@ -7,32 +7,28 @@ import srch.nodes.ClosestNode;
 
 public class GoalSearch extends ClosestSearch {
 
-	public static Location search(String color, Location from) 
+	public static Location search(DataWorldModel model, Location from) 
 	{
-		return new GoalSearch(color).search(new ClosestNode(from));
+		return new GoalSearch(model).search(new ClosestNode(from));
 	}
 	
-	private String color;
+	private DataWorldModel model;
 
-	public GoalSearch(String color) 
+	public GoalSearch(DataWorldModel model) 
 	{
 		super(DataWorldModel.GOAL);
 		
-		this.color = color;
+		this.model = model;
 	}
 	
 	@Override
 	public boolean isGoalState(Node n) 
 	{
-//		if (!super.isGoalState(n))
-//		{
-//			return false;
-//		}
-//		
-//		Goal goal = WorldModel.getInstance().getGoal(n.getLocation());		
-//		
-//		return !goal.isSolved() && goal.getBox().getColor().equals(color);
-		return true;
+		if (!super.isGoalState(n))
+		{
+			return false;
+		}
+		return model.isSolved(model.getGoal(n.getLocation()));
 	}
 
 }

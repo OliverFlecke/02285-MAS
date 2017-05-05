@@ -5,7 +5,6 @@ import java.util.Map;
 import java.util.Optional;
 
 import env.model.SimulationWorldModel;
-import env.planner.Planner;
 import level.cell.Cell;
 import level.Location;
 import level.action.Action;

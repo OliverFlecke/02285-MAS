@@ -1,7 +1,5 @@
 package srch.searches;
 
-import java.util.List;
-
 import level.DependencyPath;
 import level.Location;
 import srch.Heuristic;

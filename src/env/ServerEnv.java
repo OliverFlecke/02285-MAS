@@ -26,8 +26,8 @@ public class ServerEnv {
     
     private static final boolean TEST = false;
 
-	private int 						nbAgs;	  
-	private HashMap<Integer, Action> 	requests;	
+	private int 						nbAgs;
+	private HashMap<Integer, Action> 	requests;
 	private String[] 					jointAction;
 
     protected BufferedReader 			serverIn;  

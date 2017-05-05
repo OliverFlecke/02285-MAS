@@ -5,7 +5,6 @@ import java.util.LinkedList;
 import java.util.List;
 
 import env.model.SimulationWorldModel;
-import env.planner.Planner;
 import level.Location;
 import level.action.Action;
 import level.action.Action.ActionType;
