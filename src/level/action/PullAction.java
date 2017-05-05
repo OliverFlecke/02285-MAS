@@ -33,6 +33,13 @@ public class PullAction extends Action {
 	}
 	
 	@Override
+	public Action getOpposite()
+	{
+		return new PushAction(Direction.getOpposite(this.getAgentDir()), this.getBoxDir(), 
+				Location.newLocation(this.getAgentDir(), this.getAgentLocation()));
+	}
+	
+	@Override
 	public boolean isOpposite(Action action) {
 		if (action instanceof PushAction)
 		{

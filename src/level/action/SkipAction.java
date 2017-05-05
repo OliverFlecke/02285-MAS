@@ -16,6 +16,11 @@ public class SkipAction extends Action {
 	}
 	
 	@Override
+	public Action getOpposite() {
+		return null;
+	}
+	
+	@Override
 	public boolean isOpposite(Action action) {
 		return false;
 	}
