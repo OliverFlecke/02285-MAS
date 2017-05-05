@@ -52,4 +52,9 @@ public class PullAction extends Action {
 			return false;			
 		}
 	}
+	
+	@Override
+	public Location getNewAgentLocation() {
+		return Location.newLocation(this.getAgentDir(), this.getAgentLocation());
+	}
 }

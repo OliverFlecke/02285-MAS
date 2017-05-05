@@ -59,6 +59,8 @@ public abstract class Action {
 	
 	public abstract Action getOpposite();
 	
+	public abstract Location getNewAgentLocation();
+	
 	@Override
 	public int hashCode() {
 		final int prime = 31;
