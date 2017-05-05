@@ -217,25 +217,18 @@ public class Planner {
 	
 	public boolean hasAgentWithOppositeAction(int step, Action action)
 	{
-		if (!hasModel(step))
-		{
-			return false;
-		}
-		else
+		if (hasModel(step))
 		{
 			DataWorldModel model = getModel(step);
 			
 			Agent agent = model.getAgent(action.getNewAgentLocation());
 			
-			if (agent == null)
-			{
-				return false;
-			}
-			else
+			if (agent != null && step < actions.get(agent.getNumber()).size())
 			{
 				return action.isOpposite(actions.get(agent.getNumber()).get(step));
 			}
 		}
+		return false;
 	}
 	
 	public boolean hasModel(int step)
