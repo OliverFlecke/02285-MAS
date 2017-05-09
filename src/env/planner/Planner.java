@@ -142,7 +142,7 @@ public class Planner {
 			return false;			
 		}
 
-		System.err.print  (actions );
+		System.err.println(actions);
 
 		this.actions.get(agent.getNumber()).addAll(actions);
 

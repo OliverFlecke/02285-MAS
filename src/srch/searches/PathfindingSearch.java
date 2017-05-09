@@ -3,9 +3,9 @@ package srch.searches;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.logging.Level;
 
 import env.model.SimulationWorldModel;
-import env.planner.Planner;
 import level.cell.Cell;
 import level.Location;
 import level.action.Action;
@@ -13,7 +13,7 @@ import srch.Node;
 import srch.Search;
 import srch.Strategy.BestFirst;
 import srch.nodes.PathfindingNode;
-import srch.Evaluation.AStar;
+import srch.Evaluation.Greedy;
 import srch.Heuristic;
 
 public class PathfindingSearch extends Search implements Heuristic {
@@ -43,7 +43,8 @@ public class PathfindingSearch extends Search implements Heuristic {
 	{
 		distances = DistanceSearch.search(from, to);
 		
-		this.setStrategy(new BestFirst(new AStar(this)));
+		logger.setLevel(Level.ALL);
+		this.setStrategy(new BestFirst(new Greedy(this)));
 		
 		this.goalLocation = to;
 		this.goalDistance = proximity;

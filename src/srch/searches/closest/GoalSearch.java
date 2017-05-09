@@ -12,6 +12,7 @@ public class GoalSearch extends ClosestSearch {
 		return new GoalSearch(color).search(new ClosestNode(from));
 	}
 	
+	@SuppressWarnings("unused")
 	private String color;
 
 	public GoalSearch(String color) 
