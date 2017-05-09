@@ -28,7 +28,8 @@ public class DependencyPathSearch extends Search implements Heuristic {
 	}
 
 	@Override
-	public boolean isGoalState(Node n) {
+	public boolean isGoalState(Node n) 
+	{
 		return n.getLocation().distance(goalLocation) == goalDistance;
 	}
 

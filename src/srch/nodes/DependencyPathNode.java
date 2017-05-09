@@ -71,7 +71,7 @@ public class DependencyPathNode extends StepNode implements IDirectionNode {
 	{		
 		DependencyPath path = new DependencyPath();
 		
-		for (Node n = this; n.getParent() != null; n = n.getParent()) 
+		for (Node n = this; n != null; n = n.getParent()) 
 		{
 			Location loc = n.getLocation();
 			
