@@ -52,7 +52,9 @@ public class WorldEnv extends ServerEnv {
   
     public void executePlanner()
     {
-    	for (int i = 0; ; i++) 
+    	int steps = planner.getSolutionLength();
+    	
+    	for (int i = 0; i < steps; i++) 
     	{
 			for (Agent agent : model.getAgents())
 			{

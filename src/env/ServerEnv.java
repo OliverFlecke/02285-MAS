@@ -24,7 +24,7 @@ public class ServerEnv {
 	
     private static final Logger logger = Logger.getLogger(ServerEnv.class.getName());
     
-    private static final boolean TEST = false;
+    private static final boolean TEST = true;
 
 	private int 						nbAgs;
 	private HashMap<Integer, Action> 	requests;
@@ -44,7 +44,7 @@ public class ServerEnv {
 		{
 			try {
 //				serverIn = new BufferedReader(new FileReader(new File("levels\\single_agent\\easy\\SACrunch.lvl")));
-				serverIn = new BufferedReader(new FileReader(new File("levels\\MAsimple3.lvl")));
+				serverIn = new BufferedReader(new FileReader(new File("levels\\MAsimple4.lvl")));
 			} catch (FileNotFoundException e) {
 				e.printStackTrace();
 			}

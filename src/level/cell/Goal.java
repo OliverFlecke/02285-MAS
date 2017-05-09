@@ -4,7 +4,7 @@ import env.model.DataWorldModel;
 
 public class Goal extends Lettered {
 	
-	private Box 		box;
+	private Box box;
 	
 	public Goal(int x, int y, char letter)
 	{

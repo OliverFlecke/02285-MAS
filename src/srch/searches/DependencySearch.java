@@ -34,7 +34,7 @@ public class DependencySearch extends Search implements Heuristic {
 
 	@Override
 	public boolean isGoalState(Node n) {
-		return n.getLocation().distance(goalLocation) == 0;
+		return n.getLocation().distance(goalLocation) == 1;
 	}
 
 	@Override
