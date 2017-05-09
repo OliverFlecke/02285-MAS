@@ -12,6 +12,7 @@ import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.Queue;
 import java.util.Set;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
@@ -37,6 +38,8 @@ public class Planner {
 	private static final Logger logger = Logger.getLogger(Planner.class.getName());
 	
 	private static WorldModel 	worldModel;	
+	
+	public static Planner instance;
 
 	private ArrayList<DataWorldModel> gridModels;
 	
@@ -44,6 +47,10 @@ public class Planner {
 	
 	public void plan()
 	{
+		logger.setLevel(Level.INFO);
+		
+		instance = this;
+		
 		SimulationWorldModel.setPlanner(this);
 		
 		worldModel = WorldModel.getInstance();
@@ -142,7 +149,7 @@ public class Planner {
 			return false;			
 		}
 
-		System.err.println(actions);
+		logger.fine("Path from agent to box:\n\t" + actions.toString());
 
 		this.actions.get(agent.getNumber()).addAll(actions);
 
@@ -175,8 +182,8 @@ public class Planner {
 			logger.info(agent.getName() + " could not find path to location " + loc);
 			return false;			
 		}
-		
-		System.err.println(actions);
+
+		logger.fine("Path from object to location:\n\t" + actions.toString());
 		
 		this.actions.get(agent.getNumber()).addAll(actions);
 
@@ -329,6 +336,14 @@ public class Planner {
 
 	private static int d(Cell c1, Cell c2) {
 		return c1.getLocation().distance(c2.getLocation());
+	}
+	
+	/**
+	 * @return The length of the solution
+	 */
+	public int getSolutionLength()
+	{
+		return actions.stream().max((a, b) -> a.size() - b.size()).get().size();
 	}
 }
 

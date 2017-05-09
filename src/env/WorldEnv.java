@@ -19,7 +19,7 @@ public class WorldEnv extends ServerEnv {
     
     private static WorldEnv instance;
     
-    private Planner planner;
+    public Planner planner;
     
     public WorldEnv()
     {
@@ -65,7 +65,7 @@ public class WorldEnv extends ServerEnv {
 			}	
 		}
     }
-    
+ 
     @Override
     protected void updateNumberOfAgents() {
 		setNbAgs(model.getNbAgs());

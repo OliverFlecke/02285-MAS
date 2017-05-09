@@ -13,7 +13,7 @@ import srch.Node;
 import srch.Search;
 import srch.Strategy.BestFirst;
 import srch.nodes.PathfindingNode;
-import srch.Evaluation.Greedy;
+import srch.Evaluation.*;
 import srch.Heuristic;
 
 public class PathfindingSearch extends Search implements Heuristic {
@@ -43,7 +43,9 @@ public class PathfindingSearch extends Search implements Heuristic {
 	{
 		distances = DistanceSearch.search(from, to);
 		
-		logger.setLevel(Level.ALL);
+		logger.setLevel(Level.OFF);
+		
+//		this.setStrategy(new BestFirst(new AStar(this)));
 		this.setStrategy(new BestFirst(new Greedy(this)));
 		
 		this.goalLocation = to;
