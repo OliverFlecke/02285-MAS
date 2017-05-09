@@ -52,7 +52,8 @@ public class Planner {
 	 */
 	public void plan()
 	{
-		logger.setLevel(Level.FINE);
+//		logger.setLevel(Level.FINE);
+
 		
 		instance = this;
 		
@@ -85,6 +86,12 @@ public class Planner {
 		}
 	}
 
+	/**
+	 * Moves the agent to a location next to the box
+	 * @param box 
+	 * @param agent to move next to the box
+	 * @return True if the movement was possible
+	 */
 	public boolean getAgentToBox(Box box, Agent agent)
 	{
 		int initialStep = getInitialStep(agent);
@@ -119,15 +126,22 @@ public class Planner {
 		return true;
 	}
 	
-	public boolean getObjectToLocation(Cell tracked, Location loc, Agent agent)
+	/**
+	 * Move an object to a location 
+	 * @param tracked The object to move
+	 * @param location to move the the object to
+	 * @param agent which should move the object
+	 * @return True if the movement is possible
+	 */
+	public boolean getObjectToLocation(Cell tracked, Location location, Agent agent)
 	{
 		int initialStep = getInitialStep(agent);
 		
-		List<Action> actions = PathfindingSearch.search(agent, tracked, loc, 0, initialStep);
+		List<Action> actions = PathfindingSearch.search(agent, tracked, location, 0, initialStep);
 
 		if (actions == null)
 		{
-			logger.info(agent.getName() + " could not find path to location " + loc);
+			logger.info(agent.getName() + " could not find path to location " + location);
 			return false;			
 		}
 
@@ -152,7 +166,6 @@ public class Planner {
 		}
 		return true;
 	}
-	
 
 	/**
 	 * Solve dependencies for a given agent and goal
@@ -209,7 +222,10 @@ public class Planner {
 			else if (model.hasObject(GridWorldModel.AGENT, dependency))
 			{
 				Agent otherAgent = model.getAgent(dependency);
-				Location storage = StorageSearch.search(agent.getLocation(), model);
+				Location storage = StorageSearch.search(otherAgent.getLocation(), model);
+				
+				if (storage == null)
+					throw new UnsupportedOperationException("Unable to find storage");
 				
 				solveDependency(otherAgent, DependencyPath.getLocationDependencyPath(otherAgent, storage, otherAgent.getLocation()));
 				
@@ -262,6 +278,10 @@ public class Planner {
 		return false;
 	}
 	
+	/**
+	 * @param step to check
+	 * @return True if the planner already has this step in its models
+	 */
 	public boolean hasModel(int step)
 	{
 		return step < gridModels.size();
