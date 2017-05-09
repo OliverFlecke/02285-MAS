@@ -174,7 +174,7 @@ public class Planner {
 	 */
 	private void solveDependencies(Agent agent, Goal goal) 
 	{
-		DependencyPath path = DependencyPath.getLocationDependencyPath(agent, goal.getBox().getLocation(), agent.getLocation());
+		DependencyPath path = DependencyPath.getLocationDependencyPath(agent, agent.getLocation(), goal.getBox().getLocation());
 		
 		path.addDependencyPath(DependencyPath.getGoalDependencyPath(agent, goal));
 		

@@ -16,7 +16,7 @@ public class DependencyPathNode extends StepNode implements IDirectionNode {
 	private Direction direction;
 	private int dependency;
 	private int dependencyCount;
-	private int initialStep;
+	private int lastStep;
 
 	public DependencyPathNode(Location initial, int dependency, int initialStep) 
 	{
@@ -25,7 +25,7 @@ public class DependencyPathNode extends StepNode implements IDirectionNode {
 		this.direction 			= null;
 		this.dependency 		= dependency;
 		this.dependencyCount 	= 0;
-		this.initialStep		= initialStep;
+		this.lastStep			= initialStep;
 	}
 
 	public DependencyPathNode(StepNode parent, Direction dir, Location loc) 
@@ -35,9 +35,9 @@ public class DependencyPathNode extends StepNode implements IDirectionNode {
 		this.direction			= dir;
 		this.dependency 		= ((DependencyPathNode) parent).dependency;
 		this.dependencyCount 	= ((DependencyPathNode) parent).dependencyCount;
-		this.initialStep		= ((DependencyPathNode) parent).initialStep;
+		this.lastStep			= ((DependencyPathNode) parent).lastStep;
 		
-		if (WorldModel.getInstance().hasObject(dependency, loc)) 
+		if (Planner.getInstance().getModel(lastStep).hasObject(dependency, loc)) 
 		{
 			dependencyCount++;
 		}
@@ -61,7 +61,7 @@ public class DependencyPathNode extends StepNode implements IDirectionNode {
 		{
 			Location loc = Location.newLocation(dir, this.getLocation());
 			
-			if (Planner.getInstance().getModel(initialStep).isFree(this.getObject(), loc))
+			if (Planner.getInstance().getModel(lastStep).isFree(this.getObject(), loc))
 			{
 				expandedNodes.add(new DependencyPathNode(this, dir, loc));
 			}
@@ -75,11 +75,11 @@ public class DependencyPathNode extends StepNode implements IDirectionNode {
 	{		
 		DependencyPath path = new DependencyPath();
 		
-		for (Node n = this; n != null; n = n.getParent()) 
+		for (Node n = this; n.getParent() != null; n = n.getParent()) 
 		{
 			Location loc = n.getLocation();
 			
-			if (Planner.getInstance().getModel(initialStep).hasObject(dependency, loc))
+			if (Planner.getInstance().getModel(lastStep).hasObject(dependency, loc))
 			{
 				path.addDependency(loc);
 			}

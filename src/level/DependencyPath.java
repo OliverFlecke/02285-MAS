@@ -49,7 +49,7 @@ public class DependencyPath {
 	
 	public static DependencyPath getGoalDependencyPath(Agent agent, Goal goal)
 	{
-		return getLocationDependencyPath(agent, goal.getLocation(), goal.getBox().getLocation(), 0);
+		return getLocationDependencyPath(agent, goal.getBox().getLocation(), goal.getLocation(), 0);
 	}
 	
 	/**
@@ -66,6 +66,6 @@ public class DependencyPath {
 	
 	public static DependencyPath getLocationDependencyPath(Agent agent, Location from, Location to, int proximity)
 	{		
-		return DependencyPathSearch.search(from, to, GridWorldModel.BOX | GridWorldModel.AGENT, proximity, Planner.getInstance().getInitialStep(agent));		
+		return DependencyPathSearch.search(from, to, GridWorldModel.BOX | GridWorldModel.AGENT, proximity, Planner.getInstance().getLastStep());		
 	}
 }
