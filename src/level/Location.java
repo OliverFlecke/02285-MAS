@@ -30,17 +30,22 @@ public class Location {
 	 * Computes a new Location based on current direction 
 	 * and location.
 	 * @param dir - Direction
-	 * @param l - Location
+	 * @param loc - Location
 	 * @return The new Location.
 	 */
-	public static Location newLocation(Direction dir, Location l)
+	public static Location newLocation(Direction dir, Location loc)
 	{        
+		return loc.newLocation(dir);
+	}
+	
+	public Location newLocation(Direction dir) 
+	{
 	    switch (dir) 
 	    {
-	    case NORTH	: return new Location(l.x, l.y - 1);
-	    case SOUTH	: return new Location(l.x, l.y + 1);
-	    case WEST	: return new Location(l.x - 1, l.y);
-	    case EAST	: return new Location(l.x + 1, l.y);
+	    case NORTH	: return new Location(this.x, this.y - 1);
+	    case SOUTH	: return new Location(this.x, this.y + 1);
+	    case WEST	: return new Location(this.x - 1, this.y);
+	    case EAST	: return new Location(this.x + 1, this.y);
 	    }        
 	    return null; // Could return l
 	}

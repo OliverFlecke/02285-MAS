@@ -3,6 +3,12 @@ package level;
 import java.util.LinkedList;
 import java.util.List;
 
+import env.model.GridWorldModel;
+import env.planner.Planner;
+import level.cell.Agent;
+import level.cell.Goal;
+import srch.searches.DependencyPathSearch;
+
 public class DependencyPath {
 
 	private LinkedList<Location> path;
@@ -39,5 +45,27 @@ public class DependencyPath {
 	public List<Location> getDependencies()
 	{
 		return dependencies;
+	}
+	
+	public static DependencyPath getGoalDependencyPath(Agent agent, Goal goal)
+	{
+		return getLocationDependencyPath(agent, goal.getLocation(), goal.getBox().getLocation(), 0);
+	}
+	
+	/**
+	 * Get dependency path between the locations. Has a default proximity equal to 1
+	 * @param agent
+	 * @param from
+	 * @param to
+	 * @return Dependency between the two locations with a proximity of 1
+	 */
+	public static DependencyPath getLocationDependencyPath(Agent agent, Location from, Location to)
+	{
+		return getLocationDependencyPath(agent, from, to, 1);
+	}
+	
+	public static DependencyPath getLocationDependencyPath(Agent agent, Location from, Location to, int proximity)
+	{		
+		return DependencyPathSearch.search(from, to, GridWorldModel.BOX | GridWorldModel.AGENT, proximity, Planner.getInstance().getInitialStep(agent));		
 	}
 }
