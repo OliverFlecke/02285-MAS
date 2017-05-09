@@ -52,6 +52,7 @@ public class WorldEnv extends ServerEnv {
   
     public void executePlanner()
     {
+
     	for (int i = 0; ; i++) 
     	{
 			for (Agent agent : model.getAgents())

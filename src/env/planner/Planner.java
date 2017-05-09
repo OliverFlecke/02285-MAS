@@ -3,6 +3,7 @@ package env.planner;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -30,6 +31,7 @@ import srch.searches.DependencyPathSearch;
 import srch.searches.DependencySearch;
 import srch.searches.PathfindingSearch;
 import srch.searches.closest.AgentSearch;
+import srch.searches.closest.BoxSearch;
 import srch.searches.closest.StorageSearch;
 
 public class Planner {
@@ -59,24 +61,27 @@ public class Planner {
 			actions.add(new ArrayList<Action>());
 		}
 		
-		matchBoxesAndGoals();
-		
-		Queue<Agent> queue = new LinkedList<Agent>();
-		for (Agent agent : worldModel.getAgents()) 
-			queue.add(agent);
+//		matchBoxesAndGoals();
+//		
+//		Queue<Agent> queue = new LinkedList<Agent>();
+//		for (Agent agent : worldModel.getAgents()) 
+//			queue.add(agent);
 		
 //		List<Goal> goals = prioritizeGoals(goals);
 		
+		List<Goal> goals = preprocessLevel();
 		
-		for (Collection<Goal> goals; !(goals = getUnsolvedGoals()).isEmpty();)
+//		for (Collection<Goal> goals; !(goals = getUnsolvedGoals()).isEmpty();)
+		for (Goal goal : goals)
 		{
-			Agent agent = queue.poll();
+			Agent agent = goal.getBox().getAgent();
+//			Agent agent = queue.poll();
 			
 			DataWorldModel model = getModel(getInitialStep(agent));
 			
-			Collection<Goal> solvableGoals = getSolvableGoals(goals, agent);
+//			Collection<Goal> solvableGoals = getSolvableGoals(goals, agent);
 			
-			for (Goal goal : solvableGoals)
+//			for (Goal goal : solvableGoals)
 			{
 				DependencyPath dependencyPath = getBoxDependencyPath(agent, goal.getBox());
 				
@@ -121,11 +126,11 @@ public class Planner {
 				if (getAgentToBox(goal.getBox(), agent))
 				{
 					getObjectToLocation(goal.getBox(), goal.getLocation(), agent);
-					break;
+//					break;
 				}
 			}
 			
-			queue.add(agent);
+//			queue.add(agent);
 		}
 	}
 	
@@ -256,26 +261,89 @@ public class Planner {
 		return actions;
 	}
 	
+	private List<Goal> preprocessLevel()
+	{
+		matchBoxesAndGoals();
+		
+		matchAgentsAndBoxes();
+		
+		return calculateDependencies();
+	}
+	
 	private void matchBoxesAndGoals()
 	{		
-		for (Entry<Character, Set<Goal>> entry : worldModel.getGoalMap().entrySet())
+		Set<Box> availableBoxes = new HashSet<>(worldModel.getBoxes());
+		
+		for (Goal goal : worldModel.getGoals())
 		{
-			for (Goal goal : entry.getValue())
+			Location boxLoc = BoxSearch.search(availableBoxes, goal.getLetter(), goal.getLocation());
+			
+			Box box = worldModel.getBox(boxLoc);
+
+			if (box != null && availableBoxes.remove(box))
 			{
-				// Create copy of box set
-				Set<Box> boxes = new HashSet<>(worldModel.getBoxes(entry.getKey()));
-				
-				Optional<Box> box = boxes.stream().min((b1, b2) -> d(goal, b1) - d(goal, b2));
-				
-				if (box.isPresent())
-				{
-					boxes.remove(box);
-					
-					goal.setBox(box.get());
-				}
-				else System.out.println("ERROR: matchBoxesAndGoals()");
+				goal.setBox(box);
+				box.setGoal(goal);
 			}
+			else logger.warning("ERROR: matchBoxesAndGoals()");
 		}
+	}
+	
+	private void matchAgentsAndBoxes()
+	{
+		Set<Box> boxes = worldModel.getGoals().stream()
+							.map(goal -> goal.getBox())
+							.collect(Collectors.toSet());
+		
+		for (Box box : boxes)
+		{
+			Location agLoc = AgentSearch.search(box.getColor(), box.getLocation());
+			
+			Agent agent = worldModel.getAgent(agLoc);
+			
+			if (agent != null)
+			{
+				box.setAgent(agent);
+			} 
+			else logger.warning("ERROR: matchAgentsAndBoxes()");
+		}
+	}
+	
+	private List<Goal> calculateDependencies()
+	{
+		Set<Goal> goals = worldModel.getGoals();
+		
+		Map<Goal, Set<Goal>> dependencies = new HashMap<>();
+		
+		initMap(dependencies, goals);
+		
+		for (Goal goal : goals)
+		{			
+			Box 	box 	= goal.getBox();
+			Agent 	agent 	= box.getAgent();
+
+	        DependencySearch.search(goal.getLocation(), box.getLocation(), WorldModel.BOX | WorldModel.GOAL)
+	        	.stream().forEach(loc -> addDependency(dependencies, loc, goal));
+	        
+	        DependencySearch.search(box.getLocation(), agent.getLocation(), WorldModel.BOX | WorldModel.GOAL)
+		        .stream().forEach(loc -> addDependency(dependencies, loc, goal));	        
+		}
+		return dependencies.entrySet().stream()
+		        .sorted(Comparator.comparingInt(e -> e.getValue().size()))
+		        .map(Map.Entry::getKey)
+		        .collect(Collectors.toList());
+	}
+	
+	private void addDependency(Map<Goal, Set<Goal>> dependencies, Location l, Goal goal)
+	{
+    	if (worldModel.hasObject(WorldModel.GOAL, l))
+    	{
+    		addToMap(dependencies, worldModel.getGoal(l), goal);
+    	}
+    	else
+    	{
+    		addToMap(dependencies, worldModel.getBox(l).getGoal(), goal);
+    	}
 	}
 	
 	private DependencyPath getGoalDependencyPath(Agent agent, Goal goal)
@@ -315,6 +383,14 @@ public class Planner {
 		        .collect(Collectors.toList());
 	}
 	
+	private static <K, V> void initMap(Map<K, Set<V>> map, Set<K> keys)
+	{
+		for (K key : keys)
+		{
+			map.put(key, new HashSet<V>());
+		}
+	}
+	
 	private static <K, V> void addToMap(Map<K, Set<V>> map, K key, V value)
 	{
 		if (map.containsKey(key))
@@ -327,8 +403,8 @@ public class Planner {
 		}
 	}
 
-	private static int d(Cell c1, Cell c2) {
-		return c1.getLocation().distance(c2.getLocation());
-	}
+//	private static int d(Cell c1, Cell c2) {
+//		return c1.getLocation().distance(c2.getLocation());
+//	}
 }
 
