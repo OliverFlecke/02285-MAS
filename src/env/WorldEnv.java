@@ -10,10 +10,11 @@ import level.Level;
 import level.action.Action;
 import level.action.SkipAction;
 import level.cell.*;
+import logging.LoggerFactory;
 
 public class WorldEnv extends ServerEnv {
 
-    private static final Logger logger = Logger.getLogger(WorldEnv.class.getName());
+    private static final Logger logger = LoggerFactory.getLogger(WorldEnv.class.getName());
 	
     private static DataWorldModel model;
     

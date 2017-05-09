@@ -3,9 +3,11 @@ package srch;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import logging.LoggerFactory;
+
 public abstract class Search {
 	
-	protected static Logger logger = Logger.getLogger(Search.class.getName());
+	protected static Logger logger = LoggerFactory.getLogger(Search.class.getName());
 	
 	protected Strategy strategy;
 	

@@ -24,6 +24,7 @@ import level.cell.Agent;
 import level.cell.Box;
 import level.cell.Cell;
 import level.cell.Goal;
+import logging.LoggerFactory;
 import srch.searches.DependencySearch;
 import srch.searches.PathfindingSearch;
 import srch.searches.closest.AgentSearch;
@@ -32,7 +33,7 @@ import srch.searches.closest.StorageSearch;
 
 public class Planner {
 	
-	private static final Logger logger = Logger.getLogger(Planner.class.getName());
+	private static final Logger logger = LoggerFactory.getLogger(Planner.class.getName());
 	
 	private static WorldModel 	worldModel;	
 	
@@ -52,8 +53,7 @@ public class Planner {
 	 */
 	public void plan()
 	{
-//		logger.setLevel(Level.FINE);
-
+		logger.setLevel(Level.FINE);
 		
 		instance = this;
 		
@@ -104,7 +104,7 @@ public class Planner {
 			return false;			
 		}
 
-		logger.info("Path from agent to box:\n\t" + actions.toString());
+		logger.info("Agent to box:\t\t" + actions.toString());
 
 		this.actions.get(agent.getNumber()).addAll(actions);
 
@@ -145,7 +145,7 @@ public class Planner {
 			return false;			
 		}
 
-		logger.info("Path from object to location:\n\t" + actions.toString());
+		logger.info("Object to location:\t" + actions.toString());
 		
 		this.actions.get(agent.getNumber()).addAll(actions);
 

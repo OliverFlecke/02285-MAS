@@ -10,10 +10,11 @@ import level.action.PullAction;
 import level.action.PushAction;
 import level.Direction;
 import level.cell.*;
+import logging.LoggerFactory;
 
 public class DataWorldModel extends GridWorldModel {
 
-	protected static final Logger logger = Logger.getLogger(DataWorldModel.class.getName());
+	protected static final Logger logger = LoggerFactory.getLogger(DataWorldModel.class.getName());
 	
 	protected Agent[]					agents;
 	protected Set<Goal>					goals;
