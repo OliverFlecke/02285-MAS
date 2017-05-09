@@ -45,7 +45,7 @@ public abstract class Search {
 				}
 			}
 		}
-		logger.info("Nodes explored: " + nodeCount + " Nodes expanded: " + nodesExpanded);
+		logger.warning("No solution found! Nodes explored: " + nodeCount + " Nodes expanded: " + nodesExpanded);
 		return null;
 	}
 	
