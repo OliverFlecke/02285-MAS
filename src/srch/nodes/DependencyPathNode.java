@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import env.model.WorldModel;
+import env.planner.Planner;
 import level.DependencyPath;
 import level.Direction;
 import level.Location;
@@ -15,6 +16,7 @@ public class DependencyPathNode extends StepNode implements IDirectionNode {
 	private Direction direction;
 	private int dependency;
 	private int dependencyCount;
+	private int initialStep;
 
 	public DependencyPathNode(Location initial, int dependency, int initialStep) 
 	{
@@ -23,6 +25,7 @@ public class DependencyPathNode extends StepNode implements IDirectionNode {
 		this.direction 			= null;
 		this.dependency 		= dependency;
 		this.dependencyCount 	= 0;
+		this.initialStep		= initialStep;
 	}
 
 	public DependencyPathNode(StepNode parent, Direction dir, Location loc) 
@@ -32,6 +35,7 @@ public class DependencyPathNode extends StepNode implements IDirectionNode {
 		this.direction			= dir;
 		this.dependency 		= ((DependencyPathNode) parent).dependency;
 		this.dependencyCount 	= ((DependencyPathNode) parent).dependencyCount;
+		this.initialStep		= ((DependencyPathNode) parent).initialStep;
 		
 		if (WorldModel.getInstance().hasObject(dependency, loc)) 
 		{
@@ -57,7 +61,7 @@ public class DependencyPathNode extends StepNode implements IDirectionNode {
 		{
 			Location loc = Location.newLocation(dir, this.getLocation());
 			
-			if (WorldModel.getInstance().isFree(this.getObject(), loc))
+			if (Planner.getInstance().getModel(initialStep).isFree(this.getObject(), loc))
 			{
 				expandedNodes.add(new DependencyPathNode(this, dir, loc));
 			}
@@ -75,7 +79,7 @@ public class DependencyPathNode extends StepNode implements IDirectionNode {
 		{
 			Location loc = n.getLocation();
 			
-			if (WorldModel.getInstance().hasObject(dependency, loc))
+			if (Planner.getInstance().getModel(initialStep).hasObject(dependency, loc))
 			{
 				path.addDependency(loc);
 			}

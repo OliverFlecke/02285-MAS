@@ -71,36 +71,17 @@ public class Planner {
 			actions.add(new ArrayList<Action>());
 		}
 		
-//		matchBoxesAndGoals();
-//		
-//		Queue<Agent> queue = new LinkedList<Agent>();
-//		for (Agent agent : worldModel.getAgents()) 
-//			queue.add(agent);
-		
-//		List<Goal> goals = prioritizeGoals(goals);
-		
-		List<Goal> goals = preprocessLevel();
-		
-//		for (Collection<Goal> goals; !(goals = getUnsolvedGoals()).isEmpty();)
-		for (Goal goal : goals)
+		for (Goal goal : preprocessLevel())
 		{
 			Agent agent = goal.getBox().getAgent();
-//			Agent agent = queue.poll();
 			
-//			Collection<Goal> solvableGoals = getSolvableGoals(goals, agent);
-			
-//			for (Goal goal : solvableGoals)
-			{
-				solveDependencies(agent, goal);				
+			solveDependencies(agent, goal);
 
-				if (getAgentToBox(goal.getBox(), agent))
-				{
-					getObjectToLocation(goal.getBox(), goal.getLocation(), agent);
-//					break;
-				}
+			if (getAgentToBox(goal.getBox(), agent))
+			{
+				getObjectToLocation(goal.getBox(), goal.getLocation(), agent);
 			}
 			
-//			queue.add(agent);
 		}
 	}
 
@@ -116,7 +97,7 @@ public class Planner {
 			return false;			
 		}
 
-		logger.fine("Path from agent to box:\n\t" + actions.toString());
+		logger.info("Path from agent to box:\n\t" + actions.toString());
 
 		this.actions.get(agent.getNumber()).addAll(actions);
 
@@ -150,7 +131,7 @@ public class Planner {
 			return false;			
 		}
 
-		logger.fine("Path from object to location:\n\t" + actions.toString());
+		logger.info("Path from object to location:\n\t" + actions.toString());
 		
 		this.actions.get(agent.getNumber()).addAll(actions);
 
@@ -196,7 +177,7 @@ public class Planner {
 	{
 		if (dependencyPath.getDependencies().isEmpty()) return;
 		
-		DataWorldModel model = getModel(getInitialStep(agent));
+		DataWorldModel model = getModel(getLastStep());
 		
 		for (Location path : dependencyPath.getPath())
 		{
@@ -395,7 +376,7 @@ public class Planner {
     	}
 	}
 
-	private Collection<Goal> getSolvableGoals(Collection<Goal> goals, Agent agent) 
+	protected Collection<Goal> getSolvableGoals(Collection<Goal> goals, Agent agent) 
 	{
 		Map<Goal, Set<Goal>> goalDependencies = new HashMap<>();
 		
@@ -441,15 +422,11 @@ public class Planner {
 			map.put(key, new HashSet<V>(Arrays.asList(value)));
 		}
 	}
-
-	private static int d(Cell c1, Cell c2) {
-		return c1.getLocation().distance(c2.getLocation());
-	}
 	
 	/**
 	 * @return The length of the solution
 	 */
-	public int getSolutionLength()
+	public int getLastStep()
 	{
 		return actions.stream().max((a, b) -> a.size() - b.size()).get().size();
 	}

@@ -52,7 +52,7 @@ public class WorldEnv extends ServerEnv {
   
     public void executePlanner()
     {
-    	int steps = planner.getSolutionLength();
+    	int steps = planner.getLastStep();
     	
     	for (int i = 0; i < steps; i++) 
     	{
