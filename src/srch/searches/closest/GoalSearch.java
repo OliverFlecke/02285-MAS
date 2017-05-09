@@ -12,6 +12,9 @@ public class GoalSearch extends ClosestSearch {
 		return new GoalSearch(model).search(new ClosestNode(from));
 	}
 	
+	@SuppressWarnings("unused")
+	private String color;
+	
 	private DataWorldModel model;
 
 	public GoalSearch(DataWorldModel model) 
