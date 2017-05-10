@@ -48,6 +48,11 @@ public class Planner {
 		return instance;
 	}
 	
+	public GridWorldModel getLastModel()
+	{
+		return getModel(getLastStep());
+	}
+	
 	/**
 	 * Find a solution to the level
 	 */
