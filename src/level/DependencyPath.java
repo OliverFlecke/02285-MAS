@@ -72,6 +72,6 @@ public class DependencyPath {
 	
 	public static DependencyPath getLocationDependencyPath(Agent agent, Location from, Location to, int proximity)
 	{		
-		return DependencyPathSearch.search(from, to, GridWorldModel.BOX | GridWorldModel.AGENT, proximity, Planner.getInstance().getLastStep());		
+		return DependencyPathSearch.search(from, to, GridWorldModel.BOX | GridWorldModel.AGENT, proximity, Planner.getInstance().getLastModel());		
 	}
 }

@@ -179,7 +179,7 @@ public class Planner {
 	 */
 	private void solveDependencies(Agent agent, Goal goal) 
 	{
-		DependencyPath path = DependencyPath.getLocationDependencyPath(agent, agent.getLocation(), goal.getBox().getLocation());
+		DependencyPath path = DependencyPath.getBoxDependencyPath(agent, goal.getBox());
 		
 		path.addDependencyPath(DependencyPath.getGoalDependencyPath(agent, goal));
 		
@@ -213,8 +213,8 @@ public class Planner {
 					Location storage = StorageSearch.search(box.getLocation(), model);
 					Agent otherAgent = model.getAgent(AgentSearch.search(box.getColor(), box.getLocation()));
 
-					DependencyPath otherDependencyPath = DependencyPath.getLocationDependencyPath(otherAgent, box.getLocation(), otherAgent.getLocation());
-					otherDependencyPath.addDependencyPath(DependencyPath.getLocationDependencyPath(otherAgent, storage, box.getLocation()));
+					DependencyPath otherDependencyPath = DependencyPath.getBoxDependencyPath(otherAgent, box);
+					otherDependencyPath.addDependencyPath(DependencyPath.getLocationDependencyPath(otherAgent, box.getLocation(), storage));
 					solveDependency(otherAgent, otherDependencyPath);
 					
 					if (!getAgentToBox(box, otherAgent)) 
