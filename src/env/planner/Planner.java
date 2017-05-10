@@ -298,6 +298,7 @@ public class Planner {
 			throw new UnsupportedOperationException("getModel - step is too large: " + step + " Size is only: " + gridModels.size());
 		}
 		
+		// Should only trigger when step == gridModels.size()
 		if (!hasModel(step))
 		{
 			gridModels.add(new DataWorldModel(gridModels.get(step - 1)));

@@ -6,6 +6,7 @@ import java.util.List;
 import env.model.GridWorldModel;
 import env.planner.Planner;
 import level.cell.Agent;
+import level.cell.Box;
 import level.cell.Goal;
 import srch.searches.DependencyPathSearch;
 
@@ -52,6 +53,11 @@ public class DependencyPath {
 		return getLocationDependencyPath(agent, goal.getBox().getLocation(), goal.getLocation(), 0);
 	}
 	
+	public static DependencyPath getBoxDependencyPath(Agent agent, Box box)
+	{
+		return getLocationDependencyPath(agent, agent.getLocation(), box.getLocation(), 1);
+	}
+	
 	/**
 	 * Get dependency path between the locations. Has a default proximity equal to 1
 	 * @param agent
@@ -61,7 +67,7 @@ public class DependencyPath {
 	 */
 	public static DependencyPath getLocationDependencyPath(Agent agent, Location from, Location to)
 	{
-		return getLocationDependencyPath(agent, from, to, 1);
+		return getLocationDependencyPath(agent, from, to, 0);
 	}
 	
 	public static DependencyPath getLocationDependencyPath(Agent agent, Location from, Location to, int proximity)
