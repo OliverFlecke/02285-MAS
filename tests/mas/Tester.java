@@ -7,7 +7,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.junit.BeforeClass;
-import org.junit.Test;
 import logging.LoggerFactory;
 
 public class Tester {
@@ -26,7 +25,7 @@ public class Tester {
 	 * Tests a level
 	 * @param level path to the level
 	 */
-	private static void testLevel(String level) 
+	public static void testLevel(String level) 
 	{	
 		logger.fine("Testing level: " + level);
 		
@@ -73,24 +72,4 @@ public class Tester {
 			fail();
 		}
 	}
-	
-	@Test
-	public void MASimple1() { testLevel("MAsimple1.lvl"); }
-	
-	@Test 
-	public void MASimple2() { testLevel("MAsimple2.lvl"); }
-	
-	@Test 
-	public void MASimple3() { testLevel("MAsimple3.lvl"); }
-	
-	@Test 
-	public void MASimple4() { testLevel("MAsimple4.lvl"); }
-	
-	@Test 
-	public void MASimple5() { testLevel("MAsimple5.lvl"); }
-	
-	
-	@Test 
-	public void MAbispebjerg() { testLevel("MAbispebjerg.lvl");	}
-
 }
