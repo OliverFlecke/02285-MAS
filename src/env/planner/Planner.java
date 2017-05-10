@@ -30,7 +30,10 @@ public class Planner {
 	public static Planner getInstance() {
 		return instance;
 	}
-	
+
+	/**
+	 * @return The last model in the planner
+	 */
 	public DataWorldModel getLastModel() {
 		return getModel(getLastStep());
 	}

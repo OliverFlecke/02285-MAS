@@ -9,7 +9,7 @@ public abstract class Node {
 	
 	private Node parent;	
 	private Location location;	
-	private int object, g;
+	private int object, include, g;
 	
 	public Node(Location initial)
 	{
@@ -18,9 +18,15 @@ public abstract class Node {
 	
 	public Node(Location initial, int object)
 	{
+		this(initial, object, 0);
+	}
+	
+	public Node(Location initial, int object, int include)
+	{
 		this.parent 	= null;
 		this.location 	= initial;
 		this.object		= object | GridWorldModel.WALL;
+		this.include  	= include;
 		this.g 			= 0;
 	}
 	
@@ -40,12 +46,24 @@ public abstract class Node {
 		return this.location;
 	}
 	
-	public int getObject() {
-		return object;
+	/**
+	 * @return Objects to exclude
+	 */
+	public int getObject() 
+	{
+		return this.object;
+	}
+	
+	/**
+	 * @return Objects to include
+	 */
+	public int getInclude()
+	{
+		return this.include;
 	}
 	
 	public int g() {
-		return g;
+		return this.g;
 	}
 
 	public abstract List<? extends Node> getExpandedNodes();

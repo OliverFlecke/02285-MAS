@@ -12,8 +12,9 @@ import level.action.SkipAction;
 import level.cell.Cell;
 import srch.Node;
 import srch.interfaces.IActionNode;
+import srch.interfaces.IModelNode;
 
-public class PathfindingNode extends Node implements IActionNode {
+public class PathfindingNode extends Node implements IActionNode, IModelNode {
 
 	private Action action;
 	private SimulationWorldModel model;
