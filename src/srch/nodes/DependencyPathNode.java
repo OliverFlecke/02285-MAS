@@ -59,7 +59,7 @@ public class DependencyPathNode extends StepNode implements IDirectionNode {
 		
 		for (Direction dir : Direction.EVERY)
 		{
-			Location loc = Location.newLocation(dir, this.getLocation());
+			Location loc = this.getLocation().newLocation(dir);
 			
 			if (Planner.getInstance().getModel(lastStep).isFree(this.getObject(), loc))
 			{

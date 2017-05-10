@@ -41,7 +41,7 @@ public class DistanceNode extends Node implements IDirectionNode {
 		
 		for (Direction dir : Direction.EVERY)
 		{
-			Location loc = Location.newLocation(dir, getLocation());
+			Location loc = this.getLocation().newLocation(dir);
 			
 			if (WorldModel.getInstance().isFree(this.getObject(), loc))
 			{

@@ -187,7 +187,7 @@ public class DataWorldModel extends GridWorldModel {
 		Direction 	dir 	= action.getDirection();
 		
 	    Location 	agLoc 	= getAgPos(agId);
-	    Location 	nAgLoc 	= Location.newLocation(dir, agLoc);
+	    Location 	nAgLoc 	= agLoc.newLocation(dir);
 		
 	    move(AGENT, agLoc, nAgLoc);
 	}
@@ -197,8 +197,8 @@ public class DataWorldModel extends GridWorldModel {
 		Direction 	dir2 	= action.getBoxDir();
 	
 	    Location 	agLoc 	= getAgPos(agId);
-		Location 	nAgLoc 	= Location.newLocation(dir1, agLoc);
-		Location 	nBoxLoc = Location.newLocation(dir2, nAgLoc);
+		Location 	nAgLoc 	= agLoc.newLocation(dir1);
+		Location 	nBoxLoc = nAgLoc.newLocation(dir2); 
 	
 	    move(AGENT, agLoc, nAgLoc);
 	    move(BOX, nAgLoc, nBoxLoc);
@@ -209,8 +209,8 @@ public class DataWorldModel extends GridWorldModel {
 		Direction dir2 = action.getBoxDir();
 		
 	    Location agLoc 	= getAgPos(agId);        
-		Location boxLoc = Location.newLocation(dir2, agLoc);    	
-		Location nAgLoc = Location.newLocation(dir1, agLoc);
+		Location boxLoc = agLoc.newLocation(dir2);
+		Location nAgLoc = agLoc.newLocation(dir1); 
 	
 		move(AGENT, agLoc, nAgLoc);
 		move(BOX, boxLoc, agLoc);

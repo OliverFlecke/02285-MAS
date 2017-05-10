@@ -96,7 +96,7 @@ public class SimulationWorldModel extends GridWorldModel {
         
         if (agLoc == null) return false;        
         
-        Location nAgLoc = Location.newLocation(dir, agLoc);
+        Location nAgLoc = agLoc.newLocation(dir);
         
         if (nAgLoc == null) return false;
         
@@ -122,7 +122,7 @@ public class SimulationWorldModel extends GridWorldModel {
         
         int agColor = getMasked(COLOR_MASK, agLoc);
         
-    	Location boxLoc = Location.newLocation(dir1, agLoc);
+    	Location boxLoc = agLoc.newLocation(dir1);
         
         if (boxLoc == null) return false;
     	
@@ -132,7 +132,7 @@ public class SimulationWorldModel extends GridWorldModel {
         
         if (agColor != boxColor) return false;
     	
-    	Location nBoxLoc = Location.newLocation(dir2, boxLoc);
+    	Location nBoxLoc = boxLoc.newLocation(dir2);
         
         if (nBoxLoc == null) return false;
         
@@ -156,7 +156,7 @@ public class SimulationWorldModel extends GridWorldModel {
         
         int agColor = getMasked(COLOR_MASK, agLoc);
         
-    	Location boxLoc = Location.newLocation(dir2, agLoc);
+    	Location boxLoc = agLoc.newLocation(dir2);
     	
     	if (boxLoc == null) return false;
     	
@@ -166,7 +166,7 @@ public class SimulationWorldModel extends GridWorldModel {
     	
     	if (agColor != boxColor) return false;
     	
-    	Location nAgLoc = Location.newLocation(dir1, agLoc);
+    	Location nAgLoc = agLoc.newLocation(dir1);
     	
     	if (nAgLoc == null) return false;
         

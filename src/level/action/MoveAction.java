@@ -26,7 +26,7 @@ public class MoveAction extends Action {
 	
 	@Override
 	public Action getOpposite() {
-		return new MoveAction(Direction.getOpposite(this.getDirection()), Location.newLocation(this.getDirection(), this.getAgentLocation()));
+		return new MoveAction(Direction.getOpposite(this.getDirection()), this.getAgentLocation().newLocation(this.getDirection()));
 	}
 	
 	@Override
