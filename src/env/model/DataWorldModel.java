@@ -54,14 +54,14 @@ public class DataWorldModel extends GridWorldModel {
 	 * @param goal
 	 * @return True if the passed goal is solved
 	 */
-	public boolean isSolved(Goal goal)
-	{
-		Box box = this.getBox(goal.getLocation());
-		if (box == null)
-			return false;
-		else
-			return Character.toLowerCase(box.getLetter()) == Character.toLowerCase(goal.getLetter());
-	}
+//	public boolean isSolved(Goal goal)
+//	{
+//		Box box = this.getBox(goal.getLocation());
+//		if (box == null)
+//			return false;
+//		else
+//			return Character.toLowerCase(box.getLetter()) == Character.toLowerCase(goal.getLetter());
+//	}
 //	/**
 //	 * @return All the boxes in the world, which is not already on a goal
 //	 */
@@ -75,7 +75,7 @@ public class DataWorldModel extends GridWorldModel {
 	 */
 	public Set<Goal> getUnsolvedGoals()
 	{
-		return goals.stream().filter(goal -> !isSolved(goal)).collect(Collectors.toSet());
+		return goals.stream().filter(goal -> !isSolved(goal.getLocation())).collect(Collectors.toSet());
 	}
     
     public int getNbAgs() {

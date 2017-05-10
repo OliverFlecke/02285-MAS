@@ -6,6 +6,7 @@ import java.util.logging.Logger;
 
 import level.Location;
 import level.action.*;
+import level.cell.Agent;
 import level.Color;
 import level.Direction;
 
@@ -24,6 +25,8 @@ public class GridWorldModel {
     public static final int 	COLOR_MASK	= 0xFF00;
     public static final int		GOAL_MASK 	= 0xFF0000;
     public static final int		BOX_MASK 	= 0xFF000000;
+    
+    public static final int		AGENT_MASK 	= TYPE_MASK | COLOR_MASK | BOX_MASK;
 	
 	protected int					width, height;
     
@@ -130,7 +133,7 @@ public class GridWorldModel {
 		return data[x][y] & mask;
 	}
 	
-	protected void move(int obj, Location fr, Location to)
+	public void move(int obj, Location fr, Location to)
 	{
 		obj |= LOCKED;
 		
@@ -164,6 +167,10 @@ public class GridWorldModel {
 	public long countUnsolvedGoals()
 	{		
 		return goalLocations.stream().filter(goal -> !isSolved(goal)).count();
+	}
+	
+	public int getAgentNumber(Agent agent) {
+		return ((int) agent.getLetter()) << 24;
 	}
 	
 	@Override

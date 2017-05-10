@@ -15,15 +15,17 @@ public class DependencyPathNode extends Node implements IDirectionNode {
 	private Direction direction;
 	private int dependency;
 	private int dependencyCount;
+	private int include;
 	private GridWorldModel model;
 
-	public DependencyPathNode(Location initial, int dependency, GridWorldModel model) 
+	public DependencyPathNode(Location initial, int dependency, int include, GridWorldModel model) 
 	{
 		super(initial);
 		
 		this.direction 			= null;
 		this.dependency 		= dependency;
 		this.dependencyCount 	= 0;
+		this.include			= include;
 		this.model				= model;
 	}
 
@@ -34,6 +36,7 @@ public class DependencyPathNode extends Node implements IDirectionNode {
 		this.direction			= dir;
 		this.dependency 		= ((DependencyPathNode) parent).dependency;
 		this.dependencyCount 	= ((DependencyPathNode) parent).dependencyCount;
+		this.include			= ((DependencyPathNode) parent).include;
 		this.model				= ((DependencyPathNode) parent).model;
 		
 		if (model.hasObject(dependency, loc)) 
@@ -49,6 +52,10 @@ public class DependencyPathNode extends Node implements IDirectionNode {
 	
 	public int getDependencies() {
 		return dependencyCount;
+	}
+	
+	public GridWorldModel getModel() {
+		return model;
 	}
 
 	@Override
@@ -82,7 +89,7 @@ public class DependencyPathNode extends Node implements IDirectionNode {
 			{
 				path.addToPath(loc);
 			}			
-			else if (model.hasObject(dependency, loc))
+			else if (model.isFree(include, loc) && model.hasObject(dependency, loc))
 			{
 				path.addDependency(loc);
 			}

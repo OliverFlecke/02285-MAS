@@ -12,9 +12,6 @@ public class GoalSearch extends ClosestSearch {
 		return new GoalSearch(model).search(new ClosestNode(from));
 	}
 	
-	@SuppressWarnings("unused")
-	private String color;
-	
 	private DataWorldModel model;
 
 	public GoalSearch(DataWorldModel model) 
@@ -31,7 +28,7 @@ public class GoalSearch extends ClosestSearch {
 		{
 			return false;
 		}
-		return model.isSolved(model.getGoal(n.getLocation()));
+		return model.isSolved(n.getLocation());
 	}
 
 }

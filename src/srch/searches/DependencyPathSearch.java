@@ -12,9 +12,9 @@ import srch.nodes.DependencyPathNode;
 
 public class DependencyPathSearch extends Search implements Heuristic {
 
-	public static DependencyPath search(Location from, Location to, int object, int proximity, GridWorldModel model) 
+	public static DependencyPath search(Location from, Location to, int object, int proximity, int agentNumber, GridWorldModel model) 
 	{
-		return new DependencyPathSearch(to, proximity).search(new DependencyPathNode(from, object, model));
+		return new DependencyPathSearch(to, proximity).search(new DependencyPathNode(from, object, agentNumber, model));
 	}
 	
 	private Location goalLocation;
@@ -35,7 +35,12 @@ public class DependencyPathSearch extends Search implements Heuristic {
 	}
 
 	@Override
-	public int h(Node n) {
-		return n.getLocation().distance(goalLocation) + ((DependencyPathNode) n).getDependencies() * 10; 
+	public int h(Node n) 
+	{
+		int h = n.getLocation().distance(goalLocation) + ((DependencyPathNode) n).getDependencies() * 10;
+		
+		h += ((DependencyPathNode) n).getModel().isSolved(n.getLocation()) ? 10 : 0;
+		
+		return h; 
 	}
 }
