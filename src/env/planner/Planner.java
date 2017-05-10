@@ -35,7 +35,7 @@ public class Planner {
 	
 	private static final Logger logger = LoggerFactory.getLogger(Planner.class.getName());
 	
-	private static WorldModel 	worldModel;	
+	private static WorldModel worldModel;	
 	
 	public static Planner instance;
 
@@ -48,6 +48,9 @@ public class Planner {
 		return instance;
 	}
 	
+	/**
+	 * @return The last model in the planner
+	 */
 	public GridWorldModel getLastModel()
 	{
 		return getModel(getLastStep());
@@ -109,7 +112,7 @@ public class Planner {
 			return false;			
 		}
 
-		logger.info("Agent to box:\t\t" + actions.toString());
+		logger.info(agent.getName() + " to box " + box.getLetter() + ":\t\t" + actions.toString());
 
 		this.actions.get(agent.getNumber()).addAll(actions);
 
@@ -150,7 +153,7 @@ public class Planner {
 			return false;			
 		}
 
-		logger.info("Object to location:\t" + actions.toString());
+		logger.info(agent.getName() + ": Object to location:\t" + actions.toString());
 		
 		this.actions.get(agent.getNumber()).addAll(actions);
 
