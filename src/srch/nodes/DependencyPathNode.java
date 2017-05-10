@@ -58,7 +58,7 @@ public class DependencyPathNode extends Node implements IDirectionNode {
 		
 		for (Direction dir : Direction.EVERY)
 		{
-			Location loc = Location.newLocation(dir, this.getLocation());
+			Location loc = this.getLocation().newLocation(dir);
 			
 			if (model.isFree(this.getObject(), loc))
 			{

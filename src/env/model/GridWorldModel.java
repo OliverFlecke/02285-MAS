@@ -229,7 +229,7 @@ public class GridWorldModel {
     	Direction 	dir 	= action.getDirection();
 
     	Location 	agLoc 	= action.getAgentLocation();
-        Location 	nAgLoc 	= Location.newLocation(dir, agLoc);
+        Location 	nAgLoc 	= agLoc.newLocation(dir);
     	
         move(AGENT, agLoc, nAgLoc);
     }
@@ -240,8 +240,8 @@ public class GridWorldModel {
     	Direction 	dir2 	= action.getBoxDir();
 
     	Location 	agLoc 	= action.getAgentLocation();
-    	Location 	boxLoc 	= Location.newLocation(dir1, agLoc);
-    	Location 	nBoxLoc = Location.newLocation(dir2, boxLoc);
+    	Location 	boxLoc 	= agLoc.newLocation(dir1);
+    	Location 	nBoxLoc = boxLoc.newLocation(dir2);
 
         move(BOX, boxLoc, nBoxLoc);
         move(AGENT, agLoc, boxLoc);
@@ -253,8 +253,8 @@ public class GridWorldModel {
     	Direction 	dir2 	= action.getBoxDir();
 
     	Location 	agLoc  	= action.getAgentLocation();
-    	Location 	boxLoc 	= Location.newLocation(dir2, agLoc);    	
-    	Location 	nAgLoc 	= Location.newLocation(dir1, agLoc);
+    	Location 	boxLoc 	= agLoc.newLocation(dir2);
+    	Location 	nAgLoc 	= agLoc.newLocation(dir1);
 
     	move(AGENT, agLoc, nAgLoc);
     	move(BOX, boxLoc, agLoc);
