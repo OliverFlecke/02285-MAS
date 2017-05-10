@@ -3,41 +3,40 @@ package srch.nodes;
 import java.util.ArrayList;
 import java.util.List;
 
-import env.model.WorldModel;
-import env.planner.Planner;
+import env.model.GridWorldModel;
 import level.DependencyPath;
 import level.Direction;
 import level.Location;
 import srch.Node;
 import srch.interfaces.IDirectionNode;
 
-public class DependencyPathNode extends StepNode implements IDirectionNode {
+public class DependencyPathNode extends Node implements IDirectionNode {
 
 	private Direction direction;
 	private int dependency;
 	private int dependencyCount;
-	private int lastStep;
+	private GridWorldModel model;
 
-	public DependencyPathNode(Location initial, int dependency, int initialStep) 
+	public DependencyPathNode(Location initial, int dependency, GridWorldModel model) 
 	{
-		super(initial, initialStep);
+		super(initial);
 		
 		this.direction 			= null;
 		this.dependency 		= dependency;
 		this.dependencyCount 	= 0;
-		this.lastStep			= initialStep;
+		this.model				= model;
 	}
 
-	public DependencyPathNode(StepNode parent, Direction dir, Location loc) 
+	public DependencyPathNode(Node parent, Direction dir, Location loc) 
 	{
 		super(parent, loc);
 		
 		this.direction			= dir;
 		this.dependency 		= ((DependencyPathNode) parent).dependency;
 		this.dependencyCount 	= ((DependencyPathNode) parent).dependencyCount;
-		this.lastStep			= ((DependencyPathNode) parent).lastStep;
+		this.model				= ((DependencyPathNode) parent).model;
 		
-		if (Planner.getInstance().getModel(lastStep).hasObject(dependency, loc)) 
+		if (model.hasObject(dependency, loc)) 
 		{
 			dependencyCount++;
 		}
@@ -61,7 +60,7 @@ public class DependencyPathNode extends StepNode implements IDirectionNode {
 		{
 			Location loc = this.getLocation().newLocation(dir);
 			
-			if (Planner.getInstance().getModel(lastStep).isFree(this.getObject(), loc))
+			if (model.isFree(this.getObject(), loc))
 			{
 				expandedNodes.add(new DependencyPathNode(this, dir, loc));
 			}
@@ -75,11 +74,15 @@ public class DependencyPathNode extends StepNode implements IDirectionNode {
 	{		
 		DependencyPath path = new DependencyPath();
 		
-		for (Node n = this; n.getParent() != null; n = n.getParent()) 
-		{
+		for (Node n = this; n != null; n = n.getParent()) 
+		{			
 			Location loc = n.getLocation();
 			
-			if (Planner.getInstance().getModel(lastStep).hasObject(dependency, loc))
+			if (n.getParent() == null)
+			{
+				path.addToPath(loc);
+			}			
+			else if (model.hasObject(dependency, loc))
 			{
 				path.addDependency(loc);
 			}
