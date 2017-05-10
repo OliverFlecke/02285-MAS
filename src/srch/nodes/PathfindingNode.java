@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
-import env.model.SimulationWorldModel;
+import env.model.SimulationModel;
 import level.Location;
 import level.action.Action;
 import level.action.Action.ActionType;
@@ -17,17 +17,17 @@ import srch.interfaces.IModelNode;
 public class PathfindingNode extends Node implements IActionNode, IModelNode {
 
 	private Action action;
-	private SimulationWorldModel model;
+	private SimulationModel model;
 	
 	public PathfindingNode(Cell agent, Cell tracked, int initialStep) 
 	{
 		super(agent.getLocation());
 
 		action 	= null;
-		model 	= new SimulationWorldModel(initialStep, tracked);
+		model 	= new SimulationModel(initialStep, tracked);
 	}
 
-	public PathfindingNode(Node parent, Action action, SimulationWorldModel model) 
+	public PathfindingNode(Node parent, Action action, SimulationModel model) 
 	{
 		super(parent, action.getNewAgentLocation());
 		
@@ -52,7 +52,7 @@ public class PathfindingNode extends Node implements IActionNode, IModelNode {
 		return model.getTrackedLocation();
 	}
 	
-	public SimulationWorldModel getModel() 
+	public SimulationModel getModel() 
 	{
 		return model;
 	}

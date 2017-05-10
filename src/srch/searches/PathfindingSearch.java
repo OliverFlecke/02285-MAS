@@ -5,7 +5,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.logging.Level;
 
-import env.model.SimulationWorldModel;
+import env.model.SimulationModel;
 import level.cell.Cell;
 import level.Location;
 import level.action.Action;
@@ -61,7 +61,7 @@ public class PathfindingSearch extends Search implements Heuristic {
 	@Override
 	public int h(Node n) 
 	{
-		SimulationWorldModel model = ((PathfindingNode) n).getModel();
+		SimulationModel model = ((PathfindingNode) n).getModel();
 		
 		int goalDist = 0;
 		

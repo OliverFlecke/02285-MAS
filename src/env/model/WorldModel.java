@@ -9,7 +9,7 @@ import level.cell.Box;
 import level.cell.Goal;
 import level.Color;
 
-public class WorldModel extends DataWorldModel {
+public class WorldModel extends CellModel {
 	
 	private Map<Character, Set<Goal>> 	goalMap;
 	private Map<Character, Set<Box>>  	boxMap;

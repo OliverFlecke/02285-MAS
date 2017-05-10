@@ -10,7 +10,7 @@ import level.action.PushAction;
 import level.cell.Agent;
 import level.cell.Cell;
 
-public class SimulationWorldModel extends GridWorldModel {
+public class SimulationModel extends ActionModel {
 
 	private static Planner planner;
 	
@@ -18,12 +18,12 @@ public class SimulationWorldModel extends GridWorldModel {
 					nextStep;
 	private Cell 	tracked;
 
-	public SimulationWorldModel(int step, Cell tracked)
+	public SimulationModel(int step, Cell tracked)
 	{
 		this(planner.getModel(step), step, tracked);
 	}
 
-	public SimulationWorldModel(GridWorldModel model, int step, Cell tracked)
+	public SimulationModel(DataModel model, int step, Cell tracked)
 	{
 		super(model);
 		
@@ -34,7 +34,7 @@ public class SimulationWorldModel extends GridWorldModel {
 	
 	public static void setPlanner(Planner planner)
 	{
-		SimulationWorldModel.planner = planner;
+		SimulationModel.planner = planner;
 	}
 	
 	public Location getTrackedLocation()
@@ -57,9 +57,9 @@ public class SimulationWorldModel extends GridWorldModel {
 		super.move(obj, fr, to);
 	}
     
-    public SimulationWorldModel run(Action action)
+    public SimulationModel run(Action action)
     {    	
-    	SimulationWorldModel simulation = new SimulationWorldModel(this, nextStep, this.tracked);
+    	SimulationModel simulation = new SimulationModel(this, nextStep, this.tracked);
     	
     	for (Agent agent : WorldModel.getInstance().getAgents())
     	{

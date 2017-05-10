@@ -1,6 +1,6 @@
 package srch.searches.closest;
 
-import env.model.GridWorldModel;
+import env.model.DataModel;
 import env.planner.Planner;
 import level.Location;
 import level.cell.Agent;
@@ -10,17 +10,18 @@ import srch.Search;
 import srch.Strategy.BestFirst;
 import srch.Evaluation.AStar;
 import srch.nodes.StorageNode;
+import util.ModelUtil;
 
 public class StorageSearch extends Search implements Heuristic {
 	
-	public static Location search(Location from, Agent agent, GridWorldModel overlay, GridWorldModel model) 
+	public static Location search(Location from, Agent agent, DataModel overlay, DataModel model) 
 	{
-		return new StorageSearch(overlay).search(new StorageNode(from, model.getAgentNumber(agent), model));
+		return new StorageSearch(overlay).search(new StorageNode(from, ModelUtil.getAgentNumber(agent), model));
 	}
 	
-	private GridWorldModel overlay;
+	private DataModel overlay;
 	
-	public StorageSearch(GridWorldModel overlay)
+	public StorageSearch(DataModel overlay)
 	{
 		super();
 		
@@ -32,12 +33,12 @@ public class StorageSearch extends Search implements Heuristic {
 	@Override
 	public boolean isGoalState(Node n) 
 	{
-		return overlay.isFree(GridWorldModel.IN_USE, n.getLocation());
+		return overlay.isFree(DataModel.IN_USE, n.getLocation());
 	}
 
 	@Override
 	public int h(Node n) 
 	{
-		return Planner.getInstance().getUnsolvedGoals().size() * 10;
+		return Planner.getInstance().countUnsolvedGoals() * 10;
 	}
 }

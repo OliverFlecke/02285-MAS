@@ -1,6 +1,6 @@
 package level.cell;
 
-import env.model.DataWorldModel;
+import env.model.CellModel;
 
 public class Goal extends Lettered {
 	
@@ -11,7 +11,7 @@ public class Goal extends Lettered {
 		super(x, y, letter);
 	}
 	
-	public boolean isSolved(DataWorldModel model)
+	public boolean isSolved(CellModel model)
 	{
 		Box box = model.getBox(this.getLocation());
 		if (box == null)

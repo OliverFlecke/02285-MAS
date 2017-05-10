@@ -2,7 +2,6 @@ package env.planner;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -22,10 +21,10 @@ public class Planner {
 	private static 	WorldModel 	worldModel;		
 	private static 	Planner 	instance;
 
-	private ArrayList<DataWorldModel> 		dataModels;
+	private ArrayList<CellModel> 		dataModels;
 	private ArrayList<ArrayList<Action>> 	actions;
 	
-	private ActionPlanner actionPlanner;
+	private Executor executor;
 	
 	public static Planner getInstance() {
 		return instance;
@@ -34,7 +33,7 @@ public class Planner {
 	/**
 	 * @return The last model in the planner
 	 */
-	public DataWorldModel getLastModel() {
+	public CellModel getLastModel() {
 		return getModel(getLastStep());
 	}
 	
@@ -53,11 +52,11 @@ public class Planner {
 		
 		worldModel = WorldModel.getInstance();
 		
-		SimulationWorldModel.setPlanner(this);
+		SimulationModel.setPlanner(this);
 		
-		actionPlanner = new ActionPlanner(this);
+		executor = new Executor(this);
 		
-		dataModels = new ArrayList<DataWorldModel>(Arrays.asList(new DataWorldModel(worldModel)));
+		dataModels = new ArrayList<CellModel>(Arrays.asList(new CellModel(worldModel)));
 		
 		actions = new ArrayList<ArrayList<Action>>(worldModel.getNbAgs());
 		
@@ -85,7 +84,7 @@ public class Planner {
 	
 	private boolean planAgentToBox(Agent agent, Box box)
 	{
-		DataWorldModel model = getModel(getInitialStep(agent));
+		CellModel model = getModel(getInitialStep(agent));
 		
 		if (!planAgentToBox(agent, box, model))
 		{
@@ -98,7 +97,7 @@ public class Planner {
 	
 	private boolean planObjectToLocation(Agent agent, Cell tracked, Location goal)
 	{
-		DataWorldModel model = getModel(getInitialStep(agent));
+		CellModel model = getModel(getInitialStep(agent));
 		
 		if (!planObjectToLocation(agent, tracked, goal, model))
 		{
@@ -109,44 +108,35 @@ public class Planner {
 		return true;
 	}
 	
-	private boolean planObjectToLocation(Agent agent, Cell tracked, Location goal, DataWorldModel model)
+	private boolean planObjectToLocation(Agent agent, Cell tracked, Location goal, CellModel model)
 	{
+		// TODO: We make a trajectory in one model and ask agents to solve dependencies in another
+		// The trajectory should be made using the helping agent's model
 		DependencyPath dependencyPath = DependencyPath.getDependencyPath(agent, tracked, goal, model);
 		
-		GridWorldModel overlay = addPathOverlay(dependencyPath.getPath());
+		OverlayModel overlay = new OverlayModel(DataModel.IN_USE, dependencyPath.getPath());
 		
 		solveDependencies(agent, dependencyPath.getDependencies(), overlay, model);	
 		
-		return actionPlanner.getObjectToLocation(tracked, goal, agent);
+		return executor.getObjectToLocation(agent, tracked, goal);
 	}
 
-	private boolean planAgentToBox(Agent agent, Box box, DataWorldModel model) 
+	private boolean planAgentToBox(Agent agent, Box box, CellModel model) 
 	{
 		DependencyPath dependencyPath = DependencyPath.getDependencyPath(agent, box, model);
 		
-		GridWorldModel overlay = addPathOverlay(dependencyPath.getPath());
+		OverlayModel overlay = new OverlayModel(DataModel.IN_USE, dependencyPath.getPath());
 		
 		solveDependencies(agent, dependencyPath.getDependencies(), overlay, model);	
 		
-		return actionPlanner.getAgentToBox(box, agent);
+		return executor.getAgentToBox(agent, box);
 	}
 	
-	private GridWorldModel addPathOverlay(List<Location> path)
-	{		
-		GridWorldModel overlay = new GridWorldModel(worldModel);
-		
-		for (Location loc : path)
-		{
-			overlay.add(GridWorldModel.IN_USE, loc);
-		}		
-		return overlay;
-	}
-	
-	private void solveDependencies(Agent agent, List<Location> dependencies, GridWorldModel overlay, DataWorldModel model)
+	private void solveDependencies(Agent agent, List<Location> dependencies, DataModel overlay, CellModel model)
 	{
 		for (Location dependency : dependencies)
 		{
-			if (model.hasObject(GridWorldModel.BOX, dependency))
+			if (model.hasObject(DataModel.BOX, dependency))
 			{
 				Box box = model.getBox(dependency);
 
@@ -155,18 +145,18 @@ public class Planner {
 					// TODO: Use agent model
 					Agent otherAgent = model.getAgent(AgentSearch.search(box.getColor(), box.getLocation()));
 					
-					DataWorldModel otherModel = getModel(getInitialStep(otherAgent));
+					CellModel otherModel = getModel(getInitialStep(otherAgent));
 					
 					Location storage = StorageSearch.search(box.getLocation(), otherAgent, overlay, otherModel);
 
 					planObjectToLocation(otherAgent, box, storage);
 				}
 			}
-			else if (model.hasObject(GridWorldModel.AGENT, dependency))
+			else if (model.hasObject(DataModel.AGENT, dependency))
 			{
 				Agent otherAgent = model.getAgent(dependency);
 				
-				DataWorldModel otherModel = getModel(getInitialStep(otherAgent));
+				CellModel otherModel = getModel(getInitialStep(otherAgent));
 				
 				Location storage = StorageSearch.search(otherAgent.getLocation(), otherAgent, overlay, otherModel);
 				
@@ -181,9 +171,9 @@ public class Planner {
 	/**
 	 * @return The unsolved goals of the last model in this planner
 	 */
-	public Collection<Goal> getUnsolvedGoals()
+	public int countUnsolvedGoals()
 	{
-		return getLastModel().getUnsolvedGoals();
+		return getLastModel().countUnsolvedGoals();
 	}
 	
 	/**
@@ -204,7 +194,7 @@ public class Planner {
 	{
 		if (hasModel(step))
 		{
-			DataWorldModel model = getModel(step);
+			CellModel model = getModel(step);
 			
 			Agent agent = model.getAgent(action.getNewAgentLocation());
 			
@@ -224,7 +214,7 @@ public class Planner {
 		return step < dataModels.size();
 	}
 	
-	public DataWorldModel getModel(Agent agent) {
+	public CellModel getModel(Agent agent) {
 		return getModel(getInitialStep(agent));
 	}
 	
@@ -232,7 +222,7 @@ public class Planner {
 	 * @param step
 	 * @return The data model with the given step
 	 */
-	public DataWorldModel getModel(int step)
+	public CellModel getModel(int step)
 	{
 		if (step > dataModels.size())
 		{
@@ -242,7 +232,7 @@ public class Planner {
 		// Should only trigger when step == gridModels.size()
 		if (!hasModel(step))
 		{
-			dataModels.add(new DataWorldModel(dataModels.get(step - 1)));
+			dataModels.add(new CellModel(dataModels.get(step - 1)));
 		}
 		
 		return dataModels.get(step);

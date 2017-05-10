@@ -1,6 +1,6 @@
 package srch.searches;
 
-import env.model.GridWorldModel;
+import env.model.DataModel;
 import level.DependencyPath;
 import level.Location;
 import srch.Heuristic;
@@ -12,7 +12,7 @@ import srch.nodes.DependencyPathNode;
 
 public class DependencyPathSearch extends Search implements Heuristic {
 
-	public static DependencyPath search(Location from, Location to, int object, int proximity, int agentNumber, GridWorldModel model) 
+	public static DependencyPath search(Location from, Location to, int object, int proximity, int agentNumber, DataModel model) 
 	{
 		return new DependencyPathSearch(to, proximity).search(new DependencyPathNode(from, object, agentNumber, model));
 	}

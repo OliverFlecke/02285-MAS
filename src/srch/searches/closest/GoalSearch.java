@@ -1,22 +1,22 @@
 package srch.searches.closest;
 
-import env.model.DataWorldModel;
+import env.model.CellModel;
 import level.Location;
 import srch.Node;
 import srch.nodes.ClosestNode;
 
 public class GoalSearch extends ClosestSearch {
 
-	public static Location search(DataWorldModel model, Location from) 
+	public static Location search(CellModel model, Location from) 
 	{
 		return new GoalSearch(model).search(new ClosestNode(from));
 	}
 	
-	private DataWorldModel model;
+	private CellModel model;
 
-	public GoalSearch(DataWorldModel model) 
+	public GoalSearch(CellModel model) 
 	{
-		super(DataWorldModel.GOAL);
+		super(CellModel.GOAL);
 		
 		this.model = model;
 	}

@@ -3,7 +3,7 @@ package srch.nodes;
 import java.util.ArrayList;
 import java.util.List;
 
-import env.model.GridWorldModel;
+import env.model.DataModel;
 import level.Direction;
 import level.Location;
 import srch.Node;
@@ -11,10 +11,10 @@ import srch.Node;
 public class StorageNode extends ClosestNode {
 	
 	private int include;
-	private GridWorldModel model;
+	private DataModel model;
 
-	public StorageNode(Location initial, int include, GridWorldModel model) {
-		super(initial, GridWorldModel.AGENT);
+	public StorageNode(Location initial, int include, DataModel model) {
+		super(initial, DataModel.AGENT);
 		
 		this.include = include;
 		this.model	 = model;

@@ -1,8 +1,8 @@
 package srch.interfaces;
 
-import env.model.GridWorldModel;
+import env.model.DataModel;
 
 public interface IModelNode 
 {
-	public GridWorldModel getModel();
+	public DataModel getModel();
 }

@@ -3,7 +3,8 @@ package srch.nodes;
 import java.util.ArrayList;
 import java.util.List;
 
-import env.model.GridWorldModel;
+import env.model.DataModel;
+import env.model.WorldModel;
 import level.DependencyPath;
 import level.Direction;
 import level.Location;
@@ -16,9 +17,9 @@ public class DependencyPathNode extends Node implements IDirectionNode {
 	private int dependency;
 	private int dependencyCount;
 	private int include;
-	private GridWorldModel model;
+	private DataModel model;
 
-	public DependencyPathNode(Location initial, int dependency, int include, GridWorldModel model) 
+	public DependencyPathNode(Location initial, int dependency, int include, DataModel model) 
 	{
 		super(initial);
 		
@@ -54,7 +55,7 @@ public class DependencyPathNode extends Node implements IDirectionNode {
 		return dependencyCount;
 	}
 	
-	public GridWorldModel getModel() {
+	public DataModel getModel() {
 		return model;
 	}
 
@@ -88,8 +89,8 @@ public class DependencyPathNode extends Node implements IDirectionNode {
 			if (n.getParent() == null)
 			{
 				path.addToPath(loc);
-			}			
-			else if (model.isFree(include, loc) && model.hasObject(dependency, loc))
+			}
+			else if (model.isFree(include, WorldModel.BOX_MASK, loc) && model.hasObject(dependency, loc))
 			{
 				path.addDependency(loc);
 			}
