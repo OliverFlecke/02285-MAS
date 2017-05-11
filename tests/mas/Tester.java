@@ -34,6 +34,8 @@ public class Tester {
 	{	
 		logger.fine("Testing level: " + level);
 		
+		level = level + ".lvl";
+		
 		String command = "java -jar server.jar -l levels\\" + level + " -c \"java -jar client.jar\"";
 		
 		Runtime rt = Runtime.getRuntime();
