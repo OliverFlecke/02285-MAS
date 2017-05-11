@@ -12,7 +12,7 @@ public class ModelUtil {
 		return ((int) agent.getLetter()) << 24;
 	}
 
-//	public static GridWorldModel compareModels(GridWorldModel m1, GridWorldModel m2)
+//	public static DataModel compareModels(DataModel m1, DataModel m2)
 //	{
 //		int[][] result = new int[m1.data.length][m1.data[0].length];
 //		
@@ -23,10 +23,10 @@ public class ModelUtil {
 //	    		result[x][y] = m1.data[x][y] & m2.data[x][y];
 //	    	}
 //	    }
-//	    return new GridWorldModel(result);
+//	    return new DataModel(result);
 //	}
 //
-//	public static GridWorldModel diffModels(GridWorldModel m1, GridWorldModel m2)
+//	public static DataModel diffModels(DataModel m1, DataModel m2)
 //	{
 //		int[][] result = new int[m1.data.length][m1.data[0].length];
 //		
@@ -37,7 +37,7 @@ public class ModelUtil {
 //	    		result[x][y] = m1.data[x][y] ^ m2.data[x][y];
 //	    	}
 //	    }
-//	    return new GridWorldModel(result);
+//	    return new DataModel(result);
 //	}
 	
 	public static Agent[][] deepCopyAgents(Agent[][] data)

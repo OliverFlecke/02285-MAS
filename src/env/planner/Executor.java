@@ -101,15 +101,16 @@ public class Executor {
 //		if (planner.dataModelCount() - finalStep > 3)
 //		{
 //			// These two models contain the update
-//			GridWorldModel m0 = planner.getModel(finalStep    );
-//			GridWorldModel m1 = planner.getModel(finalStep - 1);
+//			DataModel m0 = planner.getModel(finalStep    );
+//			DataModel m1 = planner.getModel(finalStep - 1);
 //			// This model is not updated
-//			GridWorldModel m2 = planner.getModel(finalStep - 2);
+//			DataModel m2 = planner.getModel(finalStep - 2);
 //			
-//			GridWorldModel c1 = ModelUtil.compareModels(m0, m1);			
-//			GridWorldModel c2 = ModelUtil.compareModels(m2, c1);
+//			DataModel c1 = ModelUtil.compareModels(m0, m1);
+//			DataModel c2 = ModelUtil.compareModels(m2, c1);
 //			
-//			GridWorldModel diff = ModelUtil.diffModels(c1, c2);
+//			DataModel diff = ModelUtil.diffModels(c1, c2);
+//			System.out.println();
 //		}
 		
 		for (int futureStep = finalStep + 1; futureStep < planner.dataModelCount(); futureStep++)
