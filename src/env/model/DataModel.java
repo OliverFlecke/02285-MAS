@@ -24,7 +24,7 @@ public class DataModel {
 	
 	protected int					width, height;
     
-    protected int[][]             	data;
+    public int[][]             	data;
     
 	
 	public DataModel(int width, int height)
@@ -53,7 +53,7 @@ public class DataModel {
 	}
 	
 	public boolean isSolved(int x, int y) {
-		return (data[x][y] & GOAL_MASK) == ((data[x][y] & BOX_MASK) >> 8);
+		return hasObject(GOAL, x, y) && (data[x][y] & GOAL_MASK) == ((data[x][y] & BOX_MASK) >> 8);
 	}
     
     public boolean inGrid(int x, int y) {

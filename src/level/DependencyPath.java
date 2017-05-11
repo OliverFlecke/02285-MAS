@@ -57,7 +57,7 @@ public class DependencyPath {
 	 */
 	public static DependencyPath getDependencyPath(Agent agent, Box box, DataModel model)
 	{
-		return getLocationDependencyPath(agent, agent.getLocation(), box.getLocation(), 1, model);
+		return getLocationDependencyPath(agent, agent.getLocation(), box.getLocation(), 0, model);
 	}
 	
 	/**

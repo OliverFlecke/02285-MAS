@@ -82,9 +82,13 @@ public class DependencyPathNode extends Node implements IDirectionNode {
 	{		
 		DependencyPath path = new DependencyPath();
 		
-		for (Node n = this; n != null; n = n.getParent()) 
+		path.addToPath(this.getLocation());
+		
+		for (Node n = this.getParent(); n != null; n = n.getParent()) 
 		{			
 			Location loc = n.getLocation();
+			
+			// TODO: Add agent color to search
 			
 			if (n.getParent() == null)
 			{

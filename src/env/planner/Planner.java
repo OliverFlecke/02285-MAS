@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import env.model.*;
+import level.Color;
 import level.DependencyPath;
 import level.Location;
 import level.action.Action;
@@ -116,7 +117,7 @@ public class Planner {
 		
 		OverlayModel overlay = new OverlayModel(DataModel.IN_USE, dependencyPath.getPath());
 		
-		solveDependencies(agent, dependencyPath.getDependencies(), overlay, model);	
+		solveDependencies(agent.getColor(), dependencyPath.getDependencies(), overlay, model);	
 		
 		return executor.getObjectToLocation(agent, tracked, goal);
 	}
@@ -127,12 +128,12 @@ public class Planner {
 		
 		OverlayModel overlay = new OverlayModel(DataModel.IN_USE, dependencyPath.getPath());
 		
-		solveDependencies(agent, dependencyPath.getDependencies(), overlay, model);	
+		solveDependencies(agent.getColor(), dependencyPath.getDependencies(), overlay, model);	
 		
 		return executor.getAgentToBox(agent, box);
 	}
 	
-	private void solveDependencies(Agent agent, List<Location> dependencies, DataModel overlay, CellModel model)
+	private void solveDependencies(Color color, List<Location> dependencies, DataModel overlay, CellModel model)
 	{
 		for (Location dependency : dependencies)
 		{
@@ -140,7 +141,7 @@ public class Planner {
 			{
 				Box box = model.getBox(dependency);
 
-				if (!box.getColor().equals(agent.getColor()))
+				if (!box.getColor().equals(color))
 				{							
 					// TODO: Use agent model
 					Agent otherAgent = model.getAgent(AgentSearch.search(box.getColor(), box.getLocation()));
@@ -163,7 +164,7 @@ public class Planner {
 				if (storage == null)
 					throw new UnsupportedOperationException("Unable to find storage");
 
-				planObjectToLocation(agent, agent, storage, otherModel);
+				planObjectToLocation(otherAgent, otherAgent, storage, otherModel);
 			}
 		}
 	}

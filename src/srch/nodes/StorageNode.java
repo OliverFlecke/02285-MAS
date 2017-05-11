@@ -36,6 +36,8 @@ public class StorageNode extends ClosestNode {
 		{
 			Location loc = this.getLocation().newLocation(dir);
 			
+			// TODO: Add agent color
+			
 			if (model.hasObject(include, loc))
 			{
 				expandedNodes.add(new ClosestNode(this, dir, loc));

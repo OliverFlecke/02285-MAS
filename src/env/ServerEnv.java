@@ -45,7 +45,7 @@ public class ServerEnv {
 		{
 			try {
 //				serverIn = new BufferedReader(new FileReader(new File("levels\\multi_agent\\easy\\MADeliRobot.lvl")));
-				serverIn = new BufferedReader(new FileReader(new File("levels\\MAsimple5.lvl")));
+				serverIn = new BufferedReader(new FileReader(new File("levels\\MAsimple3.lvl")));
 			} catch (FileNotFoundException e) {
 				e.printStackTrace();
 			}
