@@ -25,7 +25,7 @@ public class ServerEnv {
 	
     private static final Logger logger = LoggerFactory.getLogger(ServerEnv.class.getName());
     
-    private static final boolean TEST = false;
+    private static final boolean TEST = true;
 
 	private int 						nbAgs;
 	private HashMap<Integer, Action> 	requests;
@@ -44,8 +44,8 @@ public class ServerEnv {
 		if (TEST)
 		{
 			try {
-//				serverIn = new BufferedReader(new FileReader(new File("levels\\multi_agent\\easy\\MADeliRobot.lvl")));
-				serverIn = new BufferedReader(new FileReader(new File("levels\\MAsimple3.lvl")));
+				serverIn = new BufferedReader(new FileReader(new File("levels\\multi_agent\\easy\\MADeliRobot.lvl")));
+//				serverIn = new BufferedReader(new FileReader(new File("levels\\MAsimple5.lvl")));
 			} catch (FileNotFoundException e) {
 				e.printStackTrace();
 			}

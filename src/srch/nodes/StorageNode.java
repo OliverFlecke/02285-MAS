@@ -11,20 +11,15 @@ import srch.Node;
 public class StorageNode extends ClosestNode {
 	
 	private int include;
-	private DataModel model;
 
 	public StorageNode(Location initial, int include, DataModel model) {
-		super(initial, DataModel.AGENT);
-		
+		super(initial, DataModel.AGENT, model);		
 		this.include = include;
-		this.model	 = model;
 	}
 
 	public StorageNode(Node parent, Direction direction, Location location) {
-		super(parent, direction, location);
-		
+		super(parent, direction, location);		
 		this.include = ((StorageNode) parent).include;
-		this.model   = ((StorageNode) parent).model;
 	}
 
 	@Override
@@ -38,11 +33,11 @@ public class StorageNode extends ClosestNode {
 			
 			// TODO: Add agent color
 			
-			if (model.hasObject(include, loc))
+			if (getModel().hasObject(include, loc))
 			{
 				expandedNodes.add(new ClosestNode(this, dir, loc));
 			}			
-			else if (model.isFree(this.getObject(), loc))
+			else if (getModel().isFree(this.getObject(), loc))
 			{
 				expandedNodes.add(new ClosestNode(this, dir, loc));
 			}

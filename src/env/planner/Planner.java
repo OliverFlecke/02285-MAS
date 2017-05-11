@@ -144,7 +144,7 @@ public class Planner {
 				if (!box.getColor().equals(color))
 				{							
 					// TODO: Use agent model
-					Agent otherAgent = model.getAgent(AgentSearch.search(box.getColor(), box.getLocation()));
+					Agent otherAgent = model.getAgent(AgentSearch.search(box.getColor(), box.getLocation(), model));
 					
 					CellModel otherModel = getModel(getInitialStep(otherAgent));
 					

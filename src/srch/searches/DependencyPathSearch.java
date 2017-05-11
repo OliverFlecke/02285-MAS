@@ -12,26 +12,24 @@ import srch.nodes.DependencyPathNode;
 
 public class DependencyPathSearch extends Search implements Heuristic {
 
-	public static DependencyPath search(Location from, Location to, int object, int proximity, int agentNumber, DataModel model) 
+	public static DependencyPath search(Location from, Location to, int object, int agentNumber, boolean toBox, DataModel model) 
 	{
-		return new DependencyPathSearch(to, proximity).search(new DependencyPathNode(from, object, agentNumber, model));
+		return new DependencyPathSearch(to).search(new DependencyPathNode(from, object, agentNumber, toBox, model));
 	}
 	
 	private Location goalLocation;
-	private int 	 goalDistance;
 	
-	public DependencyPathSearch(Location to, int proximity)
+	public DependencyPathSearch(Location to)
 	{
 		this.setStrategy(new BestFirst(new AStar(this)));
 		
 		goalLocation = to;
-		goalDistance = proximity;
 	}
 
 	@Override
 	public boolean isGoalState(Node n) 
 	{
-		return n.getLocation().distance(goalLocation) == goalDistance;
+		return n.getLocation().distance(goalLocation) == 0;
 	}
 
 	@Override
