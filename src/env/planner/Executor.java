@@ -42,7 +42,7 @@ public class Executor {
 			return false;			
 		}
 
-		logger.info("Agent to box:\t\t" + actions.toString());
+		logger.info(agent.getName() + " to " + box + ":\t\t" + actions.toString());
 
 		planner.getActions().get(agent.getNumber()).addAll(actions);
 		
@@ -70,7 +70,7 @@ public class Executor {
 			return false;			
 		}
 
-		logger.info("Object to location:\t" + actions.toString());
+		logger.info(tracked + " to " + location + ":\t\t" + actions.toString());
 		
 		planner.getActions().get(agent.getNumber()).addAll(actions);
 

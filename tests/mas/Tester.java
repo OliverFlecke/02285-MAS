@@ -13,7 +13,7 @@ public class Tester {
 	
 	private static Logger logger = LoggerFactory.getLogger(Tester.class.getName());
 
-	private static final long allowedTime = 10000;
+	private static final long MAX_TIME = 10000;
 	
 	@BeforeClass
 	public static void before()
@@ -21,13 +21,20 @@ public class Tester {
 		logger.setLevel(Level.WARNING);
 	}
 	
+	public static void testLevel(String level)
+	{
+		testLevel(level, MAX_TIME);
+	}
+	
 	/**
 	 * Tests a level
 	 * @param level path to the level
 	 */
-	public static void testLevel(String level) 
+	public static void testLevel(String level, long allowedTime) 
 	{	
 		logger.fine("Testing level: " + level);
+		
+		level = level + ".lvl";
 		
 		String command = "java -jar server.jar -l levels\\" + level + " -c \"java -jar client.jar\"";
 		
