@@ -24,8 +24,7 @@ public enum Color {
 		case "pink": 		return Color.Pink;
 		case "yellow":		return Color.Yellow;
 		case "blue":
-		default: 
-			return Color.Blue;
+		default: 			return Color.Blue;
 		}
 	}
 	

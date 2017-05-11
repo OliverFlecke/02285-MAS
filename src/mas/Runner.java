@@ -14,7 +14,9 @@ public class Runner {
 		
 		double duration = (endTime - startTime) / 1000000000.0;
 		
+		System.err.println("----------------------------------------------------------------------------------");
 		System.err.println("Planning time: " + duration + " \tLength of solution: " + env.planner.getLastStep());
+		System.err.println("----------------------------------------------------------------------------------");
 		
 		env.executePlanner();
 		
