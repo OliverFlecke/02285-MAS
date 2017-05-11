@@ -4,7 +4,6 @@ import env.model.DataModel;
 import env.model.WorldModel;
 import level.Color;
 import level.Location;
-import level.cell.Agent;
 import srch.Node;
 import srch.nodes.ClosestNode;
 
@@ -30,11 +29,8 @@ public class AgentSearch extends ClosestSearch {
 		if (!super.isGoalState(n))
 		{
 			return false;
-		}
-		
-		Agent agent = WorldModel.getInstance().getAgent(n.getLocation());		
-		
-		return agent.getColor().equals(color);
+		}			
+		return color.equals(((ClosestNode) n).getModel().getColor(n.getLocation()));
 	}
 
 }

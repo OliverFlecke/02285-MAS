@@ -70,6 +70,10 @@ public class Planner {
 		{
 			solveGoal(goal);
 		}
+		for (Goal goal : getLastModel().getUnsolvedGoals())
+		{
+			solveGoal(goal);
+		}
 	}
 	
 	private void solveGoal(Goal goal)
