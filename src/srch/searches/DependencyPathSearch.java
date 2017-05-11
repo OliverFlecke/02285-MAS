@@ -3,6 +3,7 @@ package srch.searches;
 import env.model.DataModel;
 import level.DependencyPath;
 import level.Location;
+import level.cell.Agent;
 import srch.Heuristic;
 import srch.Node;
 import srch.Search;
@@ -12,9 +13,9 @@ import srch.nodes.DependencyPathNode;
 
 public class DependencyPathSearch extends Search implements Heuristic {
 
-	public static DependencyPath search(Location from, Location to, int object, int agentNumber, boolean toBox, DataModel model) 
+	public static DependencyPath search(Agent agent, Location from, Location to, int object, boolean toBox, DataModel model) 
 	{
-		return new DependencyPathSearch(to).search(new DependencyPathNode(from, object, agentNumber, toBox, model));
+		return new DependencyPathSearch(to).search(new DependencyPathNode(from, agent, object, toBox, model));
 	}
 	
 	private Location goalLocation;

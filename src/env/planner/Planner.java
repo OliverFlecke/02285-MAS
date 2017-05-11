@@ -2,17 +2,22 @@ package env.planner;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import env.model.*;
-import level.Color;
+
+import env.model.CellModel;
+import env.model.DataModel;
+import env.model.OverlayModel;
+import env.model.SimulationModel;
+import env.model.WorldModel;
 import level.DependencyPath;
 import level.Location;
 import level.action.Action;
-import level.cell.*;
+import level.cell.Agent;
+import level.cell.Box;
+import level.cell.Cell;
+import level.cell.Goal;
 import logging.LoggerFactory;
-import srch.searches.closest.AgentSearch;
 import srch.searches.closest.StorageSearch;
 
 public class Planner {
@@ -66,111 +71,122 @@ public class Planner {
 			actions.add(new ArrayList<Action>());
 		}
 		
+		solveLevel();		
+	}
+	
+	private void solveLevel()
+	{
 		for (Goal goal : Preprocessor.preprocess())
 		{
 			solveGoal(goal);
 		}
-		for (Goal goal : getLastModel().getUnsolvedGoals())
-		{
-			solveGoal(goal);
-		}
+		
+//		for (Goal goal : getLastModel().getUnsolvedGoals())
+//		{
+//			solveGoal(goal);
+//		}
 	}
 	
 	private void solveGoal(Goal goal)
 	{		
-		Agent agent = goal.getBox().getAgent();
+		Box	  		box		= goal.getBox();
+		Agent 		agent 	= box.getAgent();
+		Location 	loc 	= goal.getLocation();
+		int			step	= getInitialStep(agent);
 		
-		if (!planAgentToBox(agent, goal.getBox()))
-			throw new UnsupportedOperationException("Unable to get " + agent + " to " + goal.getBox());
+		if (!planAgentToBox(agent, box, step))
+			throw new UnsupportedOperationException("Unable to get " + agent + " to " + box);
 		
-		if (!planObjectToLocation(agent, goal.getBox(), goal.getLocation()))
-			throw new UnsupportedOperationException("Unable to get " + goal.getBox() + " to " + goal);
-	}
-	
-	private boolean planAgentToBox(Agent agent, Box box)
-	{
-		CellModel model = getModel(getInitialStep(agent));
-		
-		if (!planAgentToBox(agent, box, model))
-		{
-			model = getLastModel();
-			
-			return planAgentToBox(agent, box, model);
-		}
-		return true;
-	}
-	
-	private boolean planObjectToLocation(Agent agent, Cell tracked, Location goal)
-	{
-		CellModel model = getModel(getInitialStep(agent));
-		
-		if (!planObjectToLocation(agent, tracked, goal, model))
-		{
-			model = getLastModel();
-			
-			return planObjectToLocation(agent, tracked, goal, model);
-		}
-		return true;
-	}
-	
-	private boolean planObjectToLocation(Agent agent, Cell tracked, Location goal, CellModel model)
-	{
-		// TODO: We make a trajectory in one model and ask agents to solve dependencies in another
-		// The trajectory should be made using the helping agent's model
-		DependencyPath dependencyPath = DependencyPath.getDependencyPath(agent, tracked, goal, model);
-		
-		OverlayModel overlay = new OverlayModel(DataModel.IN_USE, dependencyPath.getPath());
-		
-		solveDependencies(agent.getColor(), dependencyPath.getDependencies(), overlay, model);	
-		
-		return executor.getObjectToLocation(agent, tracked, goal);
+		if (!planObjectToLocation(agent, box, loc, step))
+			throw new UnsupportedOperationException("Unable to get " + box + " to " + goal);
 	}
 
-	private boolean planAgentToBox(Agent agent, Box box, CellModel model) 
+	private boolean planAgentToBox(Agent agent, Box box, int step) 
 	{
-		DependencyPath dependencyPath = DependencyPath.getDependencyPath(agent, box, model);
+		CellModel 		model 			= getModel(step);		
+		DependencyPath 	dependencyPath 	= DependencyPath.getDependencyPath(agent, box, model);
+		OverlayModel	overlay			= new OverlayModel(dependencyPath.getPath());
 		
-		OverlayModel overlay = new OverlayModel(DataModel.IN_USE, dependencyPath.getPath());
-		
-		solveDependencies(agent.getColor(), dependencyPath.getDependencies(), overlay, model);	
-		
+		if (!dependencyPath.getDependencies().isEmpty())
+		{
+			Location dependency = dependencyPath.getDependencies().get(0);
+			
+			int newStep = solveDependency(dependency, overlay, step);
+			
+			if (newStep >= 0) return planAgentToBox(agent, box, newStep);
+		}
 		return executor.getAgentToBox(agent, box);
 	}
-	
-	private void solveDependencies(Color color, List<Location> dependencies, DataModel overlay, CellModel model)
+
+	private boolean planObjectToLocation(Agent agent, Cell tracked, Location loc, int step) 
 	{
-		for (Location dependency : dependencies)
+		CellModel 		model 			= getModel(step);		
+		DependencyPath 	dependencyPath 	= DependencyPath.getDependencyPath(agent, tracked, loc, model);
+		OverlayModel	overlay			= new OverlayModel(dependencyPath.getPath());
+		
+		if (dependencyPath.getDependencies().isEmpty())
 		{
-			if (model.hasObject(DataModel.BOX, dependency))
-			{
-				Box box = model.getBox(dependency);
-
-				if (!box.getColor().equals(color))
-				{							
-					// TODO: Use agent model
-					Agent otherAgent = model.getAgent(AgentSearch.search(box.getColor(), box.getLocation(), model));
-					
-					CellModel otherModel = getModel(getInitialStep(otherAgent));
-					
-					Location storage = StorageSearch.search(box.getLocation(), otherAgent, overlay, otherModel);
-
-					planObjectToLocation(otherAgent, box, storage);
-				}
-			}
-			else if (model.hasObject(DataModel.AGENT, dependency))
-			{
-				Agent otherAgent = model.getAgent(dependency);
-				
-				CellModel otherModel = getModel(getInitialStep(otherAgent));
-				
-				Location storage = StorageSearch.search(otherAgent.getLocation(), otherAgent, overlay, otherModel);
-				
-				if (storage == null)
-					throw new UnsupportedOperationException("Unable to find storage");
-
-				planObjectToLocation(otherAgent, otherAgent, storage, otherModel);
-			}
+			return executor.getObjectToLocation(agent, tracked, loc);
 		}
+		
+		Location dependency = dependencyPath.getDependencies().get(0);
+		
+		int newStep = solveDependency(dependency, overlay, step);
+		
+		return planObjectToLocation(agent, tracked, loc, newStep);
+	}
+	
+	private int solveDependency(Location dependency, OverlayModel overlay, int step)
+	{
+		CellModel model = getModel(step);
+		
+		if (model.hasObject(DataModel.BOX, dependency))
+		{
+			Box 	box 	= model.getBox(dependency);
+			Agent 	agent 	= box.getAgent();
+			
+			return solveAgentToBoxDependency(agent, box, overlay, step);
+		}
+		else if (model.hasObject(DataModel.AGENT, dependency))
+		{
+			Agent	agent 	= model.getAgent(dependency);
+			
+			return solveObjectToLocationDependency(agent, agent, overlay, step);
+		}
+		
+		throw new UnsupportedOperationException("Attempt to solve unknown dependency");
+	}
+
+	private int solveAgentToBoxDependency(Agent agent, Box box, OverlayModel overlay, int step) 
+	{
+		int agentStep = getInitialStep(agent);
+		
+		if (step < agentStep)
+		{
+			return agentStep;
+		}
+		
+		planAgentToBox(agent, box, agentStep);
+		
+		return solveObjectToLocationDependency(agent, box, overlay, agentStep);
+	}
+	
+	private int solveObjectToLocationDependency(Agent agent, Cell tracked, OverlayModel overlay, int step) 
+	{
+		int agentStep = getInitialStep(agent);
+		
+		if (step < agentStep)
+		{
+			return agentStep;
+		}
+		
+		CellModel model = getModel(agentStep);
+		
+		Location storage = StorageSearch.search(agent.getLocation(), agent, overlay, model);
+		
+		planObjectToLocation(agent, tracked, storage, agentStep);
+		
+		return -1;
 	}
 	
 	/**

@@ -6,20 +6,25 @@ import java.util.List;
 import env.model.DataModel;
 import level.Direction;
 import level.Location;
+import level.cell.Agent;
 import srch.Node;
+import util.ModelUtil;
 
 public class StorageNode extends ClosestNode {
 	
-	private int include;
+	private Agent 	agent;
+	private int		agNumber;
 
-	public StorageNode(Location initial, int include, DataModel model) {
-		super(initial, DataModel.AGENT, model);		
-		this.include = include;
+	public StorageNode(Location initial, Agent agent, DataModel model) {
+		super(initial, DataModel.AGENT, model);
+		this.agent 		= agent;		
+		this.agNumber 	= ModelUtil.getAgentNumber(agent);
 	}
 
 	public StorageNode(Node parent, Direction direction, Location location) {
 		super(parent, direction, location);		
-		this.include = ((StorageNode) parent).include;
+		this.agent 		= ((StorageNode) parent).agent;
+		this.agNumber 	= ((StorageNode) parent).agNumber;
 	}
 
 	@Override
@@ -31,13 +36,14 @@ public class StorageNode extends ClosestNode {
 		{
 			Location loc = this.getLocation().newLocation(dir);
 			
-			// TODO: Add agent color
-			
-			if (getModel().hasObject(include, loc))
-			{
-				expandedNodes.add(new ClosestNode(this, dir, loc));
-			}			
-			else if (getModel().isFree(this.getObject(), loc))
+				// Add node if loc has agent itself or
+			if (this.getModel().hasObject(agNumber, DataModel.BOX_MASK, loc) ||
+				// Add node if loc is free of object or
+				this.getModel().isFree(this.getObject(), loc) ||
+				// Add node if object contains box and loc has box with agent's color
+				((this.getObject() & DataModel.BOX) != 0 		&&
+				  this.getModel().hasObject(DataModel.BOX, loc) && 
+				  this.getModel().getColor(loc).equals(agent.getColor())))
 			{
 				expandedNodes.add(new ClosestNode(this, dir, loc));
 			}

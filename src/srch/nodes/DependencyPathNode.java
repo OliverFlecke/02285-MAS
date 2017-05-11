@@ -8,27 +8,29 @@ import env.model.WorldModel;
 import level.DependencyPath;
 import level.Direction;
 import level.Location;
+import level.cell.Agent;
 import srch.Node;
 import srch.interfaces.IDirectionNode;
+import util.ModelUtil;
 
 public class DependencyPathNode extends Node implements IDirectionNode {
 
-	private Direction direction;
-	private int dependency;
-	private int dependencyCount;
-	private int include;
-	private boolean includeLast;
-	private DataModel model;
+	private Direction 	direction;
+	private Agent		agent;
+	private int 		dependency;
+	private int 		dependencyCount;
+	private boolean 	ignoreLast;
+	private DataModel 	model;
 
-	public DependencyPathNode(Location initial, int dependency, int include, boolean includeLast, DataModel model) 
+	public DependencyPathNode(Location initial, Agent agent, int dependency, boolean includeLast, DataModel model) 
 	{
 		super(initial);
 		
 		this.direction 			= null;
+		this.agent				= agent;
 		this.dependency 		= dependency;
 		this.dependencyCount 	= 0;
-		this.include			= include;
-		this.includeLast		= includeLast;
+		this.ignoreLast		= includeLast;
 		this.model				= model;
 	}
 
@@ -39,10 +41,10 @@ public class DependencyPathNode extends Node implements IDirectionNode {
 		DependencyPathNode n = (DependencyPathNode) parent;
 		
 		this.direction			= dir;
+		this.agent				= n.agent;
 		this.dependency 		= n.dependency;
 		this.dependencyCount 	= n.dependencyCount;
-		this.include			= n.include;
-		this.includeLast		= n.includeLast;
+		this.ignoreLast		= n.ignoreLast;
 		this.model				= n.model;
 		
 		if (model.hasObject(dependency, loc)) 
@@ -87,15 +89,21 @@ public class DependencyPathNode extends Node implements IDirectionNode {
 	{		
 		DependencyPath path = new DependencyPath();
 		
-		path.addToPath(this.getLocation());
+		int agNumber = ModelUtil.getAgentNumber(agent);
 		
 		for (Node n = this; n != null; n = n.getParent()) 
 		{			
 			Location loc = n.getLocation();
 			
-			// TODO: Add agent color to search
-			if (!(n == this && includeLast || n.getParent() == null) &&
-				model.isFree(include, WorldModel.BOX_MASK, loc) && model.hasObject(dependency, loc))
+			if (model.hasObject(dependency, loc) &&
+				// Do not add dependency if n is last and ignoreLast
+				!(n == this && ignoreLast) && 
+				// Do not add dependency if n is first
+				!(n.getParent() == null) && 
+				// Do not add dependency if dependency is box of agent's color
+				!(model.hasObject(DataModel.BOX, loc) && model.getColor(loc).equals(agent.getColor())) && 
+				// Do not add dependency if dependency is agent itself
+				!(model.hasObject(agNumber, WorldModel.BOX_MASK, loc)))
 			{
 				path.addDependency(loc);
 			}

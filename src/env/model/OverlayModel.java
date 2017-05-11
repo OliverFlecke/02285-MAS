@@ -7,6 +7,11 @@ import level.Location;
 public class OverlayModel extends DataModel {
 	
 	private int overlayObject;
+	
+	public OverlayModel(List<Location> overlay)
+	{
+		this(IN_USE, overlay);
+	}
 
 	public OverlayModel(int obj, List<Location> overlay) 
 	{

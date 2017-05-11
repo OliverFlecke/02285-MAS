@@ -38,11 +38,11 @@ public class Executor {
 
 		if (actions == null)
 		{
-			logger.info(agent.getName() + " could not find path to box " + box.getLetter());
+			logger.info(agent + " could not find path to box " + box.getLetter());
 			return false;			
 		}
 
-		logger.info(agent.getName() + " to " + box + ":\t\t" + actions.toString());
+		logger.info(agent + " to " + box + ":\t\t" + actions.toString());
 
 		planner.getActions().get(agent.getNumber()).addAll(actions);
 		

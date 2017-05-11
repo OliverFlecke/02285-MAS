@@ -22,9 +22,9 @@ public class DataModel {
     public static final int		GOAL_MASK 	= 0xFF0000;
     public static final int		BOX_MASK 	= 0xFF000000;
 	
-	protected int					width, height;
-    
-    public int[][]             	data;
+	protected int		width, 
+						height;    
+    protected int[][] 	data;
     
 	
 	public DataModel(int width, int height)
@@ -66,6 +66,14 @@ public class DataModel {
     
     public boolean hasObject(int obj, int x, int y) {
         return inGrid(x, y) && (data[x][y] & obj) != 0;
+    }
+    
+    public boolean hasObject(int obj, int mask, Location l) {
+    	return hasObject(obj, mask, l.x, l.y);
+    }
+    
+    public boolean hasObject(int obj, int mask, int x, int y) {
+    	return inGrid(x, y) && getMasked(mask, x, y) == obj;
     }
 
     public boolean isFree(Location l) {

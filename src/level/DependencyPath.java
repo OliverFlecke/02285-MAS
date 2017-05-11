@@ -8,7 +8,6 @@ import level.cell.Agent;
 import level.cell.Box;
 import level.cell.Cell;
 import srch.searches.DependencyPathSearch;
-import util.ModelUtil;
 
 public class DependencyPath {
 
@@ -72,6 +71,6 @@ public class DependencyPath {
 	
 	private static DependencyPath getLocationDependencyPath(Agent agent, Location from, Location to, boolean toBox, DataModel model)
 	{
-		return DependencyPathSearch.search(from, to, DataModel.BOX | DataModel.AGENT, ModelUtil.getAgentNumber(agent), toBox, model);		
+		return DependencyPathSearch.search(agent, from, to, DataModel.BOX | DataModel.AGENT, toBox, model);		
 	}
 }
