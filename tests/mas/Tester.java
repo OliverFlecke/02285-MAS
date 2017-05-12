@@ -90,7 +90,7 @@ public class Tester {
 							logger.warning(error);
 						}
 						
-						proc.destroyForcibly();	
+//						Runtime.getRuntime().exec("taskkill /F /IM java.exe");
 						
 						throw new UnsupportedOperationException("See command line for details");
 					}
@@ -98,8 +98,8 @@ public class Tester {
 			}
 			
 			logger.warning("Unable to solve level: " + level);
-			
-			proc.destroyForcibly();	
+
+//			Runtime.getRuntime().exec("taskkill /F /IM java.exe");
 			
 			fail("Unable to solve level");
 		} 
