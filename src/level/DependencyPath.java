@@ -1,30 +1,28 @@
 package level;
 
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Optional;
 
 import env.model.DataModel;
+import env.planner.Planner;
 import level.cell.Agent;
 import level.cell.Box;
 import level.cell.Cell;
 import srch.searches.DependencyPathSearch;
-import util.ModelUtil;
 
 public class DependencyPath {
 
 	private LinkedList<Location> path;
-	private LinkedList<Location> dependencies;
+	private Map<Location, Integer> dependencies;
 	
 	public DependencyPath()
 	{
-		path = new LinkedList<>();
-		dependencies = new LinkedList<>();
-	}
-	
-	public void addDependencyPath(DependencyPath dependencyPath)
-	{
-		path.addAll(dependencyPath.path);
-		dependencies.addAll(dependencyPath.dependencies);
+		path 			= new LinkedList<>();
+		dependencies 	= new HashMap<>();
 	}
 	
 	public void addToPath(Location l)
@@ -32,9 +30,9 @@ public class DependencyPath {
 		path.addFirst(l);
 	}
 	
-	public void addDependency(Location l)
+	public void addDependency(Location l, int step)
 	{
-		dependencies.addFirst(l);
+		dependencies.put(l, step);
 	}
 	
 	public List<Location> getPath()
@@ -42,9 +40,25 @@ public class DependencyPath {
 		return path;
 	}
 	
-	public List<Location> getDependencies()
+	public Map<Location, Integer> getDependencies()
 	{
 		return dependencies;
+	}
+	
+	public Entry<Location, Integer> getDependency()
+	{
+		Planner planner =  Planner.getInstance();
+		
+		Optional<Entry<Location, Integer>> box = dependencies.entrySet().stream()
+				.filter(e -> planner.getModel(e.getValue()).hasObject(DataModel.BOX, e.getKey()))
+				.min((e1, e2) -> e1.getValue() - e2.getValue());
+		
+		if (box.isPresent())
+		{
+			return box.get();
+		}		
+		
+		return dependencies.entrySet().stream().min((e1, e2) -> e1.getValue() - e2.getValue()).get();
 	}
 	
 	/**
@@ -54,9 +68,9 @@ public class DependencyPath {
 	 * @param to
 	 * @return
 	 */
-	public static DependencyPath getDependencyPath(Agent agent, Box box, DataModel model)
+	public static DependencyPath getDependencyPath(Agent agent, Box box, int initialStep)
 	{
-		return getLocationDependencyPath(agent, agent.getLocation(), box.getLocation(), true, model);
+		return getLocationDependencyPath(agent, agent.getLocation(), box.getLocation(), true, initialStep);
 	}
 	
 	/**
@@ -65,13 +79,13 @@ public class DependencyPath {
 	 * @param to
 	 * @return
 	 */
-	public static DependencyPath getDependencyPath(Agent agent, Cell tracked, Location to, DataModel model)
+	public static DependencyPath getDependencyPath(Agent agent, Cell tracked, Location to, int initialStep)
 	{
-		return getLocationDependencyPath(agent, tracked.getLocation(), to, false, model);
+		return getLocationDependencyPath(agent, tracked.getLocation(), to, false, initialStep);
 	}
 	
-	private static DependencyPath getLocationDependencyPath(Agent agent, Location from, Location to, boolean toBox, DataModel model)
+	private static DependencyPath getLocationDependencyPath(Agent agent, Location from, Location to, boolean toBox, int initialStep)
 	{
-		return DependencyPathSearch.search(from, to, DataModel.BOX | DataModel.AGENT, ModelUtil.getAgentNumber(agent), toBox, model);		
+		return DependencyPathSearch.search(agent, from, to, DataModel.BOX | DataModel.AGENT, toBox, initialStep);		
 	}
 }

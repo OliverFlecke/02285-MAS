@@ -45,7 +45,7 @@ public class ServerEnv {
 		{
 			try {
 				serverIn = new BufferedReader(new FileReader(new File("levels\\multi_agent\\easy\\MACrunch.lvl")));
-//				serverIn = new BufferedReader(new FileReader(new File("levels\\MAsimple5.lvl")));
+//				serverIn = new BufferedReader(new FileReader(new File("levels\\MAsimple4.lvl")));
 			} catch (FileNotFoundException e) {
 				e.printStackTrace();
 			}

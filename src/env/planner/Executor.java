@@ -1,12 +1,17 @@
 package env.planner;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.logging.Logger;
 
 import env.model.CellModel;
-import env.model.WorldModel;
+import env.model.DataModel;
+import env.model.FutureModel;
 import level.Location;
 import level.action.Action;
+import level.action.SkipAction;
 import level.cell.Agent;
 import level.cell.Box;
 import level.cell.Cell;
@@ -38,11 +43,11 @@ public class Executor {
 
 		if (actions == null)
 		{
-			logger.info(agent.getName() + " could not find path to box " + box.getLetter());
+			logger.info(agent + " could not find path to box " + box.getLetter());
 			return false;			
 		}
 
-		logger.info(agent.getName() + " to " + box + ":\t\t" + actions.toString());
+		logger.info(agent + " to " + box + ":\t\t" + actions.toString());
 
 		planner.getActions().get(agent.getNumber()).addAll(actions);
 		
@@ -79,17 +84,38 @@ public class Executor {
 		return true;
 	}
 	
+	public void executeSkips(Agent agent, int steps)
+	{
+		int initialStep = planner.getInitialStep(agent);
+		
+		List<Action> actions = new ArrayList<Action>();
+		
+		for (int i = 0; i < steps; i++)
+		{
+			actions.add(new SkipAction(agent.getLocation()));
+		}
+		
+		planner.getActions().get(agent.getNumber()).addAll(actions);
+		
+		executeActions(initialStep, actions);
+
+		logger.info(agent + " skipping: " + actions.size() + " times");
+	}
+	
 	private void executeActions(int initialStep, List<Action> actions)
 	{
 		if (actions.isEmpty()) return;
 		
+		FutureModel futureModel = new FutureModel(planner.getModel(initialStep));
+		
 		int step = initialStep, finalStep = initialStep + actions.size();
 		
-		int updateLimit = Math.min(finalStep + 1, planner.dataModelCount());
+		int updateLimit = Math.min(finalStep, planner.dataModelCount());
 		
 		// Update the grid models with the actions
 		for (Action action : actions)
 		{
+			futureModel.doExecute(action);
 			planner.getModel(step++).doExecute(action);
 
 			for (int futureStep = step; futureStep < updateLimit; futureStep++)
@@ -98,30 +124,18 @@ public class Executor {
 			}
 		}
 		
-//		if (planner.dataModelCount() - finalStep > 3)
-//		{
-//			// These two models contain the update
-//			DataModel m0 = planner.getModel(finalStep    );
-//			DataModel m1 = planner.getModel(finalStep - 1);
-//			// This model is not updated
-//			DataModel m2 = planner.getModel(finalStep - 2);
-//			
-//			DataModel c1 = ModelUtil.compareModels(m0, m1);
-//			DataModel c2 = ModelUtil.compareModels(m2, c1);
-//			
-//			DataModel diff = ModelUtil.diffModels(c1, c2);
-//			System.out.println();
-//		}
+		Map<Cell, Location> originalLocations = futureModel.getOriginalLocations();
 		
-		for (int futureStep = finalStep + 1; futureStep < planner.dataModelCount(); futureStep++)
+		for (int futureStep = finalStep; futureStep < planner.dataModelCount(); futureStep++)
 		{
-			Location fr	= actions.get(0).getAgentLocation(),
-					 to	= actions.get(actions.size() - 1).getNewAgentLocation();
-			
 			CellModel model = planner.getModel(futureStep);
 			
-			if (model != null) 	model.move(WorldModel.AGENT, fr, to);
-			else 				logger.warning("model == null");				
+			for (Entry<Cell, Location> entry : originalLocations.entrySet())
+			{
+				int objectType = entry.getKey() instanceof Agent ? DataModel.AGENT : DataModel.BOX;
+				
+				model.move(objectType, entry.getValue(), ((Cell) entry.getKey()).getLocation());
+			}
 		}
 	}
 }

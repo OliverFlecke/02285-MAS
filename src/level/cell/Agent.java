@@ -39,6 +39,6 @@ public class Agent extends Colored {
 	
 	@Override
 	public String toString() {
-		return "Agent " + number + ": " + super.toString();
+		return "Agent: " + super.toString();
 	}
 }

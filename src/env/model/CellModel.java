@@ -104,6 +104,8 @@ public class CellModel extends ActionModel {
 	
 	public void move(int obj, Location fr, Location to)
 	{
+		if (fr.equals(to)) return;
+		
 		switch (obj)
 		{
 		case AGENT: 
