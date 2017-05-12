@@ -1,5 +1,6 @@
 package util;
 
+import env.model.DataModel;
 import level.cell.Agent;
 import level.cell.Box;
 import level.cell.Goal;
@@ -12,33 +13,33 @@ public class ModelUtil {
 		return ((int) agent.getLetter()) << 24;
 	}
 
-//	public static DataModel compareModels(DataModel m1, DataModel m2)
-//	{
-//		int[][] result = new int[m1.data.length][m1.data[0].length];
-//		
-//	    for (int x = 0; x < result.length; x++) 
-//	    {
-//	    	for (int y = 0; y < result[0].length; y++)
-//	    	{
-//	    		result[x][y] = m1.data[x][y] & m2.data[x][y];
-//	    	}
-//	    }
-//	    return new DataModel(result);
-//	}
-//
-//	public static DataModel diffModels(DataModel m1, DataModel m2)
-//	{
-//		int[][] result = new int[m1.data.length][m1.data[0].length];
-//		
-//	    for (int x = 0; x < result.length; x++) 
-//	    {
-//	    	for (int y = 0; y < result[0].length; y++)
-//	    	{
-//	    		result[x][y] = m1.data[x][y] ^ m2.data[x][y];
-//	    	}
-//	    }
-//	    return new DataModel(result);
-//	}
+	public static DataModel compareModels(DataModel m1, DataModel m2)
+	{
+		int[][] result = new int[m1.data.length][m1.data[0].length];
+		
+	    for (int x = 0; x < result.length; x++) 
+	    {
+	    	for (int y = 0; y < result[0].length; y++)
+	    	{
+	    		result[x][y] = m1.data[x][y] & m2.data[x][y];
+	    	}
+	    }
+	    return new DataModel(result);
+	}
+
+	public static DataModel diffModels(DataModel m1, DataModel m2)
+	{
+		int[][] result = new int[m1.data.length][m1.data[0].length];
+		
+	    for (int x = 0; x < result.length; x++) 
+	    {
+	    	for (int y = 0; y < result[0].length; y++)
+	    	{
+	    		result[x][y] = m1.data[x][y] ^ m2.data[x][y];
+	    	}
+	    }
+	    return new DataModel(result);
+	}
 	
 	public static Agent[][] deepCopyAgents(Agent[][] data)
 	{

@@ -1,21 +1,20 @@
 package srch.searches;
 
-import env.model.DataModel;
 import level.DependencyPath;
 import level.Location;
 import level.cell.Agent;
+import srch.Evaluation.AStar;
 import srch.Heuristic;
 import srch.Node;
 import srch.Search;
-import srch.Evaluation.AStar;
 import srch.Strategy.BestFirst;
 import srch.nodes.DependencyPathNode;
 
 public class DependencyPathSearch extends Search implements Heuristic {
 
-	public static DependencyPath search(Agent agent, Location from, Location to, int object, boolean toBox, DataModel model) 
+	public static DependencyPath search(Agent agent, Location from, Location to, int object, boolean toBox, int initialStep) 
 	{
-		return new DependencyPathSearch(to).search(new DependencyPathNode(from, agent, object, toBox, model));
+		return new DependencyPathSearch(to).search(new DependencyPathNode(from, agent, object, toBox, initialStep));
 	}
 	
 	private Location goalLocation;

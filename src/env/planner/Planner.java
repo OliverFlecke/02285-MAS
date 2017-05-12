@@ -2,6 +2,7 @@ package env.planner;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Map.Entry;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -27,7 +28,7 @@ public class Planner {
 	private static 	WorldModel 	worldModel;		
 	private static 	Planner 	instance;
 
-	private ArrayList<CellModel> 		dataModels;
+	private ArrayList<CellModel> 			dataModels;
 	private ArrayList<ArrayList<Action>> 	actions;
 	
 	private Executor executor;
@@ -92,53 +93,63 @@ public class Planner {
 		Box	  		box		= goal.getBox();
 		Agent 		agent 	= box.getAgent();
 		Location 	loc 	= goal.getLocation();
-		int			step	= getInitialStep(agent);
-		
-		if (!planAgentToBox(agent, box, step))
-		{
-			step = getLastStep();
-			
-			planAgentToBox(agent, box, step);
-		}
-		
-		if (!planObjectToLocation(agent, box, loc, step))
-		{
-			step = getLastStep();
-			
-			planObjectToLocation(agent, box, loc, step);
-		}
+
+		planAgentToBox(agent, box);
+		planObjectToLocation(agent, box, loc);
 	}
 
-	private boolean planAgentToBox(Agent agent, Box box, int step) 
+	private boolean planAgentToBox(Agent agent, Box box) 
 	{
-		CellModel 		model 			= getModel(step);		
-		DependencyPath 	dependencyPath 	= DependencyPath.getDependencyPath(agent, box, model);
+		int				step			= getInitialStep(agent);
+		CellModel 		model 			= getModel(step);
+		DependencyPath 	dependencyPath 	= DependencyPath.getDependencyPath(agent, box, step);
 		OverlayModel	overlay			= new OverlayModel(dependencyPath.getPath());
 		
 		if (!dependencyPath.getDependencies().isEmpty())
 		{
-			Location dependency = dependencyPath.getDependencies().get(0);
+			Entry<Location, Integer> dependency = dependencyPath.getDependency();
 			
-			int newStep = solveDependency(dependency, overlay, step);
+			if (step < dependency.getValue()) 
+			{
+				executor.executeSkips(agent, dependency.getValue() - step);
+				return planAgentToBox(agent, box);
+			}
 			
-			if (newStep >= 0) return planAgentToBox(agent, box, newStep);
+			int newStep = solveDependency(dependency.getKey(), overlay, step);
+			
+			if (newStep >= 0) 
+			{
+				executor.executeSkips(agent, newStep - step);
+				return planAgentToBox(agent, box);
+			}
 		}
 		return executor.getAgentToBox(agent, box);
 	}
 
-	private boolean planObjectToLocation(Agent agent, Cell tracked, Location loc, int step) 
+	private boolean planObjectToLocation(Agent agent, Cell tracked, Location loc) 
 	{
-		CellModel 		model 			= getModel(step);		
-		DependencyPath 	dependencyPath 	= DependencyPath.getDependencyPath(agent, tracked, loc, model);
+		int				step			= getInitialStep(agent);
+		CellModel 		model 			= getModel(step);
+		DependencyPath 	dependencyPath 	= DependencyPath.getDependencyPath(agent, tracked, loc, step);
 		OverlayModel	overlay			= new OverlayModel(dependencyPath.getPath());
 		
 		if (!dependencyPath.getDependencies().isEmpty())
 		{
-			Location dependency = dependencyPath.getDependencies().get(0);
+			Entry<Location, Integer> dependency = dependencyPath.getDependency();
 			
-			int newStep = solveDependency(dependency, overlay, step);
+			if (step < dependency.getValue()) 
+			{
+				executor.executeSkips(agent, dependency.getValue() - step);
+				return planObjectToLocation(agent, tracked, loc);
+			}
 			
-			if (newStep >= 0) return planObjectToLocation(agent, tracked, loc, newStep);
+			int newStep = solveDependency(dependency.getKey(), overlay, step);
+			
+			if (newStep >= 0) 
+			{
+				executor.executeSkips(agent, newStep - step);
+				return planObjectToLocation(agent, tracked, loc);
+			}
 		}		
 		return executor.getObjectToLocation(agent, tracked, loc);
 	}
@@ -172,7 +183,7 @@ public class Planner {
 			return agentStep;
 		}
 		
-		planAgentToBox(agent, box, agentStep);
+		planAgentToBox(agent, box);
 		
 		return solveObjectToLocationDependency(agent, box, overlay, agentStep);
 	}
@@ -190,7 +201,7 @@ public class Planner {
 		
 		Location storage = StorageSearch.search(agent.getLocation(), agent, overlay, model);
 		
-		planObjectToLocation(agent, tracked, storage, agentStep);
+		planObjectToLocation(agent, tracked, storage);
 		
 		return -1;
 	}

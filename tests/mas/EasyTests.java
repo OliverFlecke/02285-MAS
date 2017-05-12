@@ -24,12 +24,12 @@ public class EasyTests {
 	@Test
 	public void MACrunch() { Tester.testLevel(PATH + "MACrunch"); }
 	
-	@Test 
+//	@Test 
 	public void MADeliRobot() { Tester.testLevel(PATH + "MADeliRobot"); }
 	
-	@Test 
+//	@Test 
 	public void MAFireFly() { Tester.testLevel(PATH + "MAFireFly"); }
 	
-	@Test 
+//	@Test 
 	public void MAYSoSirius() { Tester.testLevel(PATH + "MAYSoSirius"); }
 }

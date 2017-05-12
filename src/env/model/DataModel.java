@@ -24,7 +24,7 @@ public class DataModel {
 	
 	protected int		width, 
 						height;    
-    protected int[][] 	data;
+    public int[][] 	data;
     
 	
 	public DataModel(int width, int height)

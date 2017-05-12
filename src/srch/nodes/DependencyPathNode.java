@@ -5,6 +5,7 @@ import java.util.List;
 
 import env.model.DataModel;
 import env.model.WorldModel;
+import env.planner.Planner;
 import level.DependencyPath;
 import level.Direction;
 import level.Location;
@@ -13,8 +14,10 @@ import srch.Node;
 import srch.interfaces.IDirectionNode;
 import util.ModelUtil;
 
-public class DependencyPathNode extends Node implements IDirectionNode {
+public class DependencyPathNode extends StepNode implements IDirectionNode {
 
+	private static Planner planner = Planner.getInstance();
+	
 	private Direction 	direction;
 	private Agent		agent;
 	private int 		dependency;
@@ -22,19 +25,19 @@ public class DependencyPathNode extends Node implements IDirectionNode {
 	private boolean 	ignoreLast;
 	private DataModel 	model;
 
-	public DependencyPathNode(Location initial, Agent agent, int dependency, boolean includeLast, DataModel model) 
+	public DependencyPathNode(Location initial, Agent agent, int dependency, boolean includeLast, int initialStep) 
 	{
-		super(initial);
+		super(initial, initialStep);
 		
 		this.direction 			= null;
 		this.agent				= agent;
 		this.dependency 		= dependency;
 		this.dependencyCount 	= 0;
-		this.ignoreLast		= includeLast;
-		this.model				= model;
+		this.ignoreLast			= includeLast;
+		this.model				= planner.getModel(initialStep);
 	}
 
-	public DependencyPathNode(Node parent, Direction dir, Location loc) 
+	public DependencyPathNode(StepNode parent, Direction dir, Location loc) 
 	{
 		super(parent, loc);
 		
@@ -44,10 +47,14 @@ public class DependencyPathNode extends Node implements IDirectionNode {
 		this.agent				= n.agent;
 		this.dependency 		= n.dependency;
 		this.dependencyCount 	= n.dependencyCount;
-		this.ignoreLast		= n.ignoreLast;
+		this.ignoreLast			= n.ignoreLast;
 		this.model				= n.model;
 		
-		if (model.hasObject(dependency, loc)) 
+		
+		if (planner.getLastModel().hasObject(dependency, loc) ||
+			planner.hasModel(getStep() - 1) && planner.getModel(getStep() - 1).hasObject(dependency, loc) ||
+			planner.hasModel(getStep()    ) && planner.getModel(getStep()    ).hasObject(dependency, loc) ||
+			planner.hasModel(getStep() + 1) && planner.getModel(getStep() + 1).hasObject(dependency, loc))
 		{
 			dependencyCount++;
 		}
@@ -91,11 +98,29 @@ public class DependencyPathNode extends Node implements IDirectionNode {
 		
 		int agNumber = ModelUtil.getAgentNumber(agent);
 		
-		for (Node n = this; n != null; n = n.getParent()) 
+		for (StepNode n = this; n != null; n = (StepNode) n.getParent()) 
 		{			
 			Location loc = n.getLocation();
 			
-			if (model.hasObject(dependency, loc) &&
+			path.addToPath(loc);
+			
+			// Avoid checking model(-1)
+			if (n.getParent() == null) break;
+			
+			for (int step : new int[]{ n.getStep() - 1, n.getStep(), n.getStep() + 1, planner.getLastStep() })
+			{
+				if (planner.hasModel(step) && hasDependency(planner.getModel(step), n, loc, agNumber)) 
+				{
+					path.addDependency(loc, step);
+				}
+			}			
+		}
+		return path;
+	}
+	
+	private boolean hasDependency(DataModel model, StepNode n, Location loc, int agNumber)
+	{
+		return (model.hasObject(dependency, loc) &&
 				// Do not add dependency if n is last and ignoreLast
 				!(n == this && ignoreLast) && 
 				// Do not add dependency if n is first
@@ -103,14 +128,7 @@ public class DependencyPathNode extends Node implements IDirectionNode {
 				// Do not add dependency if dependency is box of agent's color
 				!(model.hasObject(DataModel.BOX, loc) && model.getColor(loc).equals(agent.getColor())) && 
 				// Do not add dependency if dependency is agent itself
-				!(model.hasObject(agNumber, WorldModel.BOX_MASK, loc)))
-			{
-				path.addDependency(loc);
-			}
-			
-			path.addToPath(loc);
-		}
-		return path;
+				!(model.hasObject(agNumber, WorldModel.BOX_MASK, loc)));
 	}
 
 }
