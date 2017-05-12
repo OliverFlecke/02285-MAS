@@ -2,7 +2,7 @@ package mas;
 
 import org.junit.Test;
 
-public class SAMediumTests {
+public class SAMedium {
 
 	private final static String PATH = "single_agent\\medium\\";
 	

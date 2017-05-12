@@ -91,11 +91,11 @@ public class PathfindingSearch extends Search implements Heuristic {
 
 		goalDist += 10 * model.countUnsolvedGoals();
 		
-//		int trackedDist = model.getTrackedLocation().distance(model.getAgentLocation());
-//		if (trackedDist > 1)
-//		{
-//			goalDist += trackedDist;
-//		}
+		int trackedDist = model.getTrackedLocation().distance(n.getLocation());
+		if (trackedDist > 1)
+		{
+			goalDist += trackedDist;
+		}
 
 		return goalDist; 
 	}

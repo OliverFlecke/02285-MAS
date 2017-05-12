@@ -29,8 +29,9 @@ public class Tester {
 	/**
 	 * Tests a level
 	 * @param level path to the level
+	 * @throws Exception 
 	 */
-	public static void testLevel(String level, long allowedTime) 
+	public static void testLevel(String level, long allowedTime)  
 	{	
 		logger.fine("Testing level: " + level);
 		
@@ -68,6 +69,9 @@ public class Tester {
 					if (input != null && input.equals("success")) 
 					{
 						logger.fine("Level solved!");
+						
+						proc.destroyForcibly();
+						
 						return;
 					}
 				}
@@ -86,12 +90,16 @@ public class Tester {
 							logger.warning(error);
 						}
 						
-						fail("Exception error");
+						proc.destroyForcibly();	
+						
+						throw new UnsupportedOperationException("See command line for details");
 					}
 				}
 			}
 			
 			logger.warning("Unable to solve level: " + level);
+			
+			proc.destroyForcibly();	
 			
 			fail("Unable to solve level");
 		} 

@@ -23,13 +23,19 @@ public class Preprocessor {
 	
 	public static List<Goal> preprocess()
 	{
+		long startTime = System.nanoTime();
+		
 		worldModel = WorldModel.getInstance();
 		
 		matchBoxesAndGoals();
 		
 		matchAgentsAndBoxes();
 		
-		return calculateDependencies();
+		List<Goal> goals = calculateDependencies();
+		
+		logger.info("Preprocessing done: " + ((System.nanoTime() - startTime) / 1000000000.0));
+		
+		return goals;
 	}
 	
 	private static void matchBoxesAndGoals()
