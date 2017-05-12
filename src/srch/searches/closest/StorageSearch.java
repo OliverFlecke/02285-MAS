@@ -31,13 +31,20 @@ public class StorageSearch extends Search implements Heuristic {
 	@Override
 	public boolean isGoalState(Node n) 
 	{
-		return overlay.isFree(DataModel.IN_USE, n.getLocation());
+		DataModel model = ((StorageNode) n).getModel();
+		
+		Location loc = n.getLocation();
+		
+		return overlay.isFree(DataModel.IN_USE, loc) && model.isFree(loc);
 	}
 
 	@Override
 	public int h(Node n) 
 	{
-		return ((StorageNode) n).getModel().isSolved(n.getLocation()) ? 10 : 0;
-//		return Planner.getInstance().countUnsolvedGoals() * 10;
+		DataModel model = ((StorageNode) n).getModel();
+		
+		Location loc = n.getLocation();
+		
+		return model.hasObject(DataModel.AGENT, loc) || model.hasObject(DataModel.BOX, loc) ? 100 : 0;
 	}
 }

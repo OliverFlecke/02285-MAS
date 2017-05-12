@@ -45,12 +45,13 @@ public class DependencyPath {
 		return dependencies;
 	}
 	
-	public Entry<Location, Integer> getDependency()
+	public Entry<Location, Integer> getDependency(Location loc)
 	{
 		Planner planner =  Planner.getInstance();
 		
 		Optional<Entry<Location, Integer>> box = dependencies.entrySet().stream()
 				.filter(e -> planner.getModel(e.getValue()).hasObject(DataModel.BOX, e.getKey()))
+				.sorted((e1, e2) -> e1.getKey().distance(loc) - e2.getKey().distance(loc))
 				.min((e1, e2) -> e1.getValue() - e2.getValue());
 		
 		if (box.isPresent())
@@ -58,7 +59,9 @@ public class DependencyPath {
 			return box.get();
 		}		
 		
-		return dependencies.entrySet().stream().min((e1, e2) -> e1.getValue() - e2.getValue()).get();
+		return dependencies.entrySet().stream()
+				.sorted((e1, e2) -> e1.getKey().distance(loc) - e2.getKey().distance(loc))
+				.min((e1, e2) -> e1.getValue() - e2.getValue()).get();
 	}
 	
 	/**

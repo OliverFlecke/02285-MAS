@@ -16,7 +16,7 @@ public class StorageNode extends ClosestNode {
 	private int		agNumber;
 
 	public StorageNode(Location initial, Agent agent, DataModel model) {
-		super(initial, DataModel.AGENT | DataModel.BOX, model);
+		super(initial, model);
 		this.agent 		= agent;		
 		this.agNumber 	= ModelUtil.getAgentNumber(agent);
 	}

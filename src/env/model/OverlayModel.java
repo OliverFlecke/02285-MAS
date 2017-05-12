@@ -8,21 +8,42 @@ public class OverlayModel extends DataModel {
 	
 	private int overlayObject;
 	
-	public OverlayModel(List<Location> overlay)
+	public OverlayModel()
 	{
-		this(IN_USE, overlay);
+		this(IN_USE);
 	}
-
-	public OverlayModel(int obj, List<Location> overlay) 
+	
+	public OverlayModel(int obj)
 	{
-		super(WorldModel.getInstance());
+		super(WorldModel.getInstance());		
+
+		// Remove everything except walls
+		for (int x = 0; x < width; x++)
+		{
+			for (int y = 0; y < height; y++)
+			{
+				if (isFree(WALL, x, y)) data[x][y] = 0;
+			}
+		}
 		
 		overlayObject = obj;
-
-		for (Location loc : overlay)
+	}
+	
+	public OverlayModel(OverlayModel overlay, List<Location> overlayLocations)
+	{
+		this(IN_USE, overlay);
+		
+		for (Location loc : overlayLocations)
 		{
 			add(overlayObject, loc);
 		}
+	}
+
+	public OverlayModel(int obj, OverlayModel overlay) 
+	{
+		this(obj);
+
+		deepAddData(overlay);
 	}
 	
 	@Override

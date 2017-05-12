@@ -94,25 +94,25 @@ public class Planner {
 		Agent 		agent 	= box.getAgent();
 		Location 	loc 	= goal.getLocation();
 
-		planAgentToBox(agent, box);
-		planObjectToLocation(agent, box, loc);
+		planAgentToBox(agent, box, new OverlayModel());
+		planObjectToLocation(agent, box, loc, new OverlayModel());
 	}
 
-	private boolean planAgentToBox(Agent agent, Box box) 
+	private boolean planAgentToBox(Agent agent, Box box, OverlayModel previousOverlay) 
 	{
 		int				step			= getInitialStep(agent);
 		CellModel 		model 			= getModel(step);
 		DependencyPath 	dependencyPath 	= DependencyPath.getDependencyPath(agent, box, step);
-		OverlayModel	overlay			= new OverlayModel(dependencyPath.getPath());
+		OverlayModel	overlay			= new OverlayModel(previousOverlay, dependencyPath.getPath());
 		
 		if (!dependencyPath.getDependencies().isEmpty())
 		{
-			Entry<Location, Integer> dependency = dependencyPath.getDependency();
+			Entry<Location, Integer> dependency = dependencyPath.getDependency(agent.getLocation());
 			
 			if (step < dependency.getValue()) 
 			{
 				executor.executeSkips(agent, dependency.getValue() - step);
-				return planAgentToBox(agent, box);
+				return planAgentToBox(agent, box, overlay);
 			}
 			
 			int newStep = solveDependency(dependency.getKey(), overlay, step);
@@ -121,27 +121,27 @@ public class Planner {
 			{
 				// Maximum: newStep - step, 1 for optimal solution
 				executor.executeSkips(agent, 1);
-				return planAgentToBox(agent, box);
+				return planAgentToBox(agent, box, overlay);
 			}
 		}
 		return executor.getAgentToBox(agent, box);
 	}
 
-	private boolean planObjectToLocation(Agent agent, Cell tracked, Location loc) 
+	private boolean planObjectToLocation(Agent agent, Cell tracked, Location loc, OverlayModel previousOverlay) 
 	{
 		int				step			= getInitialStep(agent);
 		CellModel 		model 			= getModel(step);
 		DependencyPath 	dependencyPath 	= DependencyPath.getDependencyPath(agent, tracked, loc, step);
-		OverlayModel	overlay			= new OverlayModel(dependencyPath.getPath());
+		OverlayModel	overlay			= new OverlayModel(previousOverlay, dependencyPath.getPath());
 		
 		if (!dependencyPath.getDependencies().isEmpty())
 		{
-			Entry<Location, Integer> dependency = dependencyPath.getDependency();
+			Entry<Location, Integer> dependency = dependencyPath.getDependency(tracked.getLocation());
 			
 			if (step < dependency.getValue()) 
 			{
 				executor.executeSkips(agent, dependency.getValue() - step);
-				return planObjectToLocation(agent, tracked, loc);
+				return planObjectToLocation(agent, tracked, loc, overlay);
 			}
 			
 			int newStep = solveDependency(dependency.getKey(), overlay, step);
@@ -150,7 +150,7 @@ public class Planner {
 			{
 				// Maximum: newStep - step, 1 for optimal solution
 				executor.executeSkips(agent, 1);
-				return planObjectToLocation(agent, tracked, loc);
+				return planObjectToLocation(agent, tracked, loc, overlay);
 			}
 		}		
 		return executor.getObjectToLocation(agent, tracked, loc);
@@ -185,7 +185,7 @@ public class Planner {
 			return agentStep;
 		}
 		
-		planAgentToBox(agent, box);
+		planAgentToBox(agent, box, overlay);
 		
 		return solveObjectToLocationDependency(agent, box, overlay, agentStep);
 	}
@@ -203,7 +203,7 @@ public class Planner {
 		
 		Location storage = StorageSearch.search(agent.getLocation(), agent, overlay, model);
 		
-		planObjectToLocation(agent, tracked, storage);
+		planObjectToLocation(agent, tracked, storage, overlay);
 		
 		return -1;
 	}
