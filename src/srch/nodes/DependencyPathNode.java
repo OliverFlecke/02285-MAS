@@ -51,10 +51,13 @@ public class DependencyPathNode extends StepNode implements IDirectionNode {
 		this.model				= n.model;
 		
 		
-		if (planner.getLastModel().hasObject(dependency, loc) ||
-			planner.hasModel(getStep() - 1) && planner.getModel(getStep() - 1).hasObject(dependency, loc) ||
-			planner.hasModel(getStep()    ) && planner.getModel(getStep()    ).hasObject(dependency, loc) ||
-			planner.hasModel(getStep() + 1) && planner.getModel(getStep() + 1).hasObject(dependency, loc))
+		if (planner.getLastStep() < getStep() && planner.getLastModel().hasObject(dependency, loc))
+		{
+			dependencyCount++;
+		}
+		else if (planner.hasModel(getStep() - 1) && planner.getModel(getStep() - 1).hasObject(dependency, loc) ||
+				 planner.hasModel(getStep()    ) && planner.getModel(getStep()    ).hasObject(dependency, loc) ||
+				 planner.hasModel(getStep() + 1) && planner.getModel(getStep() + 1).hasObject(dependency, loc))
 		{
 			dependencyCount++;
 		}
@@ -98,28 +101,37 @@ public class DependencyPathNode extends StepNode implements IDirectionNode {
 		
 		int agNumber = ModelUtil.getAgentNumber(agent);
 		
+		if (hasDependency(planner.getLastModel(), this, agNumber))
+		{
+			path.addDependency(this.getLocation(), planner.getLastStep());
+		}
+		
 		for (StepNode n = this; n != null; n = (StepNode) n.getParent()) 
 		{			
-			Location loc = n.getLocation();
-			
-			path.addToPath(loc);
+			path.addToPath(n.getLocation());
 			
 			// Avoid checking model(-1)
 			if (n.getParent() == null) break;
 			
-			for (int step : new int[]{ n.getStep() - 1, n.getStep(), n.getStep() + 1, planner.getLastStep() })
+			for (int step : new int[]{ n.getStep() - 1, n.getStep(), n.getStep() + 1 })
 			{
-				if (planner.hasModel(step) && hasDependency(planner.getModel(step), n, loc, agNumber)) 
+				if (planner.getLastStep() < n.getStep() && hasDependency(planner.getLastModel(), n, agNumber))
 				{
-					path.addDependency(loc, step);
+					path.addDependency(n.getLocation(), planner.getLastStep());
+				}
+				else if (planner.hasModel(step) && hasDependency(planner.getModel(step), n, agNumber)) 
+				{
+					path.addDependency(n.getLocation(), step);
 				}
 			}			
 		}
 		return path;
 	}
 	
-	private boolean hasDependency(DataModel model, StepNode n, Location loc, int agNumber)
+	private boolean hasDependency(DataModel model, StepNode n, int agNumber)
 	{
+		Location loc = n.getLocation();
+		
 		return (model.hasObject(dependency, loc) &&
 				// Do not add dependency if n is last and ignoreLast
 				!(n == this && ignoreLast) && 

@@ -119,7 +119,8 @@ public class Planner {
 			
 			if (newStep >= 0) 
 			{
-				executor.executeSkips(agent, newStep - step);
+				// Maximum: newStep - step, 1 for optimal solution
+				executor.executeSkips(agent, 1);
 				return planAgentToBox(agent, box);
 			}
 		}
@@ -147,7 +148,8 @@ public class Planner {
 			
 			if (newStep >= 0) 
 			{
-				executor.executeSkips(agent, newStep - step);
+				// Maximum: newStep - step, 1 for optimal solution
+				executor.executeSkips(agent, 1);
 				return planObjectToLocation(agent, tracked, loc);
 			}
 		}		
