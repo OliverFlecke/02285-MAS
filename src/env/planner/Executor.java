@@ -108,7 +108,7 @@ public class Executor {
 		
 		FutureModel futureModel = new FutureModel(planner.getModel(initialStep));
 		
-		int step = initialStep, finalStep = initialStep + actions.size();
+		int step = initialStep, finalStep = initialStep + actions.size() + 1;
 		
 		int updateLimit = Math.min(finalStep, planner.dataModelCount());
 		
@@ -116,9 +116,9 @@ public class Executor {
 		for (Action action : actions)
 		{
 			futureModel.doExecute(action);
-			planner.getModel(step++).doExecute(action);
+			planner.getModel(++step).doExecute(action);
 
-			for (int futureStep = step; futureStep < updateLimit; futureStep++)
+			for (int futureStep = step + 1; futureStep < updateLimit; futureStep++)
 			{
 				planner.getModel(futureStep).doExecute(action);				
 			}
