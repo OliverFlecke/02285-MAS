@@ -52,7 +52,7 @@ public class Tester {
 		}
 
 		BufferedReader stdInput = new BufferedReader(new InputStreamReader(proc.getInputStream()));
-		BufferedReader errInput = new BufferedReader(new InputStreamReader(proc.getErrorStream()));
+		BufferedReader errorInput = new BufferedReader(new InputStreamReader(proc.getErrorStream()));
 
 		try 
 		{
@@ -71,21 +71,29 @@ public class Tester {
 						return;
 					}
 				}
-				if (errInput.ready()) 
+				if (errorInput.ready()) 
 				{
-					error = errInput.readLine();
+					error = errorInput.readLine();
 					
-					if (error.toLowerCase().contains("exception"))
+					if (error.toLowerCase().contains("exception") || error.toLowerCase().contains("does not exist")) 
 					{
-						logger.warning("Got an exception");
-						break;
+						logger.warning("Got an exception:\n" + error);
+						
+						while (errorInput.ready())
+						{
+							error = errorInput.readLine();
+							
+							logger.warning(error);
+						}
+						
+						fail("Exception error");
 					}
 				}
 			}
 			
 			logger.warning("Unable to solve level: " + level);
 			
-			fail();
+			fail("Unable to solve level");
 		} 
 		catch (IOException e1) 
 		{
