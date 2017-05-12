@@ -1,7 +1,6 @@
 package srch.searches.closest;
 
 import env.model.DataModel;
-import env.planner.Planner;
 import level.Location;
 import level.cell.Agent;
 import srch.Evaluation.AStar;
@@ -38,6 +37,7 @@ public class StorageSearch extends Search implements Heuristic {
 	@Override
 	public int h(Node n) 
 	{
-		return Planner.getInstance().countUnsolvedGoals() * 10;
+		return ((StorageNode) n).getModel().isSolved(n.getLocation()) ? 10 : 0;
+//		return Planner.getInstance().countUnsolvedGoals() * 10;
 	}
 }

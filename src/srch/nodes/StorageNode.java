@@ -16,7 +16,7 @@ public class StorageNode extends ClosestNode {
 	private int		agNumber;
 
 	public StorageNode(Location initial, Agent agent, DataModel model) {
-		super(initial, DataModel.AGENT, model);
+		super(initial, DataModel.AGENT | DataModel.BOX, model);
 		this.agent 		= agent;		
 		this.agNumber 	= ModelUtil.getAgentNumber(agent);
 	}
@@ -39,13 +39,22 @@ public class StorageNode extends ClosestNode {
 				// Add node if loc has agent itself or
 			if (this.getModel().hasObject(agNumber, DataModel.BOX_MASK, loc) ||
 				// Add node if loc is free of object or
-				this.getModel().isFree(this.getObject(), loc) ||
-				// Add node if object contains box and loc has box with agent's color
-				((this.getObject() & DataModel.BOX) != 0 		&&
-				  this.getModel().hasObject(DataModel.BOX, loc) && 
-				  this.getModel().getColor(loc).equals(agent.getColor())))
+				this.getModel().isFree(this.getObject(), loc))
 			{
-				expandedNodes.add(new ClosestNode(this, dir, loc));
+				expandedNodes.add(new StorageNode(this, dir, loc));
+			}
+			
+			// Add node if loc has box with agent's color and
+			// this box can be moved to another loc
+			if (this.getModel().hasObject(DataModel.BOX, loc) && 
+				this.getModel().getColor(loc).equals(agent.getColor()))
+			{
+				StorageNode onBox = new StorageNode(this, dir, loc);
+				
+				if (onBox.getExpandedNodes().size() > 1)
+				{
+					expandedNodes.add(onBox);
+				}
 			}
 		}
 		return expandedNodes;

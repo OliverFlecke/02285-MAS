@@ -81,10 +81,10 @@ public class Planner {
 			solveGoal(goal);
 		}
 		
-//		for (Goal goal : getLastModel().getUnsolvedGoals())
-//		{
-//			solveGoal(goal);
-//		}
+		for (Goal goal : getLastModel().getUnsolvedGoals())
+		{
+			solveGoal(goal);
+		}
 	}
 	
 	private void solveGoal(Goal goal)
@@ -95,10 +95,18 @@ public class Planner {
 		int			step	= getInitialStep(agent);
 		
 		if (!planAgentToBox(agent, box, step))
-			throw new UnsupportedOperationException("Unable to get " + agent + " to " + box);
+		{
+			step = getLastStep();
+			
+			planAgentToBox(agent, box, step);
+		}
 		
 		if (!planObjectToLocation(agent, box, loc, step))
-			throw new UnsupportedOperationException("Unable to get " + box + " to " + goal);
+		{
+			step = getLastStep();
+			
+			planObjectToLocation(agent, box, loc, step);
+		}
 	}
 
 	private boolean planAgentToBox(Agent agent, Box box, int step) 
@@ -124,16 +132,15 @@ public class Planner {
 		DependencyPath 	dependencyPath 	= DependencyPath.getDependencyPath(agent, tracked, loc, model);
 		OverlayModel	overlay			= new OverlayModel(dependencyPath.getPath());
 		
-		if (dependencyPath.getDependencies().isEmpty())
+		if (!dependencyPath.getDependencies().isEmpty())
 		{
-			return executor.getObjectToLocation(agent, tracked, loc);
-		}
-		
-		Location dependency = dependencyPath.getDependencies().get(0);
-		
-		int newStep = solveDependency(dependency, overlay, step);
-		
-		return planObjectToLocation(agent, tracked, loc, newStep);
+			Location dependency = dependencyPath.getDependencies().get(0);
+			
+			int newStep = solveDependency(dependency, overlay, step);
+			
+			if (newStep >= 0) return planObjectToLocation(agent, tracked, loc, newStep);
+		}		
+		return executor.getObjectToLocation(agent, tracked, loc);
 	}
 	
 	private int solveDependency(Location dependency, OverlayModel overlay, int step)
@@ -152,8 +159,7 @@ public class Planner {
 			Agent	agent 	= model.getAgent(dependency);
 			
 			return solveObjectToLocationDependency(agent, agent, overlay, step);
-		}
-		
+		}		
 		throw new UnsupportedOperationException("Attempt to solve unknown dependency");
 	}
 
