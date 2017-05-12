@@ -4,7 +4,7 @@ import org.junit.Test;
 
 public class EasyTests {
 
-	private final static String PATH = "multiagent\\easy\\";
+	private final static String PATH = "multi_agent\\easy\\";
 	
 	@Test
 	public void MASimple1() { Tester.testLevel("MAsimple1"); }
@@ -22,9 +22,9 @@ public class EasyTests {
 	public void MASimple5() { Tester.testLevel("MAsimple5"); }
 	
 	@Test
-	public void MACrunch() { Tester.testLevel(PATH + "MACrunch"); }
+	public void MACrunch() { Tester.testLevel(PATH + "MACrunch", Long.MAX_VALUE); }
 	
-//	@Test 
+	@Test 
 	public void MADeliRobot() { Tester.testLevel(PATH + "MADeliRobot"); }
 	
 //	@Test 
