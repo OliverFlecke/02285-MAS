@@ -52,20 +52,34 @@ public class Tester {
 		}
 
 		BufferedReader stdInput = new BufferedReader(new InputStreamReader(proc.getInputStream()));
+		BufferedReader errInput = new BufferedReader(new InputStreamReader(proc.getErrorStream()));
 
 		try 
 		{
-			String s = null;
+			String input = null, error = null;
 			long startTime = System.currentTimeMillis();
 
 			for (long time = 0; time < allowedTime; time = System.currentTimeMillis() - startTime) 
 			{
-				if (stdInput.ready()) s = stdInput.readLine();
-				
-				if (s != null && s.equals("success")) 
+				if (stdInput.ready()) 
 				{
-					logger.fine("Level solved!");
-					return;
+					input = stdInput.readLine();
+					
+					if (input != null && input.equals("success")) 
+					{
+						logger.fine("Level solved!");
+						return;
+					}
+				}
+				if (errInput.ready()) 
+				{
+					error = errInput.readLine();
+					
+					if (error.toLowerCase().contains("exception"))
+					{
+						logger.warning("Got an exception");
+						break;
+					}
 				}
 			}
 			

@@ -32,5 +32,10 @@ public abstract class StepNode extends Node {
 	{
 		return this.step;
 	}
+	
+	@Override 
+	public StepNode getParent() {
+		return (StepNode) super.getParent();
+	}
 
 }
