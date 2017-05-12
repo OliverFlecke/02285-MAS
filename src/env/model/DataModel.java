@@ -112,6 +112,15 @@ public class DataModel {
     	add(Color.getValue(color) << 8, x , y);
     }
     
+    public Color getColor(Location l) {
+    	return getColor(l.x, l.y);
+    }
+    
+    public Color getColor(int x, int y) {
+    	if (!hasObject(AGENT, x, y) && !hasObject(BOX, x, y)) return null;
+    	return Color.getColor((data[x][y] & COLOR_MASK) >> 8);
+    }
+    
     public void addLetter(char letter, int obj, int x, int y) 
     {
     	int ch = ((int) letter);

@@ -12,7 +12,7 @@ public class BoxSearch extends ClosestSearch {
 
 	public static Location search(Set<Box> boxes, char letter, Location from) 
 	{
-		return new BoxSearch(boxes, letter).search(new ClosestNode(from));
+		return new BoxSearch(boxes, letter).search(new ClosestNode(from, WorldModel.getInstance()));
 	}
 	
 	private Set<Box> boxes;

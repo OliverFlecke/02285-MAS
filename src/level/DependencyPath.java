@@ -34,7 +34,6 @@ public class DependencyPath {
 	
 	public void addDependency(Location l)
 	{
-		addToPath(l);
 		dependencies.addFirst(l);
 	}
 	
@@ -57,7 +56,7 @@ public class DependencyPath {
 	 */
 	public static DependencyPath getDependencyPath(Agent agent, Box box, DataModel model)
 	{
-		return getLocationDependencyPath(agent, agent.getLocation(), box.getLocation(), 0, model);
+		return getLocationDependencyPath(agent, agent.getLocation(), box.getLocation(), true, model);
 	}
 	
 	/**
@@ -68,11 +67,11 @@ public class DependencyPath {
 	 */
 	public static DependencyPath getDependencyPath(Agent agent, Cell tracked, Location to, DataModel model)
 	{
-		return getLocationDependencyPath(agent, tracked.getLocation(), to, 0, model);
+		return getLocationDependencyPath(agent, tracked.getLocation(), to, false, model);
 	}
 	
-	private static DependencyPath getLocationDependencyPath(Agent agent, Location from, Location to, int proximity, DataModel model)
+	private static DependencyPath getLocationDependencyPath(Agent agent, Location from, Location to, boolean toBox, DataModel model)
 	{
-		return DependencyPathSearch.search(from, to, DataModel.BOX | DataModel.AGENT, proximity, ModelUtil.getAgentNumber(agent), model);		
+		return DependencyPathSearch.search(from, to, DataModel.BOX | DataModel.AGENT, ModelUtil.getAgentNumber(agent), toBox, model);		
 	}
 }

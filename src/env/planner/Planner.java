@@ -70,6 +70,10 @@ public class Planner {
 		{
 			solveGoal(goal);
 		}
+		for (Goal goal : getLastModel().getUnsolvedGoals())
+		{
+			solveGoal(goal);
+		}
 	}
 	
 	private void solveGoal(Goal goal)
@@ -144,7 +148,7 @@ public class Planner {
 				if (!box.getColor().equals(color))
 				{							
 					// TODO: Use agent model
-					Agent otherAgent = model.getAgent(AgentSearch.search(box.getColor(), box.getLocation()));
+					Agent otherAgent = model.getAgent(AgentSearch.search(box.getColor(), box.getLocation(), model));
 					
 					CellModel otherModel = getModel(getInitialStep(otherAgent));
 					

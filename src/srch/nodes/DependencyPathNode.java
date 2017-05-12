@@ -17,9 +17,10 @@ public class DependencyPathNode extends Node implements IDirectionNode {
 	private int dependency;
 	private int dependencyCount;
 	private int include;
+	private boolean includeLast;
 	private DataModel model;
 
-	public DependencyPathNode(Location initial, int dependency, int include, DataModel model) 
+	public DependencyPathNode(Location initial, int dependency, int include, boolean includeLast, DataModel model) 
 	{
 		super(initial);
 		
@@ -27,6 +28,7 @@ public class DependencyPathNode extends Node implements IDirectionNode {
 		this.dependency 		= dependency;
 		this.dependencyCount 	= 0;
 		this.include			= include;
+		this.includeLast		= includeLast;
 		this.model				= model;
 	}
 
@@ -34,11 +36,14 @@ public class DependencyPathNode extends Node implements IDirectionNode {
 	{
 		super(parent, loc);
 		
+		DependencyPathNode n = (DependencyPathNode) parent;
+		
 		this.direction			= dir;
-		this.dependency 		= ((DependencyPathNode) parent).dependency;
-		this.dependencyCount 	= ((DependencyPathNode) parent).dependencyCount;
-		this.include			= ((DependencyPathNode) parent).include;
-		this.model				= ((DependencyPathNode) parent).model;
+		this.dependency 		= n.dependency;
+		this.dependencyCount 	= n.dependencyCount;
+		this.include			= n.include;
+		this.includeLast		= n.includeLast;
+		this.model				= n.model;
 		
 		if (model.hasObject(dependency, loc)) 
 		{
@@ -84,24 +89,18 @@ public class DependencyPathNode extends Node implements IDirectionNode {
 		
 		path.addToPath(this.getLocation());
 		
-		for (Node n = this.getParent(); n != null; n = n.getParent()) 
+		for (Node n = this; n != null; n = n.getParent()) 
 		{			
 			Location loc = n.getLocation();
 			
 			// TODO: Add agent color to search
-			
-			if (n.getParent() == null)
-			{
-				path.addToPath(loc);
-			}
-			else if (model.isFree(include, WorldModel.BOX_MASK, loc) && model.hasObject(dependency, loc))
+			if (!(n == this && includeLast || n.getParent() == null) &&
+				model.isFree(include, WorldModel.BOX_MASK, loc) && model.hasObject(dependency, loc))
 			{
 				path.addDependency(loc);
 			}
-			else
-			{
-				path.addToPath(loc);
-			}
+			
+			path.addToPath(loc);
 		}
 		return path;
 	}

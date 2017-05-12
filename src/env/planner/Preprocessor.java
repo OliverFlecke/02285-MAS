@@ -59,7 +59,7 @@ public class Preprocessor {
 		
 		for (Box box : boxes)
 		{
-			Location agLoc = AgentSearch.search(box.getColor(), box.getLocation());
+			Location agLoc = AgentSearch.search(box.getColor(), box.getLocation(), worldModel);
 			
 			Agent agent = worldModel.getAgent(agLoc);
 			

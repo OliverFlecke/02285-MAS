@@ -3,6 +3,7 @@ package env.model;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 import level.Location;
 import level.cell.Agent;
@@ -95,6 +96,10 @@ public class CellModel extends ActionModel {
 	
 	public Box getBox(int x, int y) {
 		return boxArray[x][y];
+	}
+	
+	public Set<Goal> getUnsolvedGoals() {
+		return goals.stream().filter(goal -> !isSolved(goal.getLocation())).collect(Collectors.toSet());
 	}
 	
 	public void move(int obj, Location fr, Location to)
