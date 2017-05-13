@@ -2,19 +2,18 @@ package srch.searches;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.logging.Level;
 
 import env.model.SimulationModel;
-import level.cell.Cell;
 import level.Location;
 import level.action.Action;
+import level.cell.Cell;
+import srch.Evaluation.Greedy;
+import srch.Heuristic;
 import srch.Node;
 import srch.Search;
 import srch.Strategy.BestFirst;
 import srch.nodes.PathfindingNode;
-import srch.Evaluation.*;
-import srch.Heuristic;
 
 public class PathfindingSearch extends Search implements Heuristic {
 	
@@ -73,29 +72,23 @@ public class PathfindingSearch extends Search implements Heuristic {
 		}
 		else
 		{
-			Optional<Location> closestOpt = distances.keySet().stream().min((l1, l2) -> l1.distance(loc) - l2.distance(loc));
+			// Find closest location in distance map if not present
+			Location closest = distances.keySet().stream().min((l1, l2) -> l1.distance(loc) - l2.distance(loc)).get();
 			
-			if (closestOpt.isPresent())
-			{
-				Location closest = closestOpt.get();
-				
-				goalDist += distances.get(closest);
-				goalDist += loc.distance(closest);
-				goalDist += 5;
-			}
-			else
-			{
-				System.err.println("distance map empty!");
-			}
+			goalDist += distances.get(closest);
+			goalDist += loc.distance(closest);
+//			goalDist += 5;
 		}
 
-		goalDist += 10 * model.countUnsolvedGoals();
-		
-		int trackedDist = model.getTrackedLocation().distance(n.getLocation());
-		if (trackedDist > 1)
+		if (loc.distance(n.getLocation()) > 1)
 		{
-			goalDist += trackedDist;
+			goalDist += loc.distance(n.getLocation());
+//			goalDist += 5;
 		}
+		
+		goalDist += 10 * model.countUnsolvedGoals();
+//		goalDist += goalLocation.distance(loc);
+//		goalDist += n.getLocation().distance(loc);
 
 		return goalDist; 
 	}

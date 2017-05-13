@@ -120,6 +120,7 @@ public class Planner {
 			if (newStep >= 0) 
 			{
 				// Maximum: newStep - step, 1 for optimal solution
+//				executor.executeSkips(agent, newStep - step);
 				executor.executeSkips(agent, 1);
 				return planAgentToBox(agent, box, overlay);
 			}
@@ -149,6 +150,7 @@ public class Planner {
 			if (newStep >= 0) 
 			{
 				// Maximum: newStep - step, 1 for optimal solution
+//				executor.executeSkips(agent, newStep - step);
 				executor.executeSkips(agent, 1);
 				return planObjectToLocation(agent, tracked, loc, overlay);
 			}

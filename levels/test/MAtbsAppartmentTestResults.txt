@@ -1,0 +1,12 @@
+MAtbsAppartment.lvl
+
+Unsolved goal count heuristic is a must
+
+Nr - Time  - Steps - Heuristic
+1. - 1.473 -   322 - Distance map without distance from agent to tracked
+2. - 0.670 -   322 - Distance map with +5 if not adjacent to tracked
+3. - 0.941 -   322 - Distance map with manhattan distance from agent to tracked
+4. - 0.580 -   322 - Nr 2 without penalty for being off track
+5. -   N/A -   N/A - Nr 2 with Greedy
+6. - 0.529 -   324 - Nr 4 with Greedy
+7. - 0.492 -   324 - Nr 3 with Greedy and no penalty for being off track
