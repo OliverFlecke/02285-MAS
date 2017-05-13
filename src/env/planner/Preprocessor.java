@@ -94,7 +94,8 @@ public class Preprocessor {
 	        	.stream().forEach(loc -> addDependency(dependencies, loc, goal));
 	        
 	        DependencySearch.search(box.getLocation(), agent.getLocation(), WorldModel.BOX | WorldModel.GOAL)
-		        .stream().forEach(loc -> addDependency(dependencies, loc, goal));	        
+		        .stream().forEach(loc -> addDependency(dependencies, loc, goal));	
+	       
 		}
 		return dependencies.entrySet().stream()
 		        .sorted(Comparator.comparingInt(e -> e.getValue().size()))
@@ -110,7 +111,9 @@ public class Preprocessor {
     	}
     	else
     	{
-    		MapUtil.addToMap(dependencies, worldModel.getBox(l).getGoal(), goal);
+    		Goal otherGoal = worldModel.getBox(l).getGoal();
+    		if (otherGoal != null)
+    			MapUtil.addToMap(dependencies, otherGoal, goal);
     	}
 	}
 
