@@ -63,9 +63,9 @@ public class SimulationModel extends ActionModel {
     	
     	for (Agent agent : WorldModel.getInstance().getAgents())
     	{
-    		if (currentStep < planner.getActions().get(agent.getNumber()).size())
+    		if (currentStep - 1 < planner.getActions().get(agent.getNumber()).size())
     		{
-    			Action otherAction = planner.getActions().get(agent.getNumber()).get(currentStep);
+    			Action otherAction = planner.getActions().get(agent.getNumber()).get(currentStep - 1);
     			
     			simulation.doExecute(otherAction);
     		}

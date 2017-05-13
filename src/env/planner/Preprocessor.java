@@ -4,6 +4,7 @@ import java.util.*;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
+import env.model.CellModel;
 import env.model.WorldModel;
 import level.Location;
 import level.cell.*;
@@ -21,7 +22,7 @@ public class Preprocessor {
 
 	private Preprocessor() {}
 	
-	public static List<Goal> preprocess()
+	public static void preprocess()
 	{
 		long startTime = System.nanoTime();
 		
@@ -31,11 +32,7 @@ public class Preprocessor {
 		
 		matchAgentsAndBoxes();
 		
-		List<Goal> goals = calculateDependencies();
-		
 		logger.info("Preprocessing done: " + ((System.nanoTime() - startTime) / 1000000000.0));
-		
-		return goals;
 	}
 	
 	private static void matchBoxesAndGoals()
@@ -77,24 +74,29 @@ public class Preprocessor {
 		}
 	}
 	
-	private static List<Goal> calculateDependencies()
+	public static List<Goal> prioritizeGoals(CellModel model)
 	{
-		Set<Goal> goals = worldModel.getGoals();
+		Set<Goal> goals = model.getGoals();
 		
 		Map<Goal, Set<Goal>> dependencies = new HashMap<>();
 		
-		MapUtil.initMap(dependencies, goals);
-		
 		for (Goal goal : goals)
 		{			
+			if (model.isSolved(goal.getLocation())) continue;
+			
+			if (!dependencies.containsKey(goal))
+			{
+				dependencies.put(goal, new HashSet<Goal>());
+			}
+			
 			Box 	box 	= goal.getBox();
 			Agent 	agent 	= box.getAgent();
 
 	        DependencySearch.search(goal.getLocation(), box.getLocation(), WorldModel.BOX | WorldModel.GOAL)
-	        	.stream().forEach(loc -> addDependency(dependencies, loc, goal));
+	        	.stream().forEach(loc -> addDependency(model, dependencies, loc, goal));
 	        
 	        DependencySearch.search(box.getLocation(), agent.getLocation(), WorldModel.BOX | WorldModel.GOAL)
-		        .stream().forEach(loc -> addDependency(dependencies, loc, goal));	
+		        .stream().forEach(loc -> addDependency(model, dependencies, loc, goal));	
 	       
 		}
 		return dependencies.entrySet().stream()
@@ -103,15 +105,15 @@ public class Preprocessor {
 		        .collect(Collectors.toList());
 	}
 	
-	private static void addDependency(Map<Goal, Set<Goal>> dependencies, Location l, Goal goal)
+	private static void addDependency(CellModel model, Map<Goal, Set<Goal>> dependencies, Location l, Goal goal)
 	{
-    	if (worldModel.hasObject(WorldModel.GOAL, l))
+    	if (model.hasObject(WorldModel.GOAL, l))
     	{
-    		MapUtil.addToMap(dependencies, worldModel.getGoal(l), goal);
+    		MapUtil.addToMap(dependencies, model.getGoal(l), goal);
     	}
     	else
     	{
-    		Goal otherGoal = worldModel.getBox(l).getGoal();
+    		Goal otherGoal = model.getBox(l).getGoal();
     		if (otherGoal != null)
     			MapUtil.addToMap(dependencies, otherGoal, goal);
     	}

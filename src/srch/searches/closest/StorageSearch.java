@@ -45,6 +45,11 @@ public class StorageSearch extends Search implements Heuristic {
 		
 		Location loc = n.getLocation();
 		
+		if (model.hasObject(((StorageNode) n).getAgentNumber(), DataModel.BOX_MASK, loc))
+		{
+			return 0;
+		}
+		
 		return model.hasObject(DataModel.AGENT, loc) || model.hasObject(DataModel.BOX, loc) ? 100 : 0;
 	}
 }

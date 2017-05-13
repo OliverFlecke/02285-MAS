@@ -138,7 +138,7 @@ public class DependencyPathNode extends StepNode implements IDirectionNode {
 				// Do not add dependency if n is first
 				!(n.getParent() == null) && 
 				// Do not add dependency if dependency is box of agent's color
-				!(model.hasObject(DataModel.BOX, loc) && model.getColor(loc).equals(agent.getColor())) && 
+//				!(model.hasObject(DataModel.BOX, loc) && model.getColor(loc).equals(agent.getColor())) && 
 				// Do not add dependency if dependency is agent itself
 				!(model.hasObject(agNumber, WorldModel.BOX_MASK, loc)));
 	}

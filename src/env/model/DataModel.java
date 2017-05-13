@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.logging.Logger;
 
 import level.Color;
+import level.Direction;
 import level.Location;
 
 public class DataModel {
@@ -54,6 +55,15 @@ public class DataModel {
 	
 	public boolean isSolved(int x, int y) {
 		return hasObject(GOAL, x, y) && (data[x][y] & GOAL_MASK) == ((data[x][y] & BOX_MASK) >> 8);
+	}
+	
+	public boolean isBlocked(Location l) 
+	{
+		for (Direction dir : Direction.EVERY)
+		{
+			if (isFree(l.newLocation(dir))) return false;
+		}
+		return true;
 	}
     
     public boolean inGrid(int x, int y) {
