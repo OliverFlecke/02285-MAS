@@ -10,7 +10,7 @@ public class PullAction extends Action {
 	
 	public PullAction(Direction agentDir, Direction boxDir, Location location)
 	{
-		super(ActionType.PULL, location);
+		super(ActionType.PULL, location, location.newLocation(boxDir));
 		this.agentDir = agentDir;
 		this.boxDir = boxDir;
 	}

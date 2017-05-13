@@ -51,7 +51,7 @@ public class Executor {
 
 		planner.getActions().get(agent.getNumber()).addAll(actions);
 		
-		executeActions(initialStep, actions);
+		executeActions(agent, initialStep, actions);
 		
 		return true;
 	}
@@ -79,7 +79,7 @@ public class Executor {
 		
 		planner.getActions().get(agent.getNumber()).addAll(actions);
 
-		executeActions(initialStep, actions);
+		executeActions(agent, initialStep, actions);
 		
 		return true;
 	}
@@ -97,12 +97,12 @@ public class Executor {
 		
 		planner.getActions().get(agent.getNumber()).addAll(actions);
 		
-		executeActions(initialStep, actions);
+		executeActions(agent, initialStep, actions);
 
 		logger.info(agent + " skipping: " + actions.size() + " times");
 	}
 	
-	private void executeActions(int initialStep, List<Action> actions)
+	private void executeActions(Agent agent, int initialStep, List<Action> actions)
 	{
 		if (actions.isEmpty()) return;
 		
@@ -120,7 +120,20 @@ public class Executor {
 
 			for (int futureStep = step + 1; futureStep < updateLimit; futureStep++)
 			{
-				planner.getModel(futureStep).doExecute(action);				
+				planner.getModel(futureStep).doExecute(action);
+			}
+		}
+		
+		for (int modelStep = 1; modelStep < planner.dataModelCount(); modelStep++)
+		{
+			DataModel model = planner.getModel(modelStep);
+			
+			for (int actionStep = modelStep - 1; actionStep < planner.getActions().get(agent.getNumber()).size() - 1; actionStep++)
+			{
+				Action action = planner.getActions().get(agent.getNumber()).get(actionStep);
+						
+				model.add(DataModel.LOCKED, action.getAgentLocation());
+				model.add(DataModel.LOCKED, action.getActionLocation());
 			}
 		}
 		

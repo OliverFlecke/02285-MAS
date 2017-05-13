@@ -17,11 +17,13 @@ public abstract class Action {
 	
 	private ActionType type;
 	private Location agentLocation;
+	private Location actionLocation;
 	
-	protected Action(ActionType type, Location location)
+	protected Action(ActionType type, Location agentLocation, Location actionLocation)
 	{
 		this.type = type;
-		this.agentLocation = location;
+		this.agentLocation  = agentLocation;
+		this.actionLocation = actionLocation;
 	}
 
 	public ActionType getType()
@@ -32,6 +34,11 @@ public abstract class Action {
 	public Location getAgentLocation()
 	{
 		return this.agentLocation;
+	}
+	
+	public Location getActionLocation()
+	{
+		return this.actionLocation;
 	}
 	
 	public static List<Action> Every(Location agentLocation, Action agentAction)

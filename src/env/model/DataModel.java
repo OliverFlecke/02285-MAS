@@ -91,7 +91,7 @@ public class DataModel {
     }
 
     public boolean isFree(int x, int y) {
-        return inGrid(x, y) && (data[x][y] & (WALL | AGENT | BOX | LOCKED)) == 0;
+        return inGrid(x, y) && (data[x][y] & (WALL | AGENT | BOX)) == 0;
     }
 
     public boolean isFree(int obj, Location l) {
@@ -192,7 +192,8 @@ public class DataModel {
 		{
 			for (int x = 0; x < width; x++) 
 			{
-					 if (hasObject(AGENT, x, y)) str.append((char) ((data[x][y] & BOX_MASK) >> 24));
+				if (hasObject(LOCKED, x, y))	 str.append('%');
+				else if (hasObject(AGENT, x, y)) str.append((char) ((data[x][y] & BOX_MASK) >> 24));
 				else if (hasObject(BOX	, x, y)) str.append(Character.toUpperCase((char) ((data[x][y] & BOX_MASK) >> 24)));
 				else if (hasObject(GOAL	, x, y)) str.append((char) ((data[x][y] & GOAL_MASK) >> 16));
 				else if (hasObject(WALL	, x, y)) str.append('+');

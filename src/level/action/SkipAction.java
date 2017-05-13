@@ -6,7 +6,7 @@ public class SkipAction extends Action {
 
 	public SkipAction(Location location)
 	{
-		super(ActionType.SKIP, location);
+		super(ActionType.SKIP, location, location);
 	}
 	
 	@Override

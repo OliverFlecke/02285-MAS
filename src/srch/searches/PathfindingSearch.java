@@ -4,7 +4,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 
+import env.model.DataModel;
 import env.model.SimulationModel;
+import env.planner.Planner;
 import level.Location;
 import level.action.Action;
 import level.cell.Cell;
@@ -54,8 +56,19 @@ public class PathfindingSearch extends Search implements Heuristic {
 	@Override
 	public boolean isGoalState(Node n) 
 	{
-		return ((PathfindingNode) n).getTrackedLoc().distance(goalLocation) == goalDistance &&
-				!((PathfindingNode) n).getModel().isBlocked(n.getLocation());
+		PathfindingNode node = (PathfindingNode) n;
+		
+		SimulationModel model = node.getModel();
+		
+		int step = model.getStep();
+		
+		if (Planner.getInstance().hasModel(step) && Planner.getInstance().getModel(step).hasObject(DataModel.LOCKED, n.getLocation()))
+		{
+			return false;
+		}
+				
+		return   node.getTrackedLoc().distance(goalLocation) == goalDistance &&
+				!model.isBlocked(n.getLocation());
 	}
 
 	@Override

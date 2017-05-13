@@ -9,7 +9,7 @@ public class MoveAction extends Action {
 	
 	public MoveAction(Direction direction, Location location)
 	{
-		super(ActionType.MOVE, location);
+		super(ActionType.MOVE, location, location);
 		this.direction = direction;
 	}
 	

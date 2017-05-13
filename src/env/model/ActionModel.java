@@ -82,9 +82,7 @@ public class ActionModel extends DataModel {
     }
 	
 	public void move(int obj, Location fr, Location to)
-	{
-		obj |= LOCKED;
-		
+	{		
 		if ((obj & GOAL) != 0)
 		{
 			obj |= getMasked(GOAL_MASK, fr);

@@ -44,7 +44,7 @@ public class SimulationModel extends ActionModel {
 	
 	public int getStep()
 	{
-		return nextStep;
+		return currentStep;
 	}
 	
 	public void move(int obj, Location fr, Location to)

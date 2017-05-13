@@ -10,7 +10,7 @@ public class PushAction extends Action {
 	
 	public PushAction(Direction agentDir, Direction boxDir, Location location)
 	{
-		super(ActionType.PUSH, location);
+		super(ActionType.PUSH, location, location.newLocation(boxDir));
 		this.agentDir = agentDir;
 		this.boxDir = boxDir;
 	}
