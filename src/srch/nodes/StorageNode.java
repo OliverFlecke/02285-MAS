@@ -26,6 +26,10 @@ public class StorageNode extends ClosestNode {
 		this.agent 		= ((StorageNode) parent).agent;
 		this.agNumber 	= ((StorageNode) parent).agNumber;
 	}
+	
+	public int getAgentNumber() {
+		return agNumber;
+	}
 
 	@Override
 	public List<Node> getExpandedNodes()
@@ -47,14 +51,10 @@ public class StorageNode extends ClosestNode {
 			// Add node if loc has box with agent's color and
 			// this box can be moved to another loc
 			if (this.getModel().hasObject(DataModel.BOX, loc) && 
-				this.getModel().getColor(loc).equals(agent.getColor()))
+				this.getModel().getColor(loc).equals(agent.getColor()) &&
+				!this.getModel().isBlocked(loc))
 			{
-				StorageNode onBox = new StorageNode(this, dir, loc);
-				
-				if (onBox.getExpandedNodes().size() > 1)
-				{
-					expandedNodes.add(onBox);
-				}
+				expandedNodes.add(new StorageNode(this, dir, loc));
 			}
 		}
 		return expandedNodes;

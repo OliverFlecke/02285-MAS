@@ -8,7 +8,7 @@ import env.model.SimulationModel;
 import level.Location;
 import level.action.Action;
 import level.cell.Cell;
-import srch.Evaluation.Greedy;
+import srch.Evaluation.*;
 import srch.Heuristic;
 import srch.Node;
 import srch.Search;
@@ -44,8 +44,8 @@ public class PathfindingSearch extends Search implements Heuristic {
 		
 		logger.setLevel(Level.OFF);
 		
-//		this.setStrategy(new BestFirst(new AStar(this)));
-		this.setStrategy(new BestFirst(new Greedy(this)));
+		this.setStrategy(new BestFirst(new AStar(this)));
+//		this.setStrategy(new BestFirst(new Greedy(this)));
 		
 		this.goalLocation = to;
 		this.goalDistance = proximity;
@@ -54,7 +54,8 @@ public class PathfindingSearch extends Search implements Heuristic {
 	@Override
 	public boolean isGoalState(Node n) 
 	{
-		return ((PathfindingNode) n).getTrackedLoc().distance(goalLocation) == goalDistance;
+		return ((PathfindingNode) n).getTrackedLoc().distance(goalLocation) == goalDistance &&
+				!((PathfindingNode) n).getModel().isBlocked(n.getLocation());
 	}
 
 	@Override
@@ -89,6 +90,7 @@ public class PathfindingSearch extends Search implements Heuristic {
 		goalDist += 10 * model.countUnsolvedGoals();
 //		goalDist += goalLocation.distance(loc);
 //		goalDist += n.getLocation().distance(loc);
+		
 
 		return goalDist; 
 	}

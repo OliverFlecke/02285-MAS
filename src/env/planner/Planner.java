@@ -2,7 +2,10 @@ package env.planner;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map.Entry;
+import java.util.Queue;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -19,6 +22,7 @@ import level.cell.Box;
 import level.cell.Cell;
 import level.cell.Goal;
 import logging.LoggerFactory;
+import srch.searches.closest.AgentSearch;
 import srch.searches.closest.StorageSearch;
 
 public class Planner {
@@ -63,6 +67,8 @@ public class Planner {
 		
 		executor = new Executor(this);
 		
+		Preprocessor.preprocess();
+		
 		dataModels = new ArrayList<CellModel>(Arrays.asList(new CellModel(worldModel)));
 		
 		actions = new ArrayList<ArrayList<Action>>(worldModel.getNbAgs());
@@ -72,20 +78,19 @@ public class Planner {
 			actions.add(new ArrayList<Action>());
 		}
 		
-		solveLevel();		
+		solveLevel(Preprocessor.prioritizeGoals(getLastModel()));		
 	}
 	
-	private void solveLevel()
+	private void solveLevel(List<Goal> goals)
 	{
-		for (Goal goal : Preprocessor.preprocess())
+		if (goals.isEmpty()) return;
+		
+		for (Goal goal : goals)
 		{
 			solveGoal(goal);
 		}
 		
-		for (Goal goal : getLastModel().getUnsolvedGoals())
-		{
-			solveGoal(goal);
-		}
+		solveLevel(Preprocessor.prioritizeGoals(getLastModel()));
 	}
 	
 	private void solveGoal(Goal goal)
@@ -112,18 +117,18 @@ public class Planner {
 			if (step < dependency.getValue()) 
 			{
 				executor.executeSkips(agent, dependency.getValue() - step);
-				return planAgentToBox(agent, box, overlay);
+				return planAgentToBox(agent, box, previousOverlay);
 			}
 			
 			int newStep = solveDependency(dependency.getKey(), overlay, step);
 			
-			if (newStep >= 0) 
+			if (newStep > getInitialStep(agent)) 
 			{
 				// Maximum: newStep - step, 1 for optimal solution
 //				executor.executeSkips(agent, newStep - step);
 				executor.executeSkips(agent, 1);
-				return planAgentToBox(agent, box, overlay);
 			}
+			return planAgentToBox(agent, box, previousOverlay);
 		}
 		return executor.getAgentToBox(agent, box);
 	}
@@ -142,18 +147,18 @@ public class Planner {
 			if (step < dependency.getValue()) 
 			{
 				executor.executeSkips(agent, dependency.getValue() - step);
-				return planObjectToLocation(agent, tracked, loc, overlay);
+				return planObjectToLocation(agent, tracked, loc, previousOverlay);
 			}
 			
 			int newStep = solveDependency(dependency.getKey(), overlay, step);
 			
-			if (newStep >= 0) 
+			if (newStep > getInitialStep(agent)) 
 			{
 				// Maximum: newStep - step, 1 for optimal solution
 //				executor.executeSkips(agent, newStep - step);
 				executor.executeSkips(agent, 1);
-				return planObjectToLocation(agent, tracked, loc, overlay);
 			}
+			return planObjectToLocation(agent, tracked, loc, previousOverlay);
 		}		
 		return executor.getObjectToLocation(agent, tracked, loc);
 	}
@@ -164,8 +169,8 @@ public class Planner {
 		
 		if (model.hasObject(DataModel.BOX, dependency))
 		{
-			Box 	box 	= model.getBox(dependency);
-			Agent 	agent 	= box.getAgent();
+			Box 	box 	= model.getBox(dependency);			
+			Agent 	agent 	= model.getAgent(AgentSearch.search(box.getColor(), box.getLocation(), model));
 			
 			return solveAgentToBoxDependency(agent, box, overlay, step);
 		}
