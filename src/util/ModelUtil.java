@@ -1,6 +1,7 @@
 package util;
 
 import env.model.DataModel;
+import level.Location;
 import level.cell.Agent;
 import level.cell.Box;
 import level.cell.Goal;
@@ -11,6 +12,15 @@ public class ModelUtil {
 	
 	public static int getAgentNumber(Agent agent) {
 		return ((int) agent.getLetter()) << 24;
+	}
+	
+	public static int getAgentNumber(Location loc, DataModel model)
+	{
+		if (model.hasObject(DataModel.AGENT, loc))
+		{
+			return model.getMasked(DataModel.BOX_MASK, loc) >> 24;
+		}
+		return 0;
 	}
 
 	public static DataModel compareModels(DataModel m1, DataModel m2)
