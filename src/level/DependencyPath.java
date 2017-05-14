@@ -45,6 +45,11 @@ public class DependencyPath {
 		return !dependencies.isEmpty();
 	}
 	
+	public int countDependencies() 
+	{
+		return dependencies.size();
+	}
+	
 //	public Map<Location, Integer> getDependencies()
 //	{
 //		return dependencies;

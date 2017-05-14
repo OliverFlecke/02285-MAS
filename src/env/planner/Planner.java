@@ -103,6 +103,8 @@ public class Planner {
 
 	private boolean planAgentToBox(Agent agent, Box box, OverlayModel previousOverlay) 
 	{
+		if (agent.getLocation().distance(box.getLocation()) == 1) return true;
+		
 		int				step			= getInitialStep(agent);
 		CellModel 		model 			= getModel(step);
 		DependencyPath 	dependencyPath 	= DependencyPath.getDependencyPath(agent, box, step);
@@ -125,7 +127,7 @@ public class Planner {
 				// Maximum: newStep - step, 1 for optimal solution
 //				executor.executeSkips(agent, newStep - step);
 				executor.executeSkips(agent, 1);
-			}
+			}			
 			return planAgentToBox(agent, box, previousOverlay);
 		}
 		return executor.getAgentToBox(agent, box);
