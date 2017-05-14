@@ -1,6 +1,8 @@
 package srch.searches;
 
 import java.util.List;
+
+import env.model.CellModel;
 import level.Location;
 import srch.Node;
 import srch.Search;
@@ -18,9 +20,9 @@ public class DependencySearch extends Search implements Heuristic {
 	 * @param object
 	 * @return
 	 */
-	public static List<Location> search(Location from, Location to, int object) 
+	public static List<Location> search(Location from, Location to, int object, CellModel model) 
 	{
-		return new DependencySearch(to).search(new DependencyNode(from, object));
+		return new DependencySearch(to).search(new DependencyNode(from, object, model));
 	}
 	
 	private Location goalLocation;

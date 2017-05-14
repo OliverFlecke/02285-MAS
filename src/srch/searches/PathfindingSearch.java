@@ -9,6 +9,8 @@ import env.model.SimulationModel;
 import env.planner.Planner;
 import level.Location;
 import level.action.Action;
+import level.action.PullAction;
+import level.action.PushAction;
 import level.cell.Cell;
 import srch.Evaluation.*;
 import srch.Heuristic;
@@ -74,7 +76,8 @@ public class PathfindingSearch extends Search implements Heuristic {
 	@Override
 	public int h(Node n) 
 	{
-		SimulationModel model = ((PathfindingNode) n).getModel();
+		PathfindingNode node = (PathfindingNode) n;
+		SimulationModel model = node.getModel();
 		
 		int goalDist = 0;
 		
@@ -104,6 +107,15 @@ public class PathfindingSearch extends Search implements Heuristic {
 //		goalDist += goalLocation.distance(loc);
 //		goalDist += n.getLocation().distance(loc);
 		
+		// Agents should prefer not to move boxes
+//		if (model.isTrackedAgent())
+//		{
+//			if (node.getAction() instanceof PullAction ||
+//				node.getAction() instanceof PushAction)
+//			{
+//				goalDist += 3;
+//			}
+//		}
 
 		return goalDist; 
 	}

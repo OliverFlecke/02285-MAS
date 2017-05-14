@@ -3,7 +3,7 @@ package srch.nodes;
 import java.util.ArrayList;
 import java.util.List;
 
-import env.model.DataModel;
+import env.model.CellModel;
 import level.Direction;
 import level.Location;
 import srch.Node;
@@ -13,13 +13,13 @@ import srch.interfaces.IModelNode;
 public class ClosestNode extends Node implements IDirectionNode, IModelNode {
 	
 	private Direction direction;
-	private DataModel model;
+	private CellModel model;
 	
-	public ClosestNode(Location initial, DataModel model) {
+	public ClosestNode(Location initial, CellModel model) {
 		this(initial, 0, model);
 	}
 	
-	public ClosestNode(Location initial, int object, DataModel model) {
+	public ClosestNode(Location initial, int object, CellModel model) {
 		super(initial, object);
 		this.direction 	= null;
 		this.model 		= model;
@@ -36,7 +36,7 @@ public class ClosestNode extends Node implements IDirectionNode, IModelNode {
 		return this.direction;
 	}
 	
-	public DataModel getModel() {
+	public CellModel getModel() {
 		return this.model;
 	}
 

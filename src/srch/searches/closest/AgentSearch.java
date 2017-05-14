@@ -1,5 +1,6 @@
 package srch.searches.closest;
 
+import env.model.CellModel;
 import env.model.DataModel;
 import env.model.WorldModel;
 import level.Color;
@@ -9,7 +10,7 @@ import srch.nodes.ClosestNode;
 
 public class AgentSearch extends ClosestSearch {
 
-	public static Location search(Color color, Location from, DataModel model) 
+	public static Location search(Color color, Location from, CellModel model) 
 	{
 		return new AgentSearch(color).search(new ClosestNode(from, model));
 	}

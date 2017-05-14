@@ -3,6 +3,7 @@ package srch.nodes;
 import java.util.ArrayList;
 import java.util.List;
 
+import env.model.CellModel;
 import env.model.DataModel;
 import level.Direction;
 import level.Location;
@@ -15,7 +16,7 @@ public class StorageNode extends ClosestNode {
 	private Agent 	agent;
 	private int		agNumber;
 
-	public StorageNode(Location initial, Agent agent, DataModel model) {
+	public StorageNode(Location initial, Agent agent, CellModel model) {
 		super(initial, model);
 		this.agent 		= agent;		
 		this.agNumber 	= ModelUtil.getAgentNumber(agent);

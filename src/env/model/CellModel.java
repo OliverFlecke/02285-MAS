@@ -98,8 +98,12 @@ public class CellModel extends ActionModel {
 		return boxArray[x][y];
 	}
 	
-	public Set<Goal> getUnsolvedGoals() {
-		return goals.stream().filter(goal -> !isSolved(goal.getLocation())).collect(Collectors.toSet());
+	public boolean isSolved(Goal goal) {
+		return goal.getBox() == null ? false : goal.getLocation().equals(goal.getBox().getLocation());
+	}
+	
+	public boolean isSolved(Box box) {
+		return box.getGoal() == null ? false : box.getLocation().equals(box.getGoal().getLocation());
 	}
 	
 	public void move(int obj, Location fr, Location to)

@@ -1,6 +1,8 @@
 package srch.searches.closest;
 
+import env.model.CellModel;
 import env.model.DataModel;
+import env.model.OverlayModel;
 import level.Location;
 import level.cell.Agent;
 import srch.Evaluation.AStar;
@@ -12,14 +14,14 @@ import srch.nodes.StorageNode;
 
 public class StorageSearch extends Search implements Heuristic {
 	
-	public static Location search(Location from, Agent agent, DataModel overlay, DataModel model) 
+	public static Location search(Location from, Agent agent, OverlayModel overlay, CellModel model) 
 	{
 		return new StorageSearch(overlay).search(new StorageNode(from, agent, model));
 	}
 	
-	private DataModel overlay;
+	private OverlayModel overlay;
 	
-	public StorageSearch(DataModel overlay)
+	public StorageSearch(OverlayModel overlay)
 	{
 		super();
 		
@@ -35,7 +37,7 @@ public class StorageSearch extends Search implements Heuristic {
 		
 		Location loc = n.getLocation();
 		
-		return overlay.isFree(DataModel.IN_USE, loc) && model.isFree(loc);
+		return overlay.isFree(loc) && model.isFree(loc);
 	}
 
 	@Override

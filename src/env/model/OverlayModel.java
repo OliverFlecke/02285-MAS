@@ -45,6 +45,13 @@ public class OverlayModel extends DataModel {
 
 		deepAddData(overlay);
 	}
+
+	@Override
+	public boolean isFree(int x, int y) {
+		return super.isFree(overlayObject, x, y);
+	}
+	
+	
 	
 	@Override
 	public String toString() 
@@ -56,7 +63,7 @@ public class OverlayModel extends DataModel {
 		{
 			for (int x = 0; x < width; x++) 
 			{
-				if (hasObject(overlayObject, x, y)) str.append('-');
+				if (hasObject(overlayObject, x, y)) str.append('#');
 				else if (hasObject(WALL, x, y)) 	str.append('+');
 				else 								str.append(' ');
 			}

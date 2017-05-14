@@ -2,10 +2,8 @@ package env.planner;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map.Entry;
-import java.util.Queue;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -67,8 +65,6 @@ public class Planner {
 		
 		executor = new Executor(this);
 		
-		Preprocessor.preprocess();
-		
 		dataModels = new ArrayList<CellModel>(Arrays.asList(new CellModel(worldModel)));
 		
 		actions = new ArrayList<ArrayList<Action>>(worldModel.getNbAgs());
@@ -78,19 +74,21 @@ public class Planner {
 			actions.add(new ArrayList<Action>());
 		}
 		
-		solveLevel(Preprocessor.prioritizeGoals(getLastModel()));		
+		solveLevel(Preprocessor.preprocess(worldModel));
 	}
 	
 	private void solveLevel(List<Goal> goals)
 	{
-		if (goals.isEmpty()) return;
-		
-		for (Goal goal : goals)
+		do
 		{
-			solveGoal(goal);
+			for (Goal goal : goals)
+			{
+				solveGoal(goal);
+			}
+			
+			goals = Preprocessor.preprocess(getLastModel());
 		}
-		
-		solveLevel(Preprocessor.prioritizeGoals(getLastModel()));
+		while (!goals.isEmpty());
 	}
 	
 	private void solveGoal(Goal goal)
@@ -110,7 +108,7 @@ public class Planner {
 		DependencyPath 	dependencyPath 	= DependencyPath.getDependencyPath(agent, box, step);
 		OverlayModel	overlay			= new OverlayModel(previousOverlay, dependencyPath.getPath());
 		
-		if (!dependencyPath.getDependencies().isEmpty())
+		if (dependencyPath.hasDependencies())
 		{
 			Entry<Location, Integer> dependency = dependencyPath.getDependency(agent.getLocation());
 			
@@ -140,7 +138,7 @@ public class Planner {
 		DependencyPath 	dependencyPath 	= DependencyPath.getDependencyPath(agent, tracked, loc, step);
 		OverlayModel	overlay			= new OverlayModel(previousOverlay, dependencyPath.getPath());
 		
-		if (!dependencyPath.getDependencies().isEmpty())
+		if (dependencyPath.hasDependencies())
 		{
 			Entry<Location, Integer> dependency = dependencyPath.getDependency(tracked.getLocation());
 			

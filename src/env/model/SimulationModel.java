@@ -17,19 +17,26 @@ public class SimulationModel extends ActionModel {
 	private int 	currentStep, 
 					nextStep;
 	private Cell 	tracked;
+	private boolean isAgent;
 
 	public SimulationModel(int step, Cell tracked)
 	{
 		this(planner.getModel(step), step, tracked);
 	}
-
+	
 	public SimulationModel(DataModel model, int step, Cell tracked)
+	{
+		this(model, step, tracked, tracked instanceof Agent);
+	}
+
+	public SimulationModel(DataModel model, int step, Cell tracked, boolean isAgent)
 	{
 		super(model);
 		
 		this.currentStep 	= step;
 		this.nextStep		= step + 1;
-		this.tracked  		= new Cell(tracked);
+		this.tracked  		= new Cell(tracked);		
+		this.isAgent 		= isAgent;
 	}
 	
 	public static void setPlanner(Planner planner)
@@ -40,6 +47,11 @@ public class SimulationModel extends ActionModel {
 	public Location getTrackedLocation()
 	{
 		return tracked.getLocation();
+	}
+	
+	public boolean isTrackedAgent()
+	{
+		return isAgent;
 	}
 	
 	public int getStep()
@@ -59,7 +71,7 @@ public class SimulationModel extends ActionModel {
     
     public SimulationModel run(Action action)
     {    	
-    	SimulationModel simulation = new SimulationModel(this, nextStep, this.tracked);
+    	SimulationModel simulation = new SimulationModel(this, nextStep, tracked, isAgent);
     	
     	for (Agent agent : WorldModel.getInstance().getAgents())
     	{

@@ -1,13 +1,20 @@
 package env.planner;
 
-import java.util.*;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 import env.model.CellModel;
-import env.model.WorldModel;
+import env.model.DataModel;
 import level.Location;
-import level.cell.*;
+import level.cell.Agent;
+import level.cell.Box;
+import level.cell.Goal;
 import logging.LoggerFactory;
 import srch.searches.DependencySearch;
 import srch.searches.closest.AgentSearch;
@@ -18,32 +25,42 @@ public class Preprocessor {
 	
 	private static final Logger logger = LoggerFactory.getLogger(Preprocessor.class.getName());
 	
-	private static WorldModel worldModel;
+	private static CellModel model;
 
 	private Preprocessor() {}
 	
-	public static void preprocess()
-	{
-		long startTime = System.nanoTime();
+	public static List<Goal> preprocess(CellModel model)
+	{		
+		Preprocessor.model = model;
 		
-		worldModel = WorldModel.getInstance();
+		long startTime = System.nanoTime();
 		
 		matchBoxesAndGoals();
 		
 		matchAgentsAndBoxes();
 		
+		List<Goal> goals = prioritizeGoals();
+		
 		logger.info("Preprocessing done: " + ((System.nanoTime() - startTime) / 1000000000.0));
+		
+		return goals;
 	}
 	
 	private static void matchBoxesAndGoals()
 	{		
-		Set<Box> availableBoxes = new HashSet<>(worldModel.getBoxes());
+		Set<Box> availableBoxes = model.getBoxes().stream()
+				.filter(box -> !model.isSolved(box))
+				.collect(Collectors.toSet());
 		
-		for (Goal goal : worldModel.getGoals())
-		{
-			Location boxLoc = BoxSearch.search(availableBoxes, goal.getLetter(), goal.getLocation());
+		Set<Goal> unsolvedGoals = model.getGoals().stream()
+				.filter(goal -> !model.isSolved(goal))
+				.collect(Collectors.toSet());
+		
+		for (Goal goal : unsolvedGoals)
+		{			
+			Location boxLoc = BoxSearch.search(availableBoxes, goal.getLetter(), goal.getLocation(), model);
 			
-			Box box = worldModel.getBox(boxLoc);
+			Box box = model.getBox(boxLoc);
 
 			if (box != null && availableBoxes.remove(box))
 			{
@@ -56,33 +73,40 @@ public class Preprocessor {
 	
 	private static void matchAgentsAndBoxes()
 	{
-		Set<Box> boxes = worldModel.getGoals().stream()
+		Set<Box> boxes = model.getGoals().stream()
 							.map(goal -> goal.getBox())
 							.collect(Collectors.toSet());
 		
-		for (Box box : boxes)
+		if (model.getAgents().length == 1)
 		{
-			Location agLoc = AgentSearch.search(box.getColor(), box.getLocation(), worldModel);
+			Agent agent = model.getAgent(0);
 			
-			Agent agent = worldModel.getAgent(agLoc);
-			
-			if (agent != null)
-			{
-				box.setAgent(agent);
-			} 
-			else logger.warning("ERROR: matchAgentsAndBoxes()");
+			boxes.stream().forEach(box -> box.setAgent(agent));
 		}
+		else
+		{
+			for (Box box : boxes)
+			{			
+				Location agLoc = AgentSearch.search(box.getColor(), box.getLocation(), model);
+				
+				Agent agent = model.getAgent(agLoc);
+				
+				if (agent != null)
+				{
+					box.setAgent(agent);
+				} 
+				else logger.warning("ERROR: matchAgentsAndBoxes()");
+			}
+		}		
 	}
-	
-	public static List<Goal> prioritizeGoals(CellModel model)
+
+	private static List<Goal> prioritizeGoals() 
 	{
-		Set<Goal> goals = model.getGoals();
-		
 		Map<Goal, Set<Goal>> dependencies = new HashMap<>();
 		
-		for (Goal goal : goals)
-		{			
-			if (model.isSolved(goal.getLocation())) continue;
+		for (Goal goal : model.getGoals())
+		{
+			if (model.isSolved(goal)) continue;
 			
 			if (!dependencies.containsKey(goal))
 			{
@@ -92,22 +116,22 @@ public class Preprocessor {
 			Box 	box 	= goal.getBox();
 			Agent 	agent 	= box.getAgent();
 
-	        DependencySearch.search(goal.getLocation(), box.getLocation(), WorldModel.BOX | WorldModel.GOAL)
-	        	.stream().forEach(loc -> addDependency(model, dependencies, loc, goal));
+	        DependencySearch.search(goal.getLocation(), box.getLocation(), DataModel.BOX | DataModel.GOAL, model)
+	        	.stream().forEach(loc -> addDependency(dependencies, loc, goal));
 	        
-	        DependencySearch.search(box.getLocation(), agent.getLocation(), WorldModel.BOX | WorldModel.GOAL)
-		        .stream().forEach(loc -> addDependency(model, dependencies, loc, goal));	
-	       
+	        DependencySearch.search(box.getLocation(), agent.getLocation(), DataModel.BOX | DataModel.GOAL, model)
+		        .stream().forEach(loc -> addDependency(dependencies, loc, goal));
 		}
+		
 		return dependencies.entrySet().stream()
-		        .sorted(Comparator.comparingInt(e -> e.getValue().size()))
-		        .map(Map.Entry::getKey)
-		        .collect(Collectors.toList());
+				.sorted(Comparator.comparingInt(e -> e.getValue().size()))
+				.map(e -> e.getKey())
+				.collect(Collectors.toList());
 	}
 	
-	private static void addDependency(CellModel model, Map<Goal, Set<Goal>> dependencies, Location l, Goal goal)
+	private static void addDependency(Map<Goal, Set<Goal>> dependencies, Location l, Goal goal)
 	{
-    	if (model.hasObject(WorldModel.GOAL, l))
+    	if (model.hasObject(DataModel.GOAL, l))
     	{
     		MapUtil.addToMap(dependencies, model.getGoal(l), goal);
     	}
@@ -118,31 +142,4 @@ public class Preprocessor {
     			MapUtil.addToMap(dependencies, otherGoal, goal);
     	}
 	}
-
-//	private Collection<Goal> getSolvableGoals(Collection<Goal> goals, Agent agent) 
-//	{
-//		Map<Goal, Set<Goal>> goalDependencies = new HashMap<>();
-//		
-//		for (Goal goal : goals)
-//		{
-//			if (!goalDependencies.containsKey(goal))
-//			{
-//				goalDependencies.put(goal, new HashSet<Goal>());
-//			}
-//			
-//			Location from = goal.getLocation();
-//			Location to   = goal.getBox().getLocation();
-//
-//	        List<Location> locations = DependencySearch.search(from, to, DataWorldModel.GOAL);
-//	        
-//	        locations.stream().forEach(loc -> MapUtil.addToMap(goalDependencies, worldModel.getGoal(loc), goal));
-//		}
-//		
-//		return goalDependencies.entrySet().stream()
-////		        .sorted(Comparator.comparingInt(e -> e.getValue().size()))
-//				.filter(e -> e.getValue().isEmpty() && e.getKey().getBox().getColor().equals(agent.getColor()))
-//		        .map(Map.Entry::getKey)
-////		        .sorted((g1, g2) -> d(g1, agent) - d(g2, agent))
-//		        .collect(Collectors.toList());
-//	}
 }

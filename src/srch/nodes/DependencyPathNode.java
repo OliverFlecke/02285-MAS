@@ -12,9 +12,10 @@ import level.Location;
 import level.cell.Agent;
 import srch.Node;
 import srch.interfaces.IDirectionNode;
+import srch.interfaces.IModelNode;
 import util.ModelUtil;
 
-public class DependencyPathNode extends StepNode implements IDirectionNode {
+public class DependencyPathNode extends StepNode implements IDirectionNode, IModelNode {
 
 	private static Planner planner = Planner.getInstance();
 	
@@ -108,7 +109,9 @@ public class DependencyPathNode extends StepNode implements IDirectionNode {
 		
 		for (StepNode n = this; n != null; n = (StepNode) n.getParent()) 
 		{			
-			path.addToPath(n.getLocation());
+			Location loc = n.getLocation();
+			
+			path.addToPath(loc);
 			
 			// Avoid checking model(-1)
 			if (n.getParent() == null) break;
@@ -117,13 +120,21 @@ public class DependencyPathNode extends StepNode implements IDirectionNode {
 			{
 				if (planner.getLastStep() < n.getStep() && hasDependency(planner.getLastModel(), n, agNumber))
 				{
-					path.addDependency(n.getLocation(), planner.getLastStep());
+					path.addDependency(loc, planner.getLastStep());
 				}
 				else if (planner.hasModel(step) && hasDependency(planner.getModel(step), n, agNumber)) 
 				{
-					path.addDependency(n.getLocation(), step);
+					path.addDependency(loc, step);
 				}
-			}			
+			}
+			
+			for (int futureStep = n.getStep() + 2; futureStep < planner.dataModelCount(); futureStep++)
+			{
+				if (hasDependency(planner.getModel(futureStep), n, agNumber))
+				{
+					path.addDependency(loc, futureStep);
+				}
+			}
 		}
 		return path;
 	}

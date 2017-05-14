@@ -40,10 +40,15 @@ public class DependencyPath {
 		return path;
 	}
 	
-	public Map<Location, Integer> getDependencies()
+	public boolean hasDependencies()
 	{
-		return dependencies;
+		return !dependencies.isEmpty();
 	}
+	
+//	public Map<Location, Integer> getDependencies()
+//	{
+//		return dependencies;
+//	}
 	
 	public Entry<Location, Integer> getDependency(Location loc)
 	{
