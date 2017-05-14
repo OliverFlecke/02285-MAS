@@ -37,7 +37,7 @@ public class Tester {
 		
 		level = level + ".lvl";
 		
-		String command = "java -jar server.jar -l levels\\" + level + " -c \"java -jar client.jar\"";
+		String command = "java -jar server.jar -l levels\\" + level + " -c \"java -Xmx4g -jar client.jar\"";
 		
 		Runtime rt = Runtime.getRuntime();
 		
