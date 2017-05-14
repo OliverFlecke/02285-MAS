@@ -3,13 +3,23 @@ package level.cell;
 import env.model.WorldModel;
 import level.Color;
 
-public class Box extends Colored {
+public class Box extends Colored 
+{
+	private static int counter = 0;
 	
 	private Agent agent;
 	private Goal goal;
+	private int id; 
+	
 
 	public Box(int x, int y, char letter, Color color) {
 		super(x, y, letter, color);
+		this.id = counter++;
+	}
+	
+	public int getID()
+	{
+		return this.id;
 	}
 	
 	public Agent getAgent() {

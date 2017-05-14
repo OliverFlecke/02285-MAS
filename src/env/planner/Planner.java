@@ -2,10 +2,8 @@ package env.planner;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map.Entry;
-import java.util.Queue;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -96,6 +94,8 @@ public class Planner {
 	private void solveGoal(Goal goal)
 	{		
 		Box	  		box		= goal.getBox();
+		if (goal.getLocation().equals(box.getLocation())) return;
+		
 		Agent 		agent 	= box.getAgent();
 		Location 	loc 	= goal.getLocation();
 

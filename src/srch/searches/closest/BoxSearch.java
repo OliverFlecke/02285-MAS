@@ -1,5 +1,6 @@
 package srch.searches.closest;
 
+import java.util.HashMap;
 import java.util.Set;
 
 import env.model.WorldModel;
@@ -10,20 +11,39 @@ import srch.nodes.ClosestNode;
 
 public class BoxSearch extends ClosestSearch {
 
-	public static Location search(Set<Box> boxes, char letter, Location from) 
+	public static HashMap<Box, Integer> search(Set<Box> boxes, char letter, Location from) 
 	{
-		return new BoxSearch(boxes, letter).search(new ClosestNode(from, WorldModel.getInstance()));
+		BoxSearch boxSearch = new BoxSearch(letter);
+		boxSearch.search(new ClosestNode(from, WorldModel.getInstance()));
+		
+		HashMap<Box, Integer> distances = boxSearch.getMap();
+		for (Box box : boxes)
+		{
+			if (!distances.containsKey(box))
+			{
+				distances.put(box, Integer.MAX_VALUE);
+			}
+		}
+		
+		return distances;
 	}
 	
-	private Set<Box> boxes;
 	private char letter;
+	
+	private HashMap<Box, Integer> distances;
 
-	public BoxSearch(Set<Box> boxes, char letter) 
+	public BoxSearch(char letter) 
 	{
 		super(WorldModel.BOX);
 		
-		this.boxes 	= boxes;
 		this.letter = letter;
+		
+		distances = new HashMap<Box, Integer>();
+	}
+	
+	private HashMap<Box, Integer> getMap()
+	{
+		return this.distances;
 	}
 	
 	@Override
@@ -36,7 +56,11 @@ public class BoxSearch extends ClosestSearch {
 		
 		Box box = WorldModel.getInstance().getBox(n.getLocation());
 		
-		return box.getLetter() == letter && boxes.contains(box);
+		if (box.getLetter() == letter)
+		{
+			distances.put(box, n.g());
+		}
+		return false;
 	}
 
 }

@@ -94,8 +94,32 @@ public class CellModel extends ActionModel {
 		return goalArray[x][y];
 	}
 	
+	public Goal getGoal(int id)
+	{
+		for (Goal goal : this.goals)
+		{
+			if (goal.getID() == id)
+			{
+				return goal;
+			}
+		}
+		return null;
+	}
+	
 	public Box getBox(int x, int y) {
 		return boxArray[x][y];
+	}
+	
+	public Box getBox(int id)
+	{
+		for (Box box : this.boxes)
+		{
+			if (box.getID() == id)
+			{
+				return box;
+			}
+		}
+		return null;
 	}
 	
 	public Set<Goal> getUnsolvedGoals() {

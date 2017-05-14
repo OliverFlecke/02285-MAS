@@ -4,11 +4,20 @@ import env.model.CellModel;
 
 public class Goal extends Lettered {
 	
+	private static int counter = 0;
+	
 	private Box box;
+	private int id;
 	
 	public Goal(int x, int y, char letter)
 	{
 		super(x, y, letter);
+		this.id = counter++;
+	}
+	
+	public int getID()
+	{
+		return this.id;
 	}
 	
 	public boolean isSolved(CellModel model)

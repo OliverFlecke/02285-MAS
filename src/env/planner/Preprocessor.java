@@ -1,6 +1,7 @@
 package env.planner;
 
 import java.util.*;
+import java.util.Map.Entry;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
@@ -13,6 +14,7 @@ import srch.searches.DependencySearch;
 import srch.searches.closest.AgentSearch;
 import srch.searches.closest.BoxSearch;
 import util.MapUtil;
+import util.preprossing.Hungarian;
 
 public class Preprocessor {
 	
@@ -39,19 +41,35 @@ public class Preprocessor {
 	{		
 		Set<Box> availableBoxes = new HashSet<>(worldModel.getBoxes());
 		
+		int[][] distances = new int[worldModel.getGoals().size()][worldModel.getBoxes().size()];
+		
 		for (Goal goal : worldModel.getGoals())
 		{
-			Location boxLoc = BoxSearch.search(availableBoxes, goal.getLetter(), goal.getLocation());
+			HashMap<Box, Integer> boxLoc = BoxSearch.search(availableBoxes, goal.getLetter(), goal.getLocation());
 			
-			Box box = worldModel.getBox(boxLoc);
-
+			for (Entry<Box, Integer> entry : boxLoc.entrySet())
+			{
+				distances[goal.getID()][entry.getKey().getID()] = entry.getValue();
+			}
+		}
+		
+		int[] results = Hungarian.run(distances);
+		
+		for (int goalId = 0; goalId < results.length; goalId++)
+		{
+			int boxId = results[goalId];
+			
+			Box box 	= worldModel.getBox(boxId);
+			Goal goal 	= worldModel.getGoal(goalId);
+			
 			if (box != null && availableBoxes.remove(box))
 			{
 				goal.setBox(box);
 				box.setGoal(goal);
 			}
-			else logger.warning("ERROR: matchBoxesAndGoals()");
 		}
+		
+		logger.info("Done with matching");
 	}
 	
 	private static void matchAgentsAndBoxes()
