@@ -1,11 +1,11 @@
 package srch.searches.closest;
 
 import env.model.CellModel;
-import env.model.DataModel;
 import env.model.WorldModel;
 import level.Color;
 import level.Location;
 import srch.Node;
+import srch.interfaces.Getter;
 import srch.nodes.ClosestNode;
 
 public class AgentSearch extends ClosestSearch {
@@ -31,7 +31,7 @@ public class AgentSearch extends ClosestSearch {
 		{
 			return false;
 		}			
-		return color.equals(((ClosestNode) n).getModel().getColor(n.getLocation()));
+		return color.equals(Getter.getModel(n).getColor(n.getLocation()));
 	}
 
 }

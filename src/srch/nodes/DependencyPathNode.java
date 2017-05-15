@@ -11,11 +11,12 @@ import level.Direction;
 import level.Location;
 import level.cell.Agent;
 import srch.Node;
+import srch.interfaces.IDependencyNode;
 import srch.interfaces.IDirectionNode;
 import srch.interfaces.IModelNode;
 import util.ModelUtil;
 
-public class DependencyPathNode extends StepNode implements IDirectionNode, IModelNode {
+public class DependencyPathNode extends StepNode implements IDirectionNode, IDependencyNode, IModelNode {
 
 	private static Planner planner = Planner.getInstance();
 	
@@ -69,7 +70,11 @@ public class DependencyPathNode extends StepNode implements IDirectionNode, IMod
 		return direction;
 	}
 	
-	public int getDependencies() {
+	public int getDependency() {
+		return dependency;
+	}
+	
+	public int getDependencyCount() {
 		return dependencyCount;
 	}
 	

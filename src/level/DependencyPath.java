@@ -50,7 +50,7 @@ public class DependencyPath {
 //		else return dependencies.entrySet().stream().anyMatch(e -> isDependency(agent, e));
 	}
 	
-	private boolean isDependency(Agent agent, Entry<Location, Integer> entry)
+	protected boolean isDependency(Agent agent, Entry<Location, Integer> entry)
 	{
 		CellModel model = Planner.getInstance().getModel(entry.getValue());
 		

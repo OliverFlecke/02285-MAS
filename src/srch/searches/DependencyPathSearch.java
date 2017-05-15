@@ -39,7 +39,7 @@ public class DependencyPathSearch extends Search implements Heuristic {
 		
 		h += n.getLocation().distance(goalLocation);
 		
-		h += ((DependencyPathNode) n).getDependencies() * 10;
+		h += ((DependencyPathNode) n).getDependencyCount() * 10;
 		
 		h += ((DependencyPathNode) n).getModel().isSolved(n.getLocation()) ? 10 : 0;
 		

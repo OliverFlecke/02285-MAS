@@ -3,7 +3,7 @@ package srch.searches.closest;
 import srch.Node;
 import srch.Search;
 import srch.Strategy.BFS;
-import srch.nodes.ClosestNode;
+import srch.interfaces.Getter;
 
 public abstract class ClosestSearch extends Search {
 	
@@ -18,6 +18,6 @@ public abstract class ClosestSearch extends Search {
 
 	@Override
 	public boolean isGoalState(Node n) {
-		return ((ClosestNode) n).getModel().hasObject(object, n.getLocation());
+		return Getter.getModel(n).hasObject(object, n.getLocation());
 	}
 }

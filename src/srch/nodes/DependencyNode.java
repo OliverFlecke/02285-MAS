@@ -9,10 +9,11 @@ import env.model.CellModel;
 import level.Direction;
 import level.Location;
 import srch.Node;
+import srch.interfaces.IDependencyNode;
 import srch.interfaces.IDirectionNode;
 import srch.interfaces.IModelNode;
 
-public class DependencyNode extends Node implements IDirectionNode, IModelNode {
+public class DependencyNode extends Node implements IDirectionNode, IModelNode, IDependencyNode {
 
 	private Direction direction;
 	private int dependency;
@@ -38,7 +39,6 @@ public class DependencyNode extends Node implements IDirectionNode, IModelNode {
 		this.direction			= dir;
 		this.dependency 		= n.dependency;
 		this.dependencyCount 	= n.dependencyCount;
-		this.dependencyCount 	= n.dependencyCount;
 		this.model				= n.model;
 		
 		if (model.hasObject(dependency, loc)) 
@@ -51,13 +51,19 @@ public class DependencyNode extends Node implements IDirectionNode, IModelNode {
 	public Direction getDirection() {
 		return direction;
 	}
-	
-	public int getDependencies() {
-		return dependencyCount;
-	}
-	
+
+	@Override
 	public CellModel getModel() {
 		return model;
+	}
+	
+	public int getDependency() {
+		return dependency;
+	}
+
+	@Override
+	public int getDependencyCount() {
+		return dependencyCount;
 	}
 
 	@Override
@@ -84,7 +90,7 @@ public class DependencyNode extends Node implements IDirectionNode, IModelNode {
 	@Override
 	public List<Location> extractPlan() 
 	{
-		if (this.getDependencies() == 0) return Collections.emptyList();
+		if (this.getDependencyCount() == 0) return Collections.emptyList();
 		
 		LinkedList<Location> plan = new LinkedList<Location>();
 		

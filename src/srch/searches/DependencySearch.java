@@ -46,7 +46,7 @@ public class DependencySearch extends Search implements Heuristic {
 		
 		h += n.getLocation().distance(goalLocation);
 		
-		h += ((DependencyNode) n).getDependencies() * 10;
+		h += ((DependencyNode) n).getDependencyCount() * 10;
 		
 		return h; 
 	}

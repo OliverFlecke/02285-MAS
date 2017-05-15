@@ -62,7 +62,7 @@ public abstract class Node {
 		return this.include;
 	}
 	
-	public int g() {
+	public int getG() {
 		return this.g;
 	}
 

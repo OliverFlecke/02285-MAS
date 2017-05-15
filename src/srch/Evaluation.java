@@ -21,7 +21,7 @@ public abstract class Evaluation implements Comparator<Node> {
 
 		@Override
 		public int f(Node n) {
-			return n.g() + heuristic.h(n);
+			return n.getG() + heuristic.h(n);
 		}
 
 		@Override
@@ -42,7 +42,7 @@ public abstract class Evaluation implements Comparator<Node> {
 
 		@Override
 		public int f(Node n) {
-			return n.g() + W * heuristic.h(n);
+			return n.getG() + W * heuristic.h(n);
 		}
 
 		@Override

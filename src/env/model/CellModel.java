@@ -3,7 +3,6 @@ package env.model;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.logging.Logger;
-import java.util.stream.Collectors;
 
 import level.Location;
 import level.cell.Agent;
