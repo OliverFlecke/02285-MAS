@@ -8,9 +8,7 @@ import env.model.DataModel;
 import env.model.SimulationModel;
 import env.planner.Planner;
 import level.Location;
-import level.action.Action;
-import level.action.PullAction;
-import level.action.PushAction;
+import level.action.*;
 import level.cell.Cell;
 import srch.Evaluation.*;
 import srch.Heuristic;
@@ -103,19 +101,19 @@ public class PathfindingSearch extends Search implements Heuristic {
 //			goalDist += 5;
 		}
 		
-		goalDist += 10 * model.countUnsolvedGoals();
+		goalDist += model.countUnsolvedGoals();
 //		goalDist += goalLocation.distance(loc);
 //		goalDist += n.getLocation().distance(loc);
 		
 		// Agents should prefer not to move boxes
-//		if (model.isTrackedAgent())
-//		{
-//			if (node.getAction() instanceof PullAction ||
-//				node.getAction() instanceof PushAction)
-//			{
-//				goalDist += 3;
-//			}
-//		}
+		if (model.isTrackedAgent())
+		{
+			if (node.getAction() instanceof PullAction ||
+				node.getAction() instanceof PushAction)
+			{
+				goalDist += 3;
+			}
+		}
 
 		return goalDist; 
 	}
