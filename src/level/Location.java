@@ -49,6 +49,15 @@ public class Location {
 	    }        
 	    throw new IllegalArgumentException("Not a valid direction");
 	}
+	
+	public Direction inDirection(Location other)
+	{
+		if 		(this.x < other.x) return Direction.EAST;
+		else if (this.x > other.x) return Direction.WEST;
+		else if (this.y < other.y) return Direction.SOUTH;
+		else if (this.y > other.y) return Direction.NORTH;
+		else return null;
+	}
 
 	@Override
 	public int hashCode() {
