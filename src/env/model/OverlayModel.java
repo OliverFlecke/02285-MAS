@@ -1,12 +1,13 @@
 package env.model;
 
-import java.util.List;
+import java.util.Collection;
 
 import level.Location;
 
 public class OverlayModel extends DataModel {
 	
 	private int overlayObject;
+	private Collection<Location> agentToBoxPath;
 	
 	public OverlayModel()
 	{
@@ -29,14 +30,9 @@ public class OverlayModel extends DataModel {
 		overlayObject = obj;
 	}
 	
-	public OverlayModel(OverlayModel overlay, List<Location> overlayLocations)
+	public OverlayModel(OverlayModel overlay)
 	{
 		this(IN_USE, overlay);
-		
-		for (Location loc : overlayLocations)
-		{
-			add(overlayObject, loc);
-		}
 	}
 
 	public OverlayModel(int obj, OverlayModel overlay) 
@@ -44,6 +40,30 @@ public class OverlayModel extends DataModel {
 		this(obj);
 
 		deepAddData(overlay);
+	}
+	
+	public void addOverlay(Collection<Location> path)
+	{
+		path.stream().forEach(l -> add(overlayObject, l));
+		
+		if (agentToBoxPath != null) path.stream().forEach(l -> agentToBoxPath.remove(l));
+	}
+	
+	private void removeOverlay(Collection<Location> path)
+	{
+		if (path != null) path.stream().forEach(l -> remove(overlayObject, l));
+	}
+	
+	public void addAgentToBoxOverlay(Collection<Location> path)
+	{		
+		addOverlay(path);
+		agentToBoxPath = path;
+	}
+	
+	public void removeAgentToBoxOverlay()
+	{
+		removeOverlay(agentToBoxPath);
+		agentToBoxPath = null;
 	}
 
 	@Override

@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
 
+import env.model.CellModel;
 import env.model.DataModel;
 import env.planner.Planner;
 import level.cell.Agent;
@@ -40,9 +41,26 @@ public class DependencyPath {
 		return path;
 	}
 	
-	public boolean hasDependencies()
+	public boolean hasDependencies(Agent agent)
 	{
 		return !dependencies.isEmpty();
+//		if (dependencies.isEmpty()) 		return false;
+//		else if (dependencies.size() == 1) 	return isDependency(agent, dependencies.entrySet().stream().findAny().get());
+//		else 								return true;
+//		else return dependencies.entrySet().stream().anyMatch(e -> isDependency(agent, e));
+	}
+	
+	private boolean isDependency(Agent agent, Entry<Location, Integer> entry)
+	{
+		CellModel model = Planner.getInstance().getModel(entry.getValue());
+		
+		if (model.hasObject(DataModel.BOX, entry.getKey()))
+		{
+			Box box = model.getBox(entry.getKey());
+			
+			return !box.getColor().equals(agent.getColor());
+		}
+		return true;
 	}
 	
 	public int countDependencies() 
@@ -55,7 +73,7 @@ public class DependencyPath {
 //		return dependencies;
 //	}
 	
-	public Entry<Location, Integer> getDependency(Location loc)
+	public Entry<Location, Integer> getDependency(Agent agent, Location loc)
 	{
 		Planner planner =  Planner.getInstance();
 		

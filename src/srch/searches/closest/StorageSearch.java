@@ -16,17 +16,20 @@ public class StorageSearch extends Search implements Heuristic {
 	
 	public static Location search(Location from, Agent agent, OverlayModel overlay, CellModel model) 
 	{
-		return new StorageSearch(overlay).search(new StorageNode(from, agent, model));
+		return new StorageSearch(agent.getLocation(), from, overlay).search(new StorageNode(from, agent, model));
 	}
 	
+	private Location agent, tracked;
 	private OverlayModel overlay;
 	
-	public StorageSearch(OverlayModel overlay)
+	public StorageSearch(Location agent, Location tracked, OverlayModel overlay)
 	{
 		super();
 		
 		this.setStrategy(new BestFirst(new AStar(this)));
 		
+		this.agent 	 = agent;
+		this.tracked = tracked;
 		this.overlay = overlay;
 	}
 

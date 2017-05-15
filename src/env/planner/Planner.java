@@ -3,6 +3,7 @@ package env.planner;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -20,6 +21,7 @@ import level.cell.Box;
 import level.cell.Cell;
 import level.cell.Goal;
 import logging.LoggerFactory;
+import srch.searches.DistanceSearch;
 import srch.searches.closest.AgentSearch;
 import srch.searches.closest.StorageSearch;
 
@@ -108,11 +110,18 @@ public class Planner {
 		int				step			= getInitialStep(agent);
 		CellModel 		model 			= getModel(step);
 		DependencyPath 	dependencyPath 	= DependencyPath.getDependencyPath(agent, box, step);
-		OverlayModel	overlay			= new OverlayModel(previousOverlay, dependencyPath.getPath());
+		OverlayModel	overlay			= new OverlayModel(previousOverlay);
 		
-		if (dependencyPath.hasDependencies())
+		overlay.addAgentToBoxOverlay(dependencyPath.getPath());
+		
+		if (box.getGoal() != null)
 		{
-			Entry<Location, Integer> dependency = dependencyPath.getDependency(agent.getLocation());
+			overlay.addOverlay(DistanceSearch.search(box.getLocation(), box.getGoal().getLocation()).keySet());			
+		}
+		
+		if (dependencyPath.hasDependencies(agent))
+		{
+			Entry<Location, Integer> dependency = dependencyPath.getDependency(agent, agent.getLocation());
 			
 			if (step < dependency.getValue()) 
 			{
@@ -138,11 +147,13 @@ public class Planner {
 		int				step			= getInitialStep(agent);
 		CellModel 		model 			= getModel(step);
 		DependencyPath 	dependencyPath 	= DependencyPath.getDependencyPath(agent, tracked, loc, step);
-		OverlayModel	overlay			= new OverlayModel(previousOverlay, dependencyPath.getPath());
+		OverlayModel	overlay			= new OverlayModel(previousOverlay);
 		
-		if (dependencyPath.hasDependencies())
+		overlay.addOverlay(dependencyPath.getPath());
+		
+		if (dependencyPath.hasDependencies(agent))
 		{
-			Entry<Location, Integer> dependency = dependencyPath.getDependency(tracked.getLocation());
+			Entry<Location, Integer> dependency = dependencyPath.getDependency(agent, tracked.getLocation());
 			
 			if (step < dependency.getValue()) 
 			{
@@ -192,6 +203,8 @@ public class Planner {
 		
 		planAgentToBox(agent, box, overlay);
 		
+		if (toHelp.equals(agent)) overlay.removeAgentToBoxOverlay();
+		
 		return solveObjectToLocationDependency(toHelp, agent, box, overlay);
 	}
 	
@@ -206,7 +219,7 @@ public class Planner {
 		
 		CellModel model = getModel(agentStep);
 		
-		Location storage = StorageSearch.search(agent.getLocation(), agent, overlay, model);
+		Location storage = StorageSearch.search(tracked.getLocation(), agent, overlay, model);
 		
 		if (storage == null)
 		{
