@@ -1,5 +1,6 @@
 package mas;
 
+import env.ServerEnv;
 import env.WorldEnv;
 
 public class Runner {
@@ -18,7 +19,8 @@ public class Runner {
 		System.err.println("Planning time: " + duration + " \tLength of solution: " + env.planner.getLastStep());
 		System.err.println("----------------------------------------------------------------------------------");
 		
-		env.executePlanner();
+		if (!ServerEnv.TEST)
+			env.executePlanner();
 		
 	}
 }

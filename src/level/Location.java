@@ -47,7 +47,7 @@ public class Location {
 	    case WEST	: return new Location(this.x - 1, this.y);
 	    case EAST	: return new Location(this.x + 1, this.y);
 	    }        
-	    return null; // Could return l
+	    throw new IllegalArgumentException("Not a valid direction");
 	}
 
 	@Override
