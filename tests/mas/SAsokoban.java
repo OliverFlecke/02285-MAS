@@ -2,7 +2,7 @@ package mas;
 
 import org.junit.Test;
 
-public class SAsokoban {
+public class SAsokoban extends Tester {
 
     private final static String PATH = "single_agent\\sokoban\\";
 

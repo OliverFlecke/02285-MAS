@@ -5,7 +5,7 @@ import org.junit.Test;
 /**
  * All the tests in topfolder, easy, short_solution, and quick_solution 
  */
-public class MAEasy {
+public class MAEasy extends Tester {
 
 		private final static String PATH = "multi_agent\\easy\\";
 		

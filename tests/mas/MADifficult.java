@@ -2,7 +2,7 @@ package mas;
 
 import org.junit.Test;
 
-public class MADifficult {
+public class MADifficult extends Tester {
 
     private final static String PATH      = "multi_agent\\";
     private final static String DIFFICULT = "difficult\\";

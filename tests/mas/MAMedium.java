@@ -2,7 +2,7 @@ package mas;
 
 import org.junit.Test;
 
-public class MAMedium {
+public class MAMedium extends Tester {
 
 		private static final String PATH 	= "multi_agent\\";
 		private static final String SHORT 	= "short_solution\\";

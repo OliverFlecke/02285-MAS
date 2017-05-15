@@ -2,7 +2,7 @@ package mas;
 
 import org.junit.Test;
 
-public class SAComp {
+public class SAComp extends Tester {
 
 	private static final String PATH = "compF16levels\\";
 	

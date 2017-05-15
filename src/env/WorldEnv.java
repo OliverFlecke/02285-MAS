@@ -69,12 +69,10 @@ public class WorldEnv extends ServerEnv {
 		}
     }
  
-    @Override
     protected void updateNumberOfAgents() {
 		setNbAgs(model.getNbAgs());
     }
-	
-	@Override
+
 	protected int getAgentIdByName(String name) {
 		for (Agent agent : model.getAgents())
 			if (agent.getName().equals(name))

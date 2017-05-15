@@ -59,26 +59,6 @@ public class ServerEnv {
 		jointAction = new String[nbAgs];
 	}
 	
-	// Override
-	protected void updateNumberOfAgents() {
-		throw new UnsupportedOperationException("Not implemented");
-	}
-	
-	// Override
-	protected void updateAgsPercept() {
-		throw new UnsupportedOperationException("Not implemented");
-	}
-	
-	// Override
-	protected int getAgentIdByName(String name) {
-		throw new UnsupportedOperationException("Not implemented");
-	}
-	
-	// Override
-	protected String toString(Structure action) {
-		throw new UnsupportedOperationException("Not implemented");
-	}
-	
 	public void scheduleAction(final Action action, final int agentId) 
 	{
 		synchronized (requests)

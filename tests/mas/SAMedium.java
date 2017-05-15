@@ -2,7 +2,7 @@ package mas;
 
 import org.junit.Test;
 
-public class SAMedium {
+public class SAMedium extends Tester {
 
 	private final static String PATH = "single_agent\\medium\\";
 	
@@ -16,4 +16,5 @@ public class SAMedium {
     @Test public void SATalos()		{ Tester.testLevel(PATH + "SATalos"); }
     @Test public void SATeamNoOp()	{ Tester.testLevel(PATH + "SATeamNoOp"); }
     @Test public void SAwallE()		{ Tester.testLevel(PATH + "SAwallE"); }
+    
 }
