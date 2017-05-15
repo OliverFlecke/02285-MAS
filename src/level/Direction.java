@@ -20,7 +20,7 @@ public enum Direction {
 		case WEST	: return "W";
 		case EAST	: return "E";
 		}
-		throw new UnsupportedOperationException("Invalid direction");
+		throw new IllegalArgumentException("Invalid direction");
 	}
 
 	public static boolean isOpposite(Direction d1, Direction d2) 
@@ -37,6 +37,6 @@ public enum Direction {
 		case EAST:  return WEST;
 		case WEST:  return EAST;
 		}
-		throw new UnsupportedOperationException("Invalid direction");
+		throw new IllegalArgumentException("Invalid direction");
 	}
 }
