@@ -6,6 +6,8 @@ import java.io.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import org.junit.After;
+import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import logging.LoggerFactory;
 
@@ -19,6 +21,16 @@ public class Tester {
 	public static void before()
 	{
 		logger.setLevel(Level.WARNING);
+	}
+	
+	@AfterClass
+	public static void after()
+	{
+		try {
+			Runtime.getRuntime().exec("taskkill /F /IM java.exe");
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	public static void testLevel(String level)
