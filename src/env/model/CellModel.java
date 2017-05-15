@@ -106,6 +106,15 @@ public class CellModel extends ActionModel {
 		return box.getGoal() == null ? false : box.getLocation().equals(box.getGoal().getLocation());
 	}
 	
+	public boolean isSolved(Location l) 
+	{
+		if (hasObject(BOX, l))
+		{
+			return isSolved(getBox(l));
+		}
+		return false;
+	}
+	
 	public void move(int obj, Location fr, Location to)
 	{
 		if (fr.equals(to)) return;

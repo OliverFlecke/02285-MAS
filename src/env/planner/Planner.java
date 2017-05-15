@@ -120,7 +120,7 @@ public class Planner {
 				return planAgentToBox(agent, box, previousOverlay);
 			}
 			
-			int newStep = solveDependency(dependency.getKey(), overlay, step);
+			int newStep = solveDependency(agent, dependency.getKey(), overlay, model);
 			
 			if (newStep > getInitialStep(agent)) 
 			{
@@ -150,7 +150,7 @@ public class Planner {
 				return planObjectToLocation(agent, tracked, loc, previousOverlay);
 			}
 			
-			int newStep = solveDependency(dependency.getKey(), overlay, step);
+			int newStep = solveDependency(agent, dependency.getKey(), overlay, model);
 			
 			if (newStep > getInitialStep(agent)) 
 			{
@@ -163,45 +163,43 @@ public class Planner {
 		return executor.getObjectToLocation(agent, tracked, loc);
 	}
 	
-	private int solveDependency(Location dependency, OverlayModel overlay, int step)
-	{
-		CellModel model = getModel(step);
-		
+	private int solveDependency(Agent toHelp, Location dependency, OverlayModel overlay, CellModel model)
+	{		
 		if (model.hasObject(DataModel.BOX, dependency))
 		{
 			Box 	box 	= model.getBox(dependency);			
 			Agent 	agent 	= model.getAgent(AgentSearch.search(box.getColor(), box.getLocation(), model));
 			
-			return solveAgentToBoxDependency(agent, box, overlay, step);
+			return solveAgentToBoxDependency(toHelp, agent, box, overlay);
 		}
 		else if (model.hasObject(DataModel.AGENT, dependency))
 		{
 			Agent	agent 	= model.getAgent(dependency);
 			
-			return solveObjectToLocationDependency(agent, agent, overlay, step);
+			return solveObjectToLocationDependency(toHelp, agent, agent, overlay);
 		}		
 		throw new UnsupportedOperationException("Attempt to solve unknown dependency");
 	}
 
-	private int solveAgentToBoxDependency(Agent agent, Box box, OverlayModel overlay, int step) 
+	private int solveAgentToBoxDependency(Agent toHelp, Agent agent, Box box, OverlayModel overlay) 
 	{
 		int agentStep = getInitialStep(agent);
 		
-		if (step < agentStep)
+		if (agentStep > getInitialStep(toHelp))
 		{
 			return agentStep;
 		}
 		
 		planAgentToBox(agent, box, overlay);
 		
-		return solveObjectToLocationDependency(agent, box, overlay, agentStep);
+		return solveObjectToLocationDependency(toHelp, agent, box, overlay);
 	}
 	
-	private int solveObjectToLocationDependency(Agent agent, Cell tracked, OverlayModel overlay, int step) 
+	private int solveObjectToLocationDependency(Agent toHelp, Agent agent, Cell tracked, OverlayModel overlay) 
 	{
 		int agentStep = getInitialStep(agent);
 		
-		if (step < agentStep)
+		if (agentStep > getInitialStep(toHelp))
 		{
 			return agentStep;
 		}
@@ -209,6 +207,12 @@ public class Planner {
 		CellModel model = getModel(agentStep);
 		
 		Location storage = StorageSearch.search(agent.getLocation(), agent, overlay, model);
+		
+		if (storage == null)
+		{
+			logger.warning("Could not find storage");
+			throw new UnsupportedOperationException("No storage available");
+		}
 		
 		planObjectToLocation(agent, tracked, storage, overlay);
 		

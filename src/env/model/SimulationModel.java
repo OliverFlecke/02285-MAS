@@ -64,8 +64,7 @@ public class SimulationModel extends ActionModel {
 		if (tracked.getLocation().equals(fr))
 		{
 			tracked.setLocation(to);
-		}
-		
+		}		
 		super.move(obj, fr, to);
 	}
     
