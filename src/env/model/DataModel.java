@@ -65,6 +65,23 @@ public class DataModel {
 		}
 		return true;
 	}
+	
+	public int isFreeAdjacent(int agNumber, Location l) 
+	{
+		int count = 0;
+		
+		for (Direction dir : Direction.EVERY)
+		{
+			Location newLoc = l.newLocation(dir);
+			
+			if (isFree(newLoc) || hasObject(agNumber, DataModel.BOX_MASK, newLoc))
+			{
+				count++;
+			}
+		}
+		
+		return count;
+	}
     
     public boolean inGrid(int x, int y) {
         return y >= 0 && y < height && x >= 0 && x < width;

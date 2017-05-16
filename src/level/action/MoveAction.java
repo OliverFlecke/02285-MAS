@@ -21,12 +21,12 @@ public class MoveAction extends Action {
 	@Override
 	public String toString()
 	{
-		return "Move(" + Direction.toString(this.direction) + ")";
+		return "Move(" + this.direction.toString() + ")";
 	}
 	
 	@Override
 	public Action getOpposite() {
-		return new MoveAction(Direction.getOpposite(this.getDirection()), this.getAgentLocation().newLocation(this.getDirection()));
+		return new MoveAction(this.getDirection().getOpposite(), this.getAgentLocation().newLocation(this.getDirection()));
 	}
 	
 	@Override

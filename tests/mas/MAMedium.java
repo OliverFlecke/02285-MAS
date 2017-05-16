@@ -12,6 +12,6 @@ public class MAMedium extends Tester {
 		@Test public void MATeamNoOp() 		{ Tester.testLevel(PATH + SHORT + "MATeamNoOp"); }
 		@Test public void FOMAFOAM() 		{ Tester.testLevel(PATH + MEDIUM + "FOMAFOAM"); }
 		@Test public void MAAgentSharp()  	{ Tester.testLevel(PATH + MEDIUM + "MAAgentSharp"); }
-		@Test public void MADCN()			{ Tester.testLevel(PATH + MEDIUM + "MADCN"); }
+		@Test public void MADCN()			{ Tester.testLevel(PATH + MEDIUM + "MADCN", 20); }
 		@Test public void MAsampdoria()		{ Tester.testLevel(PATH + MEDIUM + "MAsampdoria"); }
 }

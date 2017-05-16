@@ -28,14 +28,14 @@ public class PullAction extends Action {
 	@Override 
 	public String toString()
 	{
-		return "Pull(" + Direction.toString(this.agentDir) + ","
-				+ Direction.toString(this.boxDir) + ")";
+		return "Pull(" + this.agentDir.toString() + ","
+				+ this.boxDir.toString() + ")";
 	}
 	
 	@Override
 	public Action getOpposite()
 	{
-		return new PushAction(Direction.getOpposite(this.getAgentDir()), this.getBoxDir(), 
+		return new PushAction(this.getAgentDir().getOpposite(), this.getBoxDir(), 
 				this.getAgentLocation().newLocation(this.getAgentDir()));
 	}
 	

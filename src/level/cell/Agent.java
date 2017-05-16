@@ -1,17 +1,26 @@
 package level.cell;
 
-import level.Location;
+import java.util.LinkedList;
+
 import level.Color;
+import level.Location;
 
 public class Agent extends Colored {
 
 	private int number;
+	private LinkedList<Goal> goals;
 	
-	public Agent(Location location, char letter, Color color)
+	public Agent(Location location, char letter, Color color, LinkedList<Goal> goals)
 	{
 		super(location, letter, color);
 		
 		this.number = Character.getNumericValue(letter);
+		this.goals = goals;
+	}
+	
+	public Agent(Location location, char letter, Color color)
+	{
+		this(location, letter, color, new LinkedList<Goal>());
 	}
 	
 	public Agent(int x, int y, char letter, Color color)
@@ -21,12 +30,27 @@ public class Agent extends Colored {
 	
 	public Agent(Agent agent)
 	{
-		this(agent.getLocation(), agent.getLetter(), agent.getColor());
+		this(new Location(agent.getLocation()), agent.getLetter(), agent.getColor(), agent.goals);
 	}
 	
 	public int getNumber() 
 	{
 		return number;
+	}
+	
+	public void addGoal(Goal goal) 
+	{
+		goals.add(goal);
+	}
+	
+	public void removeGoal(Goal goal)
+	{
+		goals.remove(goal);
+	}
+	
+	public Goal peekFirst()
+	{
+		return goals.peekFirst();
 	}
 	
 	/**

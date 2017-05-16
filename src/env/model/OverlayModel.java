@@ -1,20 +1,19 @@
 package env.model;
 
 import java.util.Collection;
+import java.util.Stack;
 
 import level.Location;
 
 public class OverlayModel extends DataModel {
 	
-	private int overlayObject;
-	private Collection<Location> agentToBoxPath;
+	private static final int WALL = 1;
+	
+	private int overlayObject = 1;
+	
+	private Stack<Collection<Location>> overlayStack;
 	
 	public OverlayModel()
-	{
-		this(IN_USE);
-	}
-	
-	public OverlayModel(int obj)
 	{
 		super(WorldModel.getInstance());		
 
@@ -23,55 +22,48 @@ public class OverlayModel extends DataModel {
 		{
 			for (int y = 0; y < height; y++)
 			{
-				if (isFree(WALL, x, y)) data[x][y] = 0;
+				if (data[x][y] == DataModel.WALL) data[x][y] = WALL;
+				else							  data[x][y] = 0;
 			}
-		}
-		
-		overlayObject = obj;
+		}		
+		overlayStack = new Stack<>();
 	}
 	
 	public OverlayModel(OverlayModel overlay)
 	{
-		this(IN_USE, overlay);
-	}
-
-	public OverlayModel(int obj, OverlayModel overlay) 
-	{
-		this(obj);
-
+		this();
+		
 		deepAddData(overlay);
+		
+		for (Collection<Location> path : overlay.overlayStack)
+		{
+			addOverlay(path);
+		}
 	}
 	
 	public void addOverlay(Collection<Location> path)
-	{
+	{		
+		overlayObject <<= 1;
+		
 		path.stream().forEach(l -> add(overlayObject, l));
 		
-		if (agentToBoxPath != null) path.stream().forEach(l -> agentToBoxPath.remove(l));
+		overlayStack.push(path);
 	}
 	
-	private void removeOverlay(Collection<Location> path)
+	public void removeOverlay()
 	{
-		if (path != null) path.stream().forEach(l -> remove(overlayObject, l));
-	}
-	
-	public void addAgentToBoxOverlay(Collection<Location> path)
-	{		
-		addOverlay(path);
-		agentToBoxPath = path;
-	}
-	
-	public void removeAgentToBoxOverlay()
-	{
-		removeOverlay(agentToBoxPath);
-		agentToBoxPath = null;
+		if (!overlayStack.isEmpty())
+		{			
+			overlayStack.pop().stream().forEach(l -> remove(overlayObject, l));
+			
+			overlayObject >>= 1;
+		}
 	}
 
 	@Override
 	public boolean isFree(int x, int y) {
-		return super.isFree(overlayObject, x, y);
+		return data[x][y] == 0;
 	}
-	
-	
 	
 	@Override
 	public String toString() 
@@ -83,9 +75,9 @@ public class OverlayModel extends DataModel {
 		{
 			for (int x = 0; x < width; x++) 
 			{
-				if (hasObject(overlayObject, x, y)) str.append('#');
-				else if (hasObject(WALL, x, y)) 	str.append('+');
-				else 								str.append(' ');
+					 if (data[x][y] == 0)	str.append(' ');
+				else if (data[x][y] == 1) 	str.append('+');
+				else						str.append('#');
 			}
 			str.append("\n");
 		}

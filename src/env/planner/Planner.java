@@ -97,6 +97,9 @@ public class Planner {
 		Box	  		box		= goal.getBox();
 		Agent 		agent 	= box.getAgent();
 		Location 	loc 	= goal.getLocation();
+		
+		// Agent will peek at the next goal to solve
+		agent.removeGoal(goal);
 
 		planAgentToBox(agent, box, new OverlayModel());
 		planObjectToLocation(agent, box, loc, new OverlayModel());
@@ -110,13 +113,13 @@ public class Planner {
 		CellModel 		model 			= getModel(step);
 		DependencyPath 	dependencyPath 	= DependencyPath.getDependencyPath(agent, box, step);
 		OverlayModel	overlay			= new OverlayModel(previousOverlay);
-		
-		overlay.addAgentToBoxOverlay(dependencyPath.getPath());
-		
+
+		// Add overlay for getting box to goal
 		if (box.getGoal() != null)
 		{
 			overlay.addOverlay(DistanceSearch.search(box.getLocation(), box.getGoal().getLocation()).keySet());			
-		}
+		}		
+		overlay.addOverlay(dependencyPath.getPath());
 		
 		if (dependencyPath.hasDependencies(agent))
 		{
@@ -138,7 +141,16 @@ public class Planner {
 			}			
 			return planAgentToBox(agent, box, previousOverlay);
 		}
-		return executor.getAgentToBox(agent, box);
+		
+		boolean result = executor.getAgentToBox(agent, box);
+		
+		if (box.getGoal() != null)
+		{
+			overlay.removeOverlay();			
+		}
+		overlay.removeOverlay();
+		
+		return result;
 	}
 
 	private boolean planObjectToLocation(Agent agent, Cell tracked, Location loc, OverlayModel previousOverlay) 
@@ -170,7 +182,12 @@ public class Planner {
 			}
 			return planObjectToLocation(agent, tracked, loc, previousOverlay);
 		}		
-		return executor.getObjectToLocation(agent, tracked, loc);
+		
+		boolean result = executor.getObjectToLocation(agent, tracked, loc);
+		
+		overlay.removeOverlay();
+		
+		return result;
 	}
 	
 	private int solveDependency(Agent toHelp, Location dependency, OverlayModel overlay, CellModel model)
@@ -202,7 +219,7 @@ public class Planner {
 		
 		planAgentToBox(agent, box, overlay);
 		
-		if (toHelp.equals(agent)) overlay.removeAgentToBoxOverlay();
+		if (toHelp.equals(agent)) overlay.removeOverlay();
 		
 		return solveObjectToLocationDependency(toHelp, agent, box, overlay);
 	}
@@ -218,7 +235,17 @@ public class Planner {
 		
 		CellModel model = getModel(agentStep);
 		
-		Location storage = StorageSearch.search(tracked.getLocation(), agent, overlay, model);
+		Location storage = null;
+		
+		if (toHelp.equals(agent))
+		{
+			storage = StorageSearch.search(tracked.getLocation(), agent, true, overlay, model);
+		}
+
+		if (storage == null)
+		{
+			storage = StorageSearch.search(tracked.getLocation(), agent, false, overlay, model);
+		}		
 		
 		if (storage == null)
 		{
