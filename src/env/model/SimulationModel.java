@@ -1,7 +1,6 @@
 package env.model;
 
 import env.planner.Planner;
-import level.Direction;
 import level.Location;
 import level.action.Action;
 import level.action.MoveAction;
@@ -107,14 +106,8 @@ public class SimulationModel extends ActionModel {
 	}
 
     public synchronized boolean canMove(MoveAction action) 
-    {
-    	Direction 	dir 	= action.getDirection();
-    	
-    	Location 	agLoc 	= action.getAgentLocation();
-        
-        if (agLoc == null) return false;        
-        
-        Location nAgLoc = agLoc.newLocation(dir);
+    {        
+        Location nAgLoc = action.getNewAgentLocation();
         
         if (nAgLoc == null) return false;
         
@@ -130,19 +123,12 @@ public class SimulationModel extends ActionModel {
     }	
     
     public boolean canPush(PushAction action)
-    {
-    	Direction 	dir1 	= action.getAgentDir();
-    	Direction 	dir2 	= action.getBoxDir();
-    	
+    {    	
     	Location 	agLoc 	= action.getAgentLocation();
-        
-        if (agLoc == null) return false;
         
         int agColor = getMasked(COLOR_MASK, agLoc);
         
-    	Location boxLoc = agLoc.newLocation(dir1);
-        
-        if (boxLoc == null) return false;
+    	Location boxLoc = action.getBoxLocation();
     	
     	if (isFree(BOX, boxLoc)) return false;
         
@@ -150,9 +136,7 @@ public class SimulationModel extends ActionModel {
         
         if (agColor != boxColor) return false;
     	
-    	Location nBoxLoc = boxLoc.newLocation(dir2);
-        
-        if (nBoxLoc == null) return false;
+    	Location nBoxLoc = action.getNewBoxLocation();
         
         if (!isFree(nBoxLoc)) return false;
         
@@ -164,17 +148,14 @@ public class SimulationModel extends ActionModel {
     }
     
     public boolean canPull(PullAction action)
-    {
-    	Direction 	dir1 	= action.getAgentDir();
-    	Direction 	dir2 	= action.getBoxDir();
-    	
-    	Location 	agLoc 	= action.getAgentLocation();
+    {    	
+    	Location agLoc 	= action.getAgentLocation();
+    	Location nAgLoc = action.getNewAgentLocation();    
+    	Location boxLoc = action.getBoxLocation();    	
         
         if (agLoc == null) return false;
         
         int agColor = getMasked(COLOR_MASK, agLoc);
-        
-    	Location boxLoc = agLoc.newLocation(dir2);
     	
     	if (boxLoc == null) return false;
     	
@@ -183,8 +164,6 @@ public class SimulationModel extends ActionModel {
     	int boxColor = getMasked(COLOR_MASK, boxLoc);
     	
     	if (agColor != boxColor) return false;
-    	
-    	Location nAgLoc = agLoc.newLocation(dir1);
     	
     	if (nAgLoc == null) return false;
         

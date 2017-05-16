@@ -177,11 +177,14 @@ public class DataModel {
 	
 	public int[][] deepCopyData() 
 	{
-	    int[][] result = new int[data.length][];
-	    
-	    for (int row = 0; row < data.length; row++) 
+	    int[][] result = new int[data.length][data[0].length];
+
+	    for (int x = 0; x < data.length; x++) 
 	    {
-	        result[row] = data[row].clone();
+	    	for (int y = 0; y < data[0].length; y++)
+	    	{
+	    		result[x][y] = (data[x][y] & ~LOCKED);
+	    	}
 	    }
 	    return result;
 	}

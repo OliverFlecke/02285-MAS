@@ -9,14 +9,14 @@ public class MoveAction extends Action {
 	
 	public MoveAction(Direction direction, Location location)
 	{
-		super(ActionType.MOVE, location, location);
+		super(ActionType.MOVE, location, location.newLocation(direction));
 		this.direction = direction;
 	}
 	
-	public Direction getDirection() 
-	{
-		return direction;
-	}
+//	public Direction getDirection() 
+//	{
+//		return direction;
+//	}
 	
 	@Override
 	public String toString()
@@ -26,18 +26,12 @@ public class MoveAction extends Action {
 	
 	@Override
 	public Action getOpposite() {
-		return new MoveAction(this.getDirection().getOpposite(), this.getAgentLocation().newLocation(this.getDirection()));
+		return new MoveAction(this.direction.getOpposite(), this.getAgentLocation().newLocation(this.direction));
 	}
 	
 	@Override
 	public boolean isOpposite(Action action) {
-		return action instanceof MoveAction ? Direction.isOpposite(((MoveAction) action).getDirection(), this.getDirection()) : false;
-	}
-	
-	@Override
-	public Location getNewAgentLocation()
-	{
-		return Location.newLocation(this.direction, this.getAgentLocation());
+		return action instanceof MoveAction ? Direction.isOpposite(((MoveAction) action).direction, this.direction) : false;
 	}
 
 	@Override

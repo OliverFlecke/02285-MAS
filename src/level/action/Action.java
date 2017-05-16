@@ -16,14 +16,14 @@ public abstract class Action {
 	}
 	
 	private ActionType type;
-	private Location agentLocation;
-	private Location actionLocation;
+	private Location agentLocation,
+					 newAgentLocation;
 	
-	protected Action(ActionType type, Location agentLocation, Location actionLocation)
+	protected Action(ActionType type, Location agentLocation, Location newAgentLocation)
 	{
-		this.type = type;
-		this.agentLocation  = agentLocation;
-		this.actionLocation = actionLocation;
+		this.type 				= type;
+		this.agentLocation  	= agentLocation;
+		this.newAgentLocation 	= newAgentLocation;
 	}
 
 	public ActionType getType()
@@ -36,14 +36,9 @@ public abstract class Action {
 		return this.agentLocation;
 	}
 	
-	public Location getActionLocation()
+	public Location getNewAgentLocation()
 	{
-		return this.actionLocation;
-	}
-	
-	public Direction getActionDirection()
-	{
-		return this.getActionLocation().inDirection(this.getNewAgentLocation());
+		return this.newAgentLocation;
 	}
 	
 	public static List<Action> Every(Location agentLocation, Action agentAction)
@@ -73,8 +68,6 @@ public abstract class Action {
 	public abstract boolean isOpposite(Action action);
 	
 	public abstract Action getOpposite();
-	
-	public abstract Location getNewAgentLocation();
 	
 	@Override
 	public abstract String toString();

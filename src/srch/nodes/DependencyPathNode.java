@@ -112,6 +112,17 @@ public class DependencyPathNode extends StepNode implements IDirectionNode, IDep
 			path.addDependency(this.getLocation(), planner.getLastStep());
 		}
 		
+		if (this.getParent() != null)
+		{
+			for (int futureStep = this.getStep(); futureStep < planner.dataModelCount(); futureStep++)
+			{
+				if (hasDependency(planner.getModel(futureStep), this.getParent(), agNumber))
+				{
+					path.addDependency(this.getParent().getLocation(), futureStep);
+				}
+			}			
+		}
+		
 		for (StepNode n = this; n != null; n = (StepNode) n.getParent()) 
 		{			
 			Location loc = n.getLocation();
@@ -130,14 +141,6 @@ public class DependencyPathNode extends StepNode implements IDirectionNode, IDep
 				else if (planner.hasModel(step) && hasDependency(planner.getModel(step), n, agNumber)) 
 				{
 					path.addDependency(loc, step);
-				}
-			}
-			
-			for (int futureStep = n.getStep() + 2; futureStep < planner.dataModelCount(); futureStep++)
-			{
-				if (hasDependency(planner.getModel(futureStep), n, agNumber))
-				{
-					path.addDependency(loc, futureStep);
 				}
 			}
 		}

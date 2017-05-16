@@ -11,6 +11,8 @@ import env.model.DataModel;
 import env.model.FutureModel;
 import level.Location;
 import level.action.Action;
+import level.action.PullAction;
+import level.action.PushAction;
 import level.action.SkipAction;
 import level.cell.Agent;
 import level.cell.Box;
@@ -124,16 +126,24 @@ public class Executor {
 			}
 		}
 		
-		for (int modelStep = 1; modelStep < planner.dataModelCount(); modelStep++)
+		for (int modelStep = initialStep + 1; modelStep < planner.dataModelCount(); modelStep++)
 		{
 			DataModel model = planner.getModel(modelStep);
 			
-			for (int actionStep = modelStep - 1; actionStep < planner.getActions().get(agent.getNumber()).size() - 1; actionStep++)
+			for (int actionStep = modelStep - 1; actionStep < planner.getActions().get(agent.getNumber()).size(); actionStep++)
 			{
 				Action action = planner.getActions().get(agent.getNumber()).get(actionStep);
 						
-				model.add(DataModel.LOCKED, action.getAgentLocation());
-				model.add(DataModel.LOCKED, action.getActionLocation());
+				model.add(DataModel.LOCKED, action.getNewAgentLocation());
+				
+				if (action instanceof PullAction)
+				{
+					model.add(DataModel.LOCKED, ((PullAction) action).getNewBoxLocation());
+				}
+				else if (action instanceof PushAction)
+				{
+					model.add(DataModel.LOCKED, ((PushAction) action).getNewBoxLocation());
+				}
 			}
 		}
 		
@@ -147,7 +157,7 @@ public class Executor {
 			{
 				int objectType = entry.getKey() instanceof Agent ? DataModel.AGENT : DataModel.BOX;
 				
-				model.move(objectType, entry.getValue(), ((Cell) entry.getKey()).getLocation());
+				model.move(objectType, entry.getValue(), entry.getKey().getLocation());
 			}
 		}
 	}
