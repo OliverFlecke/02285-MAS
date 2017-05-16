@@ -52,7 +52,11 @@ public class Location {
 	
 	public Direction inDirection(Location other)
 	{
-		if 		(this.x < other.x) return Direction.EAST;
+			 if (this.x < other.x && this.y < other.y) return Direction.SOUTH_EAST;
+		else if (this.x < other.x && this.y > other.y) return Direction.NORTH_EAST;
+		else if (this.x > other.x && this.y < other.y) return Direction.SOUTH_WEST;
+		else if (this.x > other.x && this.y > other.y) return Direction.NORTH_WEST;
+		else if (this.x < other.x) return Direction.EAST;
 		else if (this.x > other.x) return Direction.WEST;
 		else if (this.y < other.y) return Direction.SOUTH;
 		else if (this.y > other.y) return Direction.NORTH;
