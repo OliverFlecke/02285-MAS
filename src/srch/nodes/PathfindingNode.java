@@ -25,7 +25,7 @@ public class PathfindingNode extends Node implements IActionNode, IModelNode {
 		super(agent.getLocation());
 
 		action 	= null;
-		model 	= new SimulationModel(initialStep + 1, agent, tracked);
+		model 	= new SimulationModel(initialStep, agent, tracked);
 	}
 
 	public PathfindingNode(Node parent, Action action, SimulationModel model) 
