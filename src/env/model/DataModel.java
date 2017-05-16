@@ -209,9 +209,9 @@ public class DataModel {
 		{
 			for (int x = 0; x < width; x++) 
 			{
-				if (hasObject(LOCKED, x, y))	 str.append('%');
-				else if (hasObject(AGENT, x, y)) str.append((char) ((data[x][y] & BOX_MASK) >> 24));
+				if (hasObject(AGENT, x, y)) 	 str.append((char) ((data[x][y] & BOX_MASK) >> 24));
 				else if (hasObject(BOX	, x, y)) str.append(Character.toUpperCase((char) ((data[x][y] & BOX_MASK) >> 24)));
+				else if (hasObject(LOCKED, x, y))str.append('%');
 				else if (hasObject(GOAL	, x, y)) str.append((char) ((data[x][y] & GOAL_MASK) >> 16));
 				else if (hasObject(WALL	, x, y)) str.append('+');
 				else str.append(' ');
