@@ -16,25 +16,27 @@ public class SimulationModel extends ActionModel {
 	
 	private int 	currentStep, 
 					nextStep;
+	private Agent	agent;
 	private Cell 	tracked;
 	private boolean isAgent;
 
-	public SimulationModel(int step, Cell tracked)
+	public SimulationModel(int step, Agent agent, Cell tracked)
 	{
-		this(planner.getModel(step), step, tracked);
+		this(planner.getModel(step), step, agent, tracked);
 	}
 	
-	public SimulationModel(DataModel model, int step, Cell tracked)
+	public SimulationModel(DataModel model, int step, Agent agent, Cell tracked)
 	{
-		this(model, step, tracked, tracked instanceof Agent);
+		this(model, step, agent, tracked, tracked instanceof Agent);
 	}
 
-	public SimulationModel(DataModel model, int step, Cell tracked, boolean isAgent)
+	public SimulationModel(DataModel model, int step, Agent agent, Cell tracked, boolean isAgent)
 	{
 		super(model);
 		
 		this.currentStep 	= step;
 		this.nextStep		= step + 1;
+		this.agent			= new Agent(agent);
 		this.tracked  		= new Cell(tracked);		
 		this.isAgent 		= isAgent;
 	}
@@ -54,6 +56,11 @@ public class SimulationModel extends ActionModel {
 		return isAgent;
 	}
 	
+	public Agent getAgent()
+	{
+		return agent;
+	}
+	
 	public int getStep()
 	{
 		return currentStep;
@@ -70,7 +77,7 @@ public class SimulationModel extends ActionModel {
     
     public SimulationModel run(Action action)
     {    	
-    	SimulationModel simulation = new SimulationModel(this, nextStep, tracked, isAgent);
+    	SimulationModel simulation = new SimulationModel(this, nextStep, agent, tracked, isAgent);
     	
     	for (Agent agent : WorldModel.getInstance().getAgents())
     	{

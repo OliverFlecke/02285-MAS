@@ -9,6 +9,7 @@ import level.Location;
 import level.action.Action;
 import level.action.Action.ActionType;
 import level.action.SkipAction;
+import level.cell.Agent;
 import level.cell.Cell;
 import srch.Node;
 import srch.interfaces.IActionNode;
@@ -19,12 +20,12 @@ public class PathfindingNode extends Node implements IActionNode, IModelNode {
 	private Action action;
 	private SimulationModel model;
 	
-	public PathfindingNode(Cell agent, Cell tracked, int initialStep) 
+	public PathfindingNode(Agent agent, Cell tracked, int initialStep) 
 	{
 		super(agent.getLocation());
 
 		action 	= null;
-		model 	= new SimulationModel(initialStep + 1, tracked);
+		model 	= new SimulationModel(initialStep + 1, agent, tracked);
 	}
 
 	public PathfindingNode(Node parent, Action action, SimulationModel model) 

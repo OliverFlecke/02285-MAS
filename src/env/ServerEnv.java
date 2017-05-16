@@ -44,10 +44,10 @@ public class ServerEnv {
 		if (TEST)
 		{
 			try {
-//				serverIn = new BufferedReader(new FileReader(new File("levels\\compF16levels\\SADangerBot.lvl")));
-//				serverIn = new BufferedReader(new FileReader(new File("levels\\multi_agent\\short_solution\\MARageQuit.lvl")));
-				serverIn = new BufferedReader(new FileReader(new File("levels\\single_agent\\medium\\SAAlpha.lvl")));
-//				serverIn = new BufferedReader(new FileReader(new File("levels\\SAtest.lvl")));
+//				serverIn = new BufferedReader(new FileReader(new File("competition_environment\\competition_levels\\MAOmnics.lvl")));
+				serverIn = new BufferedReader(new FileReader(new File("levels\\multi_agent\\medium\\MADCN.lvl")));
+//				serverIn = new BufferedReader(new FileReader(new File("levels\\single_agent\\easy\\SARageQuit.lvl")));
+//				serverIn = new BufferedReader(new FileReader(new File("levels\\MASimple5.lvl")));
 			} catch (FileNotFoundException e) {
 				e.printStackTrace();
 			}

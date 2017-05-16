@@ -7,9 +7,12 @@ import java.util.logging.Level;
 import env.model.DataModel;
 import env.model.SimulationModel;
 import env.planner.Planner;
+import level.Direction;
 import level.Location;
 import level.action.*;
+import level.cell.Agent;
 import level.cell.Cell;
+import level.cell.Goal;
 import srch.Evaluation.*;
 import srch.Heuristic;
 import srch.Node;
@@ -31,7 +34,7 @@ public class PathfindingSearch extends Search implements Heuristic {
 	 * With proximity = 1, the solution is a path to a cell adjacent to the goal location.
 	 * @return Ordered list of directions leading to the goal.
 	 */
-	public static List<Action> search(Cell agent, Cell tracked, Location to, int proximity, int initialStep) 
+	public static List<Action> search(Agent agent, Cell tracked, Location to, int proximity, int initialStep) 
 	{
 		return new PathfindingSearch(tracked.getLocation(), to, proximity).search(new PathfindingNode(agent, tracked, initialStep));
 	}
@@ -112,6 +115,19 @@ public class PathfindingSearch extends Search implements Heuristic {
 				node.getAction() instanceof PushAction)
 			{
 				goalDist += 3;
+			}
+		}
+		
+		Goal nextGoal = model.getAgent().peekFirst();
+		
+		if (nextGoal != null)
+		{
+			Direction nextDir = node.getAction().getAgentLocation().inDirection(nextGoal.getBox().getLocation());
+			Direction agDir = node.getAction().getAgentLocation().inDirection(node.getAction().getNewAgentLocation());
+			
+			if (nextDir != null && agDir != null && !nextDir.hasDirection(agDir))
+			{
+				goalDist += 5;
 			}
 		}
 

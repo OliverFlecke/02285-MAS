@@ -15,7 +15,7 @@ public class Tester {
 	
 	private static Logger logger = LoggerFactory.getLogger(Tester.class.getName());
 
-	private static final long MAX_TIME = 10000;
+	private static final long MAX_TIME = 10;
 	
 	@BeforeClass
 	public static void before()
@@ -72,7 +72,7 @@ public class Tester {
 			String input = null, error = null;
 			long startTime = System.currentTimeMillis();
 
-			for (long time = 0; time < allowedTime; time = System.currentTimeMillis() - startTime) 
+			for (long time = 0; time < allowedTime * 1000; time = System.currentTimeMillis() - startTime) 
 			{
 				if (stdInput.ready()) 
 				{
