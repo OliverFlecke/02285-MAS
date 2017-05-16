@@ -41,6 +41,11 @@ public abstract class Action {
 		return this.actionLocation;
 	}
 	
+	public Direction getActionDirection()
+	{
+		return this.getActionLocation().inDirection(this.getNewAgentLocation());
+	}
+	
 	public static List<Action> Every(Location agentLocation, Action agentAction)
 	{
 		LinkedList<Action> actions = new LinkedList<Action>();
