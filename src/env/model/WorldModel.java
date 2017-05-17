@@ -83,7 +83,7 @@ public class WorldModel extends CellModel {
 				else if (ch == '+') addWall(x, y);
 			}
 		}
-		System.err.println(toString());
+//		System.err.println(toString());
 	}
 	
 	protected void addAgent(int x, int y, char letter, Color color) 

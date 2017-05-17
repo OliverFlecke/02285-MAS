@@ -98,7 +98,7 @@ public class ServerEnv {
 			catch (Exception e) 
 			{
 				logger.warning("Error: scheduleAction");
-				e.printStackTrace();
+//				e.printStackTrace();
 			}
 		}
 	}
