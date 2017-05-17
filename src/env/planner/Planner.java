@@ -246,15 +246,16 @@ public class Planner {
 		CellModel model = getModel(agentStep);
 		
 		Location storage = null;
+		boolean isAgent = tracked instanceof Agent;
 		
 		if (toHelp.equals(agent))
 		{
-			storage = StorageSearch.search(tracked.getLocation(), agent, true, overlay, model);
+			storage = StorageSearch.search(tracked.getLocation(), agent, true, isAgent, overlay, model);
 		}
 
 		if (storage == null)
 		{
-			storage = StorageSearch.search(tracked.getLocation(), agent, false, overlay, model);
+			storage = StorageSearch.search(tracked.getLocation(), agent, false, isAgent, overlay, model);
 		}		
 		
 		if (storage == null)

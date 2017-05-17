@@ -44,7 +44,7 @@ public class ServerEnv {
 		if (TEST)
 		{
 			try {
-				serverIn = new BufferedReader(new FileReader(new File("competition_environment\\competition_levels\\MAAIoliMAsh.lvl")));
+				serverIn = new BufferedReader(new FileReader(new File("competition_environment\\competition_levels\\SAFooBar.lvl")));
 //				serverIn = new BufferedReader(new FileReader(new File("levels\\multi_agent\\medium\\MADCN.lvl")));
 //				serverIn = new BufferedReader(new FileReader(new File("levels\\single_agent\\easy\\SARageQuit.lvl")));
 //				serverIn = new BufferedReader(new FileReader(new File("levels\\MASimple5.lvl")));
@@ -76,8 +76,6 @@ public class ServerEnv {
 					requests.clear();
 					
 					serverOut.println(Arrays.toString(jointAction));
-					
-					WorldModel.getInstance().nextStep();
 					
 					if (!TEST)
 					{

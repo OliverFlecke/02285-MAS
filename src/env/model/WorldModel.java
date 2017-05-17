@@ -14,11 +14,7 @@ public class WorldModel extends CellModel {
 	private Map<Character, Set<Goal>> 	goalMap;
 	private Map<Character, Set<Box>>  	boxMap;
 	
-	private int step = 0;
-	
-	public int getStep() { return this.step; }
-	
-	public void nextStep() { step++; }
+	private int freeCells;
 	
 	private static WorldModel instance;
 	
@@ -43,6 +39,10 @@ public class WorldModel extends CellModel {
 	
 	public static WorldModel getInstance() {
 		return instance;
+	}
+	
+	public int getFreeCellCount() {
+		return freeCells;
 	}
 	
 	public Map<Character, Set<Goal>> getGoalMap() {
@@ -81,6 +81,8 @@ public class WorldModel extends CellModel {
 				else if (Character.isUpperCase(ch)) addBox(x, y, ch, Color.getColor(colors.get(ch)));
 				
 				else if (ch == '+') addWall(x, y);
+				
+				else freeCells++;
 			}
 		}
 		System.err.println(toString());
