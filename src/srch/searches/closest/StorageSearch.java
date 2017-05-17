@@ -42,6 +42,16 @@ public class StorageSearch extends Search implements Heuristic {
 		
 		if (selfHelp && !canTurn) return false;
 		
+		Node parent = n.getParent();
+		
+		if (parent != null)
+		{
+			Location parentLoc = parent.getLocation();
+			
+			return overlay.isFree(parentLoc) && model.isFree(parentLoc) &&
+				   overlay.isFree(loc) && model.isFree(loc);
+		}
+		
 		return overlay.isFree(loc) && model.isFree(loc);
 	}
 
