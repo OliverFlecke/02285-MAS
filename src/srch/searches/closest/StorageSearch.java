@@ -26,35 +26,27 @@ public class StorageSearch extends Search implements Heuristic {
 		List<Predicate<StorageNode>> predicates = new ArrayList<>(Arrays.asList(
 				hasNoDependencies(hasXFreeAdjacent(1)),
 				hasNoDependencies(hasXFreeAdjacent(2)),
-				hasNoDependencies(isXParentFree(overlay, 10)),
+				hasNoDependencies(isXParentFree(overlay,10)),
 				hasNoDependencies(isXParentFree(overlay, 5)),
 				hasNoDependencies(isXParentFree(overlay, 3)),
 				hasNoDependencies(isXParentFree(overlay, 2)),
 				hasNoDependencies(isXParentFree(overlay, 1)),
-				hasNoDependencies(isXParentFree(overlay, 0)),
 				hasNoDependencies(n -> true),
-				hasXFreeAdjacent(1),
-				hasXFreeAdjacent(2),
-				isXParentFree(overlay, 10),
-				isXParentFree(overlay, 5),
-				isXParentFree(overlay, 3),
-				isXParentFree(overlay, 2),
-				isXParentFree(overlay, 1),
-				isXParentFree(overlay, 0),				
+//				isXParentFree(overlay, 2),
+				isXParentFree(overlay, 1),			
 				n -> true
 				));
 		
-		if (isAgent || WorldModel.getInstance().getFreeCellCount() < 10)
-		{
-			return new StorageSearch(selfHelp, overlay, n -> true).search(new StorageNode(from, agent, model));
-		}
-		
-		if (WorldModel.getInstance().getFreeCellCount() > 50)
-		{
-			return new StorageSearch(selfHelp, overlay, isXParentFree(overlay, 1)).search(new StorageNode(from, agent, model));
-		}
-		
 		Location storage = null;
+		
+		if (isAgent)
+		{
+			storage = new StorageSearch(selfHelp, overlay, n -> true).search(new StorageNode(from, agent, model));
+		}		
+		else if (WorldModel.getInstance().getFreeCellCount() > 50)
+		{
+			storage = new StorageSearch(selfHelp, overlay, hasNoDependencies(isXParentFree(overlay, 1))).search(new StorageNode(from, agent, model));
+		}
 		
 		for (int i = 0; i < predicates.size() && storage == null; i++)
 		{
@@ -118,7 +110,7 @@ public class StorageSearch extends Search implements Heuristic {
 	private static Predicate<StorageNode> hasNoDependencies(Predicate<StorageNode> predicate) {
 		return n -> 
 		{
-			for (Node parent = n; parent != null; parent = parent.getParent())
+			for (Node parent = n; parent.getParent() != null; parent = parent.getParent())
 			{
 				if (n.getModel().hasObject(DataModel.AGENT | DataModel.BOX, parent.getLocation())) return false;
 			}
