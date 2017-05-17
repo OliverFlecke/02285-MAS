@@ -109,14 +109,14 @@ public class PathfindingSearch extends Search implements Heuristic {
 //		goalDist += n.getLocation().distance(loc);
 		
 		// Agents should prefer not to move boxes
-		if (model.isTrackedAgent())
-		{
-			if (node.getAction() instanceof PullAction ||
-				node.getAction() instanceof PushAction)
-			{
-				goalDist += 3;
-			}
-		}
+//		if (model.isTrackedAgent())
+//		{
+//			if (node.getAction() instanceof PullAction ||
+//				node.getAction() instanceof PushAction)
+//			{
+//				goalDist += 3;
+//			}
+//		}
 		
 		Goal nextGoal = model.getAgent().peekFirst();
 		
@@ -127,7 +127,7 @@ public class PathfindingSearch extends Search implements Heuristic {
 			
 			if (nextDir != null && agDir != null && !nextDir.hasDirection(agDir))
 			{
-				goalDist += 5;
+				goalDist += 1;
 			}
 		}
 
