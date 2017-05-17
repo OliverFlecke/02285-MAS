@@ -51,16 +51,12 @@ public abstract class Action {
 		{
 			actions.remove(agentAction.getOpposite());
 		}
-//		actions.add(new SkipAction(agentLocation));
 		return actions;
 	}
 	
-	public static List<Action> Every(Location agentLocation, Action agentAction)
+	public static List<Action> EveryBox(Location agentLocation, Action agentAction)
 	{
-		LinkedList<Action> actions = new LinkedList<Action>();
-		for (Direction dir : Direction.EVERY) 
-			actions.add(new MoveAction(dir, agentLocation));
-		
+		LinkedList<Action> actions = new LinkedList<Action>();		
 		for (Direction d1 : Direction.EVERY) 
 			for (Direction d2 : Direction.EVERY) 
 				if (!Direction.isOpposite(d1, d2)) 
@@ -75,7 +71,6 @@ public abstract class Action {
 		{
 			actions.remove(agentAction.getOpposite());
 		}
-//		actions.add(new SkipAction(agentLocation));
 		return actions;
 	}
 
