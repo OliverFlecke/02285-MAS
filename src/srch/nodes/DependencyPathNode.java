@@ -11,9 +11,11 @@ import level.Direction;
 import level.Location;
 import level.cell.Agent;
 import srch.Node;
+import srch.interfaces.Getter;
 import srch.interfaces.IDependencyNode;
 import srch.interfaces.IDirectionNode;
 import srch.interfaces.IModelNode;
+import srch.searches.DependencyPathSearch;
 import util.ModelUtil;
 
 public class DependencyPathNode extends StepNode implements IDirectionNode, IDependencyNode, IModelNode {
@@ -24,10 +26,10 @@ public class DependencyPathNode extends StepNode implements IDirectionNode, IDep
 	private Agent		agent;
 	private int 		dependency;
 	private int 		dependencyCount;
-	private boolean 	ignoreLast;
+	private boolean 	ignoreLast, ignoreAdjacent, mustTurn;
 	private DataModel 	model;
 
-	public DependencyPathNode(Location initial, Agent agent, int dependency, boolean includeLast, int initialStep) 
+	public DependencyPathNode(Location initial, Agent agent, int dependency, boolean ignoreLast, boolean ignoreAdjacent, int initialStep) 
 	{
 		super(initial, initialStep);
 		
@@ -35,7 +37,9 @@ public class DependencyPathNode extends StepNode implements IDirectionNode, IDep
 		this.agent				= agent;
 		this.dependency 		= dependency;
 		this.dependencyCount 	= 0;
-		this.ignoreLast			= includeLast;
+		this.ignoreLast			= ignoreLast;
+		this.ignoreAdjacent		= ignoreAdjacent;
+		this.mustTurn			= false;
 		this.model				= planner.getModel(initialStep);
 	}
 
@@ -50,6 +54,8 @@ public class DependencyPathNode extends StepNode implements IDirectionNode, IDep
 		this.dependency 		= n.dependency;
 		this.dependencyCount 	= n.dependencyCount;
 		this.ignoreLast			= n.ignoreLast;
+		this.ignoreAdjacent		= n.ignoreAdjacent;
+		this.mustTurn			= n.mustTurn;
 		this.model				= n.model;
 		
 		
@@ -107,6 +113,10 @@ public class DependencyPathNode extends StepNode implements IDirectionNode, IDep
 		
 		int agNumber = ModelUtil.getAgentNumber(agent);
 		
+		boolean canTurn = false;
+		
+		DependencyPathNode first = null;
+		
 		for (int futureStep = this.getStep(); futureStep < planner.dataModelCount(); futureStep++)
 		{				
 			if (hasDependency(planner.getModel(futureStep), this, agNumber))
@@ -119,7 +129,7 @@ public class DependencyPathNode extends StepNode implements IDirectionNode, IDep
 			}
 		}			
 		
-		for (StepNode n = this; n != null; n = (StepNode) n.getParent()) 
+		for (DependencyPathNode n = this; n != null; n = (DependencyPathNode) n.getParent()) 
 		{			
 			Location loc = n.getLocation();
 			
@@ -138,7 +148,35 @@ public class DependencyPathNode extends StepNode implements IDirectionNode, IDep
 				{
 					path.addDependency(loc, step);
 				}
+				
+				if (ignoreAdjacent && !canTurn && planner.hasModel(step) && planner.getModel(step).isFreeAdjacent(agNumber, loc) >= 3) 
+				{
+					canTurn = true;
+				}
+				
+				if (!ignoreAdjacent && planner.hasModel(step) && planner.getModel(step).isFreeAdjacent(agNumber, loc) < 3)
+				{
+					for (Direction dir : Direction.EVERY)
+					{
+						Location newLoc = loc.newLocation(dir);
+						
+						if (newLoc.equals(n.getParent().getLocation())) continue;
+						
+						if (planner.getModel(step).hasObject(DataModel.BOX | DataModel.AGENT, newLoc) &&
+							!planner.getModel(step).hasObject(agNumber, WorldModel.BOX_MASK, newLoc))
+						{
+							path.addDependency(newLoc, step);
+						}
+					}
+				}
 			}
+			first = n;
+		}
+		
+		// Attempt to find turn location by checking adjacent cells
+		if (ignoreAdjacent && mustTurn && !canTurn && path.countDependencies() == 0)
+		{
+			return DependencyPathSearch.search(agent, first.getLocation(), this.getLocation(), dependency, ignoreLast, false, first.getStep());
 		}
 		return path;
 	}
@@ -146,6 +184,9 @@ public class DependencyPathNode extends StepNode implements IDirectionNode, IDep
 	private boolean hasDependency(DataModel model, StepNode n, int agNumber)
 	{
 		Location loc = n.getLocation();
+		
+		if (model.hasObject(agNumber, WorldModel.BOX_MASK, loc) &&
+			model.isFreeAdjacent(agNumber, this.getLocation()) < 2) mustTurn = true;		
 		
 		return (model.hasObject(dependency, loc) &&
 				// Do not add dependency if n is last and ignoreLast

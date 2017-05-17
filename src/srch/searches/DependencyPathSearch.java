@@ -12,9 +12,9 @@ import srch.nodes.DependencyPathNode;
 
 public class DependencyPathSearch extends Search implements Heuristic {
 
-	public static DependencyPath search(Agent agent, Location from, Location to, int object, boolean toBox, int initialStep) 
+	public static DependencyPath search(Agent agent, Location from, Location to, int object, boolean ignoreLast, boolean ignoreAdjacent, int initialStep) 
 	{
-		return new DependencyPathSearch(to).search(new DependencyPathNode(from, agent, object, toBox, initialStep));
+		return new DependencyPathSearch(to).search(new DependencyPathNode(from, agent, object, ignoreLast, ignoreAdjacent, initialStep));
 	}
 	
 	private Location goalLocation;

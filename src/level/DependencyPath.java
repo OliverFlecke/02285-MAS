@@ -33,7 +33,10 @@ public class DependencyPath {
 	
 	public void addDependency(Location l, int step)
 	{
-		dependencies.put(l, step);
+		if (!dependencies.containsKey(l))
+		{
+			dependencies.put(l, step);
+		}
 	}
 	
 	public List<Location> getPath()
@@ -117,6 +120,6 @@ public class DependencyPath {
 	
 	private static DependencyPath getLocationDependencyPath(Agent agent, Location from, Location to, boolean toBox, int initialStep)
 	{
-		return DependencyPathSearch.search(agent, from, to, DataModel.BOX | DataModel.AGENT, toBox, initialStep);		
+		return DependencyPathSearch.search(agent, from, to, DataModel.BOX | DataModel.AGENT, toBox, true, initialStep);		
 	}
 }
