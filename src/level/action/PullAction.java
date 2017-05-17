@@ -8,21 +8,36 @@ public class PullAction extends Action {
 	private Direction agentDir;
 	private Direction boxDir;
 	
+	private Location boxLocation;
+	private Location newBoxLocation;
+	
 	public PullAction(Direction agentDir, Direction boxDir, Location location)
 	{
-		super(ActionType.PULL, location, location.newLocation(boxDir));
+		super(ActionType.PULL, location, location.newLocation(agentDir));
 		this.agentDir = agentDir;
 		this.boxDir = boxDir;
+		this.boxLocation 	= getAgentLocation().newLocation(boxDir);
+		this.newBoxLocation = getAgentLocation();
 	}
 	
-	public Direction getAgentDir()
+	protected Direction getAgentDir()
 	{
 		return agentDir;
 	}
 	
-	public Direction getBoxDir()
+	protected Direction getBoxDir()
 	{
 		return boxDir;
+	}
+	
+	public Location getBoxLocation()
+	{
+		return boxLocation;
+	}
+	
+	public Location getNewBoxLocation()
+	{
+		return newBoxLocation;
 	}
 	
 	@Override 
@@ -51,11 +66,6 @@ public class PullAction extends Action {
 		{
 			return false;			
 		}
-	}
-	
-	@Override
-	public Location getNewAgentLocation() {
-		return Location.newLocation(this.getAgentDir(), this.getAgentLocation());
 	}
 
 	@Override

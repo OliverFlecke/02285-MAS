@@ -139,8 +139,17 @@ public class DataModel {
         remove(obj, l.x, l.y);
     }
 
-    public void remove(int obj, int x, int y) {
+    public void remove(int obj, int x, int y) 
+    {
+    	if ((obj & AGENT) != 0 || (obj & BOX) != 0)
+    	{
+    		obj |= (BOX_MASK | COLOR_MASK);
+    	}
         data[x][y] &= ~obj;
+    }
+   
+    public void addColor(Color color, Location l) {
+    	addColor(color, l.x, l.y);
     }
     
     public void addColor(Color color, int x, int y) {
@@ -154,6 +163,10 @@ public class DataModel {
     public Color getColor(int x, int y) {
     	if (!hasObject(AGENT, x, y) && !hasObject(BOX, x, y)) return null;
     	return Color.getColor((data[x][y] & COLOR_MASK) >> 8);
+    }
+    
+    public void addLetter(char letter, int obj, Location l) {
+    	addLetter(letter, obj, l.x, l.y);
     }
     
     public void addLetter(char letter, int obj, int x, int y) 
@@ -177,11 +190,14 @@ public class DataModel {
 	
 	public int[][] deepCopyData() 
 	{
-	    int[][] result = new int[data.length][];
-	    
-	    for (int row = 0; row < data.length; row++) 
+	    int[][] result = new int[data.length][data[0].length];
+
+	    for (int x = 0; x < data.length; x++) 
 	    {
-	        result[row] = data[row].clone();
+	    	for (int y = 0; y < data[0].length; y++)
+	    	{
+	    		result[x][y] = (data[x][y] & ~LOCKED);
+	    	}
 	    }
 	    return result;
 	}

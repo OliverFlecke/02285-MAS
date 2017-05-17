@@ -7,6 +7,8 @@ import java.util.logging.Logger;
 import level.Location;
 import level.cell.Agent;
 import level.cell.Box;
+import level.cell.Cell;
+import level.cell.Colored;
 import level.cell.Goal;
 import logging.LoggerFactory;
 import util.ModelUtil;
@@ -134,5 +136,48 @@ public class CellModel extends ActionModel {
 		}
 
 		super.move(obj, fr, to);
+	}
+	
+	public Cell removeCell(int obj, Location l)
+	{
+		Cell cell = null;
+		
+		switch (obj)
+		{
+		case AGENT: 
+			cell = agentArray[l.x][l.y];
+			agentArray[l.x][l.y] = null;
+			break;
+		case BOX:
+			cell = boxArray[l.x][l.y];
+			boxArray  [l.x][l.y] = null;
+			break;
+		default: return null;
+		}
+		super.remove(obj, l);
+		
+		return cell;
+	}
+	
+	public void addCell(Colored data, Cell object)
+	{		
+		Location l = data.getLocation();
+		
+		object.setLocation(l);
+		
+		int type = data instanceof Agent ? AGENT : BOX;
+		
+		if (data instanceof Agent)
+		{
+			agentArray[l.x][l.y] = (Agent) object;
+		}
+		else if (data instanceof Box)
+		{
+			boxArray[l.x][l.y] = (Box) object;
+		}
+
+		add(type, l);
+		addLetter(data.getLetter(), type, l);
+		addColor(data.getColor(), l);
 	}
 }

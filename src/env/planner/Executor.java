@@ -1,6 +1,7 @@
 package env.planner;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -11,10 +12,13 @@ import env.model.DataModel;
 import env.model.FutureModel;
 import level.Location;
 import level.action.Action;
+import level.action.PullAction;
+import level.action.PushAction;
 import level.action.SkipAction;
 import level.cell.Agent;
 import level.cell.Box;
 import level.cell.Cell;
+import level.cell.Colored;
 import logging.LoggerFactory;
 import srch.searches.PathfindingSearch;
 
@@ -123,17 +127,25 @@ public class Executor {
 				planner.getModel(futureStep).doExecute(action);
 			}
 		}
-		
-		for (int modelStep = 1; modelStep < planner.dataModelCount(); modelStep++)
+		// ADD LOCKS
+		for (int modelStep = initialStep + 1; modelStep < planner.dataModelCount(); modelStep++)
 		{
 			DataModel model = planner.getModel(modelStep);
 			
-			for (int actionStep = modelStep - 1; actionStep < planner.getActions().get(agent.getNumber()).size() - 1; actionStep++)
+			for (int actionStep = modelStep - 1; actionStep < planner.getActions().get(agent.getNumber()).size(); actionStep++)
 			{
 				Action action = planner.getActions().get(agent.getNumber()).get(actionStep);
 						
-				model.add(DataModel.LOCKED, action.getAgentLocation());
-				model.add(DataModel.LOCKED, action.getActionLocation());
+				model.add(DataModel.LOCKED, action.getNewAgentLocation());
+				
+				if (action instanceof PullAction)
+				{
+					model.add(DataModel.LOCKED, ((PullAction) action).getNewBoxLocation());
+				}
+				else if (action instanceof PushAction)
+				{
+					model.add(DataModel.LOCKED, ((PushAction) action).getNewBoxLocation());
+				}
 			}
 		}
 		
@@ -143,11 +155,22 @@ public class Executor {
 		{
 			CellModel model = planner.getModel(futureStep);
 			
+			Map<Cell, Cell> objectReferences = new HashMap<>();
+			
 			for (Entry<Cell, Location> entry : originalLocations.entrySet())
 			{
 				int objectType = entry.getKey() instanceof Agent ? DataModel.AGENT : DataModel.BOX;
 				
-				model.move(objectType, entry.getValue(), ((Cell) entry.getKey()).getLocation());
+				Cell object = model.removeCell(objectType, entry.getValue());
+				
+				objectReferences.put(entry.getKey(), object);
+				
+//				model.move(objectType, entry.getValue(), entry.getKey().getLocation());
+			}
+			
+			for (Entry<Cell, Cell> entry : objectReferences.entrySet())
+			{
+				model.addCell((Colored) entry.getKey(), entry.getValue());
 			}
 		}
 	}

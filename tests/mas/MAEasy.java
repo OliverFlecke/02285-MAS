@@ -14,7 +14,7 @@ public class MAEasy extends Tester {
 		@Test public void MASimple3() 	{ Tester.testLevel("MAsimple3"); }
 		@Test public void MASimple4() 	{ Tester.testLevel("MAsimple4"); }
 		@Test public void MASimple5() 	{ Tester.testLevel("MAsimple5"); }
-		@Test public void MACrunch() 	{ Tester.testLevel(PATH + "MACrunch", Long.MAX_VALUE); }
+		@Test public void MACrunch() 	{ Tester.testLevel(PATH + "MACrunch"); }
 		@Test public void MADeliRobot() { Tester.testLevel(PATH + "MADeliRobot"); }
 		@Test public void MAFireFly() 	{ Tester.testLevel(PATH + "MAFireFly"); }
 		@Test public void MAYSoSirius() { Tester.testLevel(PATH + "MAYSoSirius"); }

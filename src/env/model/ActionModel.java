@@ -2,7 +2,6 @@ package env.model;
 
 import java.util.Set;
 
-import level.Direction;
 import level.Location;
 import level.action.Action;
 import level.action.MoveAction;
@@ -46,39 +45,33 @@ public class ActionModel extends DataModel {
 	}
     
     public void doMove(MoveAction action)
-    {    	
-    	Direction 	dir 	= action.getDirection();
-
+    {
     	Location 	agLoc 	= action.getAgentLocation();
-        Location 	nAgLoc 	= agLoc.newLocation(dir);
+        Location 	nAgLoc 	= action.getNewAgentLocation();
     	
         move(AGENT, agLoc, nAgLoc);
     }
     
     public void doPush(PushAction action)
-    {    	
-    	Direction 	dir1 	= action.getAgentDir();
-    	Direction 	dir2 	= action.getBoxDir();
-
+    {
     	Location 	agLoc 	= action.getAgentLocation();
-    	Location 	boxLoc 	= agLoc.newLocation(dir1);
-    	Location 	nBoxLoc = boxLoc.newLocation(dir2);
+    	Location 	nAgLoc 	= action.getNewAgentLocation();
+    	Location 	boxLoc 	= action.getBoxLocation();
+    	Location 	nBoxLoc = action.getNewBoxLocation();
 
         move(BOX, boxLoc, nBoxLoc);
-        move(AGENT, agLoc, boxLoc);
+        move(AGENT, agLoc, nAgLoc);
     }
     
     public void doPull(PullAction action)
     {
-    	Direction 	dir1 	= action.getAgentDir();
-    	Direction 	dir2 	= action.getBoxDir();
-
     	Location 	agLoc  	= action.getAgentLocation();
-    	Location 	boxLoc 	= agLoc.newLocation(dir2);
-    	Location 	nAgLoc 	= agLoc.newLocation(dir1);
+    	Location 	nAgLoc 	= action.getNewAgentLocation();
+    	Location 	boxLoc 	= action.getBoxLocation();
+    	Location	nBoxLoc = action.getNewBoxLocation();
 
     	move(AGENT, agLoc, nAgLoc);
-    	move(BOX, boxLoc, agLoc);
+    	move(BOX, boxLoc, nBoxLoc);
     }
 	
 	public void move(int obj, Location fr, Location to)
