@@ -1,5 +1,7 @@
 package env.model;
 
+import java.util.List;
+
 import env.planner.Planner;
 import level.Location;
 import level.action.Action;
@@ -38,6 +40,16 @@ public class SimulationModel extends ActionModel {
 		this.agent			= new Agent(agent);
 		this.tracked  		= new Cell(tracked);		
 		this.isAgent 		= isAgent;
+    	
+		for (Agent otherAgent : WorldModel.getInstance().getAgents())
+		{
+			List<Action> actionList = planner.getActions().get(otherAgent.getNumber());
+			
+			if (currentStep < actionList.size())
+			{				
+				this.doExecute(actionList.get(currentStep));
+			}
+		}			
 	}
 	
 	public static void setPlanner(Planner planner)
@@ -78,16 +90,6 @@ public class SimulationModel extends ActionModel {
     {    	
     	SimulationModel simulation = new SimulationModel(this, nextStep, agent, tracked, isAgent);
     	
-    	for (Agent agent : WorldModel.getInstance().getAgents())
-    	{
-    		if (currentStep < planner.getActions().get(agent.getNumber()).size())
-    		{
-    			Action otherAction = planner.getActions().get(agent.getNumber()).get(currentStep);
-    			
-    			simulation.doExecute(otherAction);
-    		}
-    	}
-    	
     	simulation.doExecute(action);
     	
     	return simulation;
@@ -124,25 +126,20 @@ public class SimulationModel extends ActionModel {
     
     public boolean canPush(PushAction action)
     {    	
-    	Location 	agLoc 	= action.getAgentLocation();
+    	Location agLoc 	 = action.getAgentLocation();        
+    	Location boxLoc  = action.getBoxLocation();
+    	Location nBoxLoc = action.getNewBoxLocation();
         
-        int agColor = getMasked(COLOR_MASK, agLoc);
-        
-    	Location boxLoc = action.getBoxLocation();
-    	
     	if (isFree(BOX, boxLoc)) return false;
-        
+        if (!isFree(nBoxLoc)) return false;
+
+        int agColor = getMasked(COLOR_MASK, agLoc);
         int boxColor = getMasked(COLOR_MASK, boxLoc);
         
         if (agColor != boxColor) return false;
-    	
-    	Location nBoxLoc = action.getNewBoxLocation();
         
-        if (!isFree(nBoxLoc)) return false;
-        
-        if (planner.hasModel(currentStep) && !planner.getModel(currentStep).isFree(nBoxLoc)) return false;
-        
-        if (planner.hasModel(nextStep) && !planner.getModel(nextStep).isFree(nBoxLoc)) return false;
+        if (planner.hasModel(currentStep) && !planner.getModel(currentStep).isFree(nBoxLoc)) return false;        
+        if (planner.hasModel(nextStep)    && !planner.getModel(nextStep).isFree(nBoxLoc)) return false;
     	
 		return true;
     }

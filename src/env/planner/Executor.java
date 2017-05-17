@@ -1,6 +1,7 @@
 package env.planner;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -17,6 +18,7 @@ import level.action.SkipAction;
 import level.cell.Agent;
 import level.cell.Box;
 import level.cell.Cell;
+import level.cell.Colored;
 import logging.LoggerFactory;
 import srch.searches.PathfindingSearch;
 
@@ -125,7 +127,7 @@ public class Executor {
 				planner.getModel(futureStep).doExecute(action);
 			}
 		}
-		
+		// ADD LOCKS
 		for (int modelStep = initialStep + 1; modelStep < planner.dataModelCount(); modelStep++)
 		{
 			DataModel model = planner.getModel(modelStep);
@@ -153,11 +155,22 @@ public class Executor {
 		{
 			CellModel model = planner.getModel(futureStep);
 			
+			Map<Cell, Cell> objectReferences = new HashMap<>();
+			
 			for (Entry<Cell, Location> entry : originalLocations.entrySet())
 			{
 				int objectType = entry.getKey() instanceof Agent ? DataModel.AGENT : DataModel.BOX;
 				
-				model.move(objectType, entry.getValue(), entry.getKey().getLocation());
+				Cell object = model.removeCell(objectType, entry.getValue());
+				
+				objectReferences.put(entry.getKey(), object);
+				
+//				model.move(objectType, entry.getValue(), entry.getKey().getLocation());
+			}
+			
+			for (Entry<Cell, Cell> entry : objectReferences.entrySet())
+			{
+				model.addCell((Colored) entry.getKey(), entry.getValue());
 			}
 		}
 	}
