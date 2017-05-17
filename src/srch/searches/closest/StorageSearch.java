@@ -5,6 +5,7 @@ import java.util.function.Predicate;
 import env.model.CellModel;
 import env.model.DataModel;
 import env.model.OverlayModel;
+import env.model.WorldModel;
 import level.Location;
 import level.cell.Agent;
 import srch.Evaluation.AStar;
@@ -17,8 +18,18 @@ import srch.nodes.StorageNode;
 
 public class StorageSearch extends Search implements Heuristic {
 	
-	public static Location search(Location from, Agent agent, boolean selfHelp, OverlayModel overlay, CellModel model) 
+	public static Location search(Location from, Agent agent, boolean selfHelp, boolean isAgent, OverlayModel overlay, CellModel model) 
 	{
+		if (isAgent || WorldModel.getInstance().getFreeCellCount() < 10)
+		{
+			return new StorageSearch(selfHelp, overlay, n -> true).search(new StorageNode(from, agent, model));
+		}
+		
+		if (WorldModel.getInstance().getFreeCellCount() > 50)
+		{
+			return new StorageSearch(selfHelp, overlay, isXParentFree(overlay, 1)).search(new StorageNode(from, agent, model));
+		}
+		
 		Location storage = null;
 		
 		storage = new StorageSearch(selfHelp, overlay, hasXFreeAdjacent(1)).search(new StorageNode(from, agent, model));
@@ -85,7 +96,7 @@ public class StorageSearch extends Search implements Heuristic {
 		
 		if (selfHelp && !canTurn) return false;
 		
-		return model.isFree(DataModel.GOAL, loc) && overlay.isFree(loc) && model.isFree(loc) && goalPredicate.test((StorageNode) n);
+		return overlay.isFree(loc) && model.isFree(loc) && goalPredicate.test((StorageNode) n);
 	}
 
 	@Override
