@@ -13,7 +13,6 @@ import java.util.HashMap;
 import java.util.Map.Entry;
 import java.util.logging.Logger;
 
-import env.model.WorldModel;
 import jason.asSyntax.Structure;
 import level.action.Action;
 import logging.LoggerFactory;
@@ -44,7 +43,7 @@ public class ServerEnv {
 		if (TEST)
 		{
 			try {
-				serverIn = new BufferedReader(new FileReader(new File("competition_environment\\competition_levels\\SAFooBar.lvl")));
+				serverIn = new BufferedReader(new FileReader(new File("competition_environment\\competition_levels\\MAAIoliMAsh.lvl")));
 //				serverIn = new BufferedReader(new FileReader(new File("levels\\multi_agent\\medium\\MADCN.lvl")));
 //				serverIn = new BufferedReader(new FileReader(new File("levels\\single_agent\\easy\\SARageQuit.lvl")));
 //				serverIn = new BufferedReader(new FileReader(new File("levels\\MASimple5.lvl")));

@@ -1,5 +1,8 @@
 package srch.searches.closest;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.function.Predicate;
 
 import env.model.CellModel;
@@ -20,6 +23,27 @@ public class StorageSearch extends Search implements Heuristic {
 	
 	public static Location search(Location from, Agent agent, boolean selfHelp, boolean isAgent, OverlayModel overlay, CellModel model) 
 	{
+		List<Predicate<StorageNode>> predicates = new ArrayList<>(Arrays.asList(
+				hasNoDependencies(hasXFreeAdjacent(1)),
+				hasNoDependencies(hasXFreeAdjacent(2)),
+				hasNoDependencies(isXParentFree(overlay, 10)),
+				hasNoDependencies(isXParentFree(overlay, 5)),
+				hasNoDependencies(isXParentFree(overlay, 3)),
+				hasNoDependencies(isXParentFree(overlay, 2)),
+				hasNoDependencies(isXParentFree(overlay, 1)),
+				hasNoDependencies(isXParentFree(overlay, 0)),
+				hasNoDependencies(n -> true),
+				hasXFreeAdjacent(1),
+				hasXFreeAdjacent(2),
+				isXParentFree(overlay, 10),
+				isXParentFree(overlay, 5),
+				isXParentFree(overlay, 3),
+				isXParentFree(overlay, 2),
+				isXParentFree(overlay, 1),
+				isXParentFree(overlay, 0),				
+				n -> true
+				));
+		
 		if (isAgent || WorldModel.getInstance().getFreeCellCount() < 10)
 		{
 			return new StorageSearch(selfHelp, overlay, n -> true).search(new StorageNode(from, agent, model));
@@ -32,41 +56,9 @@ public class StorageSearch extends Search implements Heuristic {
 		
 		Location storage = null;
 		
-		storage = new StorageSearch(selfHelp, overlay, hasXFreeAdjacent(1)).search(new StorageNode(from, agent, model));
-		
-		if (storage == null)
+		for (int i = 0; i < predicates.size() && storage == null; i++)
 		{
-			storage = new StorageSearch(selfHelp, overlay, hasXFreeAdjacent(2)).search(new StorageNode(from, agent, model));
-		}
-
-		if (storage == null)
-		{
-			storage = new StorageSearch(selfHelp, overlay, isXParentFree(overlay, 10)).search(new StorageNode(from, agent, model));
-		}
-
-		if (storage == null)
-		{
-			storage = new StorageSearch(selfHelp, overlay, isXParentFree(overlay, 5)).search(new StorageNode(from, agent, model));
-		}
-
-		if (storage == null)
-		{
-			storage = new StorageSearch(selfHelp, overlay, isXParentFree(overlay, 3)).search(new StorageNode(from, agent, model));
-		}
-
-		if (storage == null)
-		{
-			storage = new StorageSearch(selfHelp, overlay, isXParentFree(overlay, 2)).search(new StorageNode(from, agent, model));
-		}
-
-		if (storage == null)
-		{
-			storage = new StorageSearch(selfHelp, overlay, isXParentFree(overlay, 1)).search(new StorageNode(from, agent, model));
-		}
-
-		if (storage == null)
-		{
-			storage = new StorageSearch(selfHelp, overlay, isXParentFree(overlay, 0)).search(new StorageNode(from, agent, model));
+			storage = new StorageSearch(selfHelp, overlay, predicates.get(i)).search(new StorageNode(from, agent, model));
 		}
 		
 		return storage;
@@ -117,10 +109,23 @@ public class StorageSearch extends Search implements Heuristic {
 			return h;
 		}
 		
-		h += model.hasObject(DataModel.AGENT, loc) || model.hasObject(DataModel.BOX, loc) ? 100 : 0;
+		h += model.hasObject(DataModel.AGENT | DataModel.BOX | DataModel.GOAL, loc) ? 100 : 0;
 		
 		return h;
 	}
+
+	
+	private static Predicate<StorageNode> hasNoDependencies(Predicate<StorageNode> predicate) {
+		return n -> 
+		{
+			for (Node parent = n; parent != null; parent = parent.getParent())
+			{
+				if (n.getModel().hasObject(DataModel.AGENT | DataModel.BOX, parent.getLocation())) return false;
+			}
+			return predicate.test(n);
+		};
+	}
+	
 	
 	private static Predicate<StorageNode> hasXFreeAdjacent(int x) {
 		return n -> n.getModel().isFreeAdjacent(n.getAgentNumber(), n.getLocation()) == x;
