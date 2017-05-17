@@ -114,7 +114,7 @@ public class PathfindingSearch extends Search implements Heuristic {
 //			if (node.getAction() instanceof PullAction ||
 //				node.getAction() instanceof PushAction)
 //			{
-//				goalDist += 3;
+//				goalDist += 10;
 //			}
 //		}
 		

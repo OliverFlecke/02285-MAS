@@ -41,6 +41,20 @@ public abstract class Action {
 		return this.newAgentLocation;
 	}
 	
+	public static List<Action> EveryMove(Location agentLocation, Action agentAction)
+	{
+		LinkedList<Action> actions = new LinkedList<Action>();
+		for (Direction dir : Direction.EVERY) 
+			actions.add(new MoveAction(dir, agentLocation));
+		
+		if (agentAction != null)
+		{
+			actions.remove(agentAction.getOpposite());
+		}
+//		actions.add(new SkipAction(agentLocation));
+		return actions;
+	}
+	
 	public static List<Action> Every(Location agentLocation, Action agentAction)
 	{
 		LinkedList<Action> actions = new LinkedList<Action>();

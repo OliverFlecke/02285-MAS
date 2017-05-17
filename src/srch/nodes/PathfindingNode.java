@@ -63,7 +63,10 @@ public class PathfindingNode extends Node implements IActionNode, IModelNode {
 	{			
 		List<Node> expandedNodes = new ArrayList<Node>();
 		
-		for (Action action : Action.Every(this.getLocation(), this.getAction()))
+		List<Action> actions = this.getModel().isTrackedAgent() ? Action.EveryMove(this.getLocation(), this.getAction()) 
+																: Action.Every(this.getLocation(), this.getAction());
+		
+		for (Action action : actions)
 		{			
 			if (model.canExecute(action))
 			{
