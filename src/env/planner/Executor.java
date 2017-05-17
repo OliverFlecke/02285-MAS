@@ -112,65 +112,75 @@ public class Executor {
 		
 		FutureModel futureModel = new FutureModel(planner.getModel(initialStep));
 		
-		int step = initialStep, finalStep = initialStep + actions.size() + 1;
+		int step = initialStep;
 		
-		int updateLimit = Math.min(finalStep, planner.dataModelCount());
+		// Create models for the actions
+		for (int modelCount = initialStep + 1; modelCount < initialStep + actions.size() + 1; modelCount++)
+		{
+			planner.getModel(modelCount);
+		}
 		
 		// Update the grid models with the actions
 		for (Action action : actions)
 		{
 			futureModel.doExecute(action);
-			planner.getModel(++step).doExecute(action);
-
-			for (int futureStep = step + 1; futureStep < updateLimit; futureStep++)
-			{
-				planner.getModel(futureStep).doExecute(action);
-			}
+			
+			updateFuture(futureModel, ++step);
 		}
-		// ADD LOCKS
+		
+		for (int futureStep = ++step; futureStep < planner.dataModelCount(); futureStep++)
+		{
+			updateFuture(futureModel, futureStep);
+		}
+
 		for (int modelStep = initialStep + 1; modelStep < planner.dataModelCount(); modelStep++)
 		{
-			DataModel model = planner.getModel(modelStep);
-			
-			for (int actionStep = modelStep - 1; actionStep < planner.getActions().get(agent.getNumber()).size(); actionStep++)
-			{
-				Action action = planner.getActions().get(agent.getNumber()).get(actionStep);
-						
-				model.add(DataModel.LOCKED, action.getNewAgentLocation());
-				
-				if (action instanceof PullAction)
-				{
-					model.add(DataModel.LOCKED, ((PullAction) action).getNewBoxLocation());
-				}
-				else if (action instanceof PushAction)
-				{
-					model.add(DataModel.LOCKED, ((PushAction) action).getNewBoxLocation());
-				}
-			}
+			addLock(agent, modelStep);
 		}
-		
+	}
+	
+	private void updateFuture(FutureModel futureModel, int step)
+	{		
 		Map<Cell, Location> originalLocations = futureModel.getOriginalLocations();
 		
-		for (int futureStep = finalStep; futureStep < planner.dataModelCount(); futureStep++)
+		CellModel model = planner.getModel(step);
+		
+		Map<Cell, Cell> objectReferences = new HashMap<>();
+		
+		// Remove old cells and store object references
+		for (Entry<Cell, Location> entry : originalLocations.entrySet())
 		{
-			CellModel model = planner.getModel(futureStep);
+			int objectType = entry.getKey() instanceof Agent ? DataModel.AGENT : DataModel.BOX;
 			
-			Map<Cell, Cell> objectReferences = new HashMap<>();
+			Cell object = model.removeCell(objectType, entry.getValue());
 			
-			for (Entry<Cell, Location> entry : originalLocations.entrySet())
+			objectReferences.put(entry.getKey(), object);
+		}
+		
+		// Add object references
+		for (Entry<Cell, Cell> entry : objectReferences.entrySet())
+		{
+			model.addCell((Colored) entry.getKey(), entry.getValue());
+		}
+	}
+	
+	private void addLock(Agent agent, int step)
+	{
+		DataModel model = planner.getModel(step);
+		
+		for (int actionStep = step - 1; actionStep < planner.getActions().get(agent.getNumber()).size(); actionStep++)
+		{
+			Action action = planner.getActions().get(agent.getNumber()).get(actionStep);
+					
+			model.add(DataModel.LOCKED, action.getNewAgentLocation());
+			
+			if (action instanceof PullAction)
 			{
-				int objectType = entry.getKey() instanceof Agent ? DataModel.AGENT : DataModel.BOX;
-				
-				Cell object = model.removeCell(objectType, entry.getValue());
-				
-				objectReferences.put(entry.getKey(), object);
-				
-//				model.move(objectType, entry.getValue(), entry.getKey().getLocation());
+				model.add(DataModel.LOCKED, ((PullAction) action).getNewBoxLocation());
 			}
-			
-			for (Entry<Cell, Cell> entry : objectReferences.entrySet())
+			else if (action instanceof PushAction)
 			{
-				model.addCell((Colored) entry.getKey(), entry.getValue());
+				model.add(DataModel.LOCKED, ((PushAction) action).getNewBoxLocation());
 			}
 		}
 	}

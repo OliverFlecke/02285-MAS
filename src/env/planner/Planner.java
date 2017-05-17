@@ -169,7 +169,7 @@ public class Planner {
 			if (step < dependency.getValue()) 
 			{
 				executor.executeSkips(agent, dependency.getValue() - step);
-				return planObjectToLocation(agent, tracked, loc, previousOverlay);
+				return planAgentToTracked(agent, tracked, loc, previousOverlay);
 			}
 			
 			int newStep = solveDependency(agent, dependency.getKey(), overlay, model);
@@ -180,7 +180,7 @@ public class Planner {
 //				executor.executeSkips(agent, newStep - step);
 				executor.executeSkips(agent, 1);
 			}
-			return planObjectToLocation(agent, tracked, loc, previousOverlay);
+			return planAgentToTracked(agent, tracked, loc, previousOverlay);
 		}		
 		
 		boolean result = executor.getObjectToLocation(agent, tracked, loc);
@@ -190,6 +190,16 @@ public class Planner {
 		return result;
 	}
 	
+	private boolean planAgentToTracked(Agent agent, Cell tracked, Location loc, OverlayModel previousOverlay) 
+	{
+		if (tracked instanceof Box)
+		{
+			planAgentToBox(agent, (Box) tracked, previousOverlay);
+			return planObjectToLocation(agent, tracked, loc, previousOverlay);
+		}
+		return planObjectToLocation(agent, tracked, loc, previousOverlay);
+	}
+
 	private int solveDependency(Agent toHelp, Location dependency, OverlayModel overlay, CellModel model)
 	{		
 		if (model.hasObject(DataModel.BOX, dependency))
