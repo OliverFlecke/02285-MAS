@@ -46,8 +46,9 @@ public class Location {
 	    case SOUTH	: return new Location(this.x, this.y + 1);
 	    case WEST	: return new Location(this.x - 1, this.y);
 	    case EAST	: return new Location(this.x + 1, this.y);
+	    default		: throw new IllegalArgumentException("Not a valid direction");
 	    }        
-	    throw new IllegalArgumentException("Not a valid direction");
+	    
 	}
 	
 	public Direction inDirection(Location other)

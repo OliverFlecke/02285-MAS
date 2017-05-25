@@ -31,8 +31,8 @@ public class Planner {
 	private static 	WorldModel 	worldModel;		
 	private static 	Planner 	instance;
 
-	private ArrayList<CellModel> 			dataModels;
-	private ArrayList<ArrayList<Action>> 	actions;
+	private ArrayList<CellModel> 	dataModels;
+	private ArrayList<List<Action>> actions;
 	
 	private Executor executor;
 	
@@ -68,7 +68,7 @@ public class Planner {
 		
 		dataModels = new ArrayList<CellModel>(Arrays.asList(new CellModel(worldModel)));
 		
-		actions = new ArrayList<ArrayList<Action>>(worldModel.getNbAgs());
+		actions = new ArrayList<List<Action>>(worldModel.getNbAgs());
 		
 		for (int i = 0; i < worldModel.getNbAgs(); i++)
 		{
@@ -339,7 +339,7 @@ public class Planner {
 		return dataModels.get(step);
 	}
 	
-	public ArrayList<ArrayList<Action>> getActions()
+	public List<List<Action>> getActions()
 	{
 		return actions;
 	}

@@ -25,7 +25,7 @@ public class LoggerFactory
 		
 		logger.addHandler(handler);
 		
-		logger.setLevel(Level.OFF);
+		logger.setLevel(Level.WARNING);
 	
 		return logger;
 	}

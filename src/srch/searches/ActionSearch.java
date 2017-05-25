@@ -18,9 +18,9 @@ import srch.Heuristic;
 import srch.Node;
 import srch.Search;
 import srch.Strategy.BestFirst;
-import srch.nodes.PathfindingNode;
+import srch.nodes.ActionNode;
 
-public class PathfindingSearch extends Search implements Heuristic {
+public class ActionSearch extends Search implements Heuristic {
 	
 	/**
 	 * Returns an ordered list of strings corresponding to the sequence of
@@ -34,31 +34,22 @@ public class PathfindingSearch extends Search implements Heuristic {
 	 * With proximity = 1, the solution is a path to a cell adjacent to the goal location.
 	 * @return Ordered list of directions leading to the goal.
 	 */
-	public static List<Action> search(Agent agent, Cell tracked, Location to, int proximity, int initialStep, boolean aStar) 
+	public static List<Action> search(Agent agent, Cell tracked, Location to, int proximity, int initialStep) 
 	{
-		return new PathfindingSearch(tracked.getLocation(), to, proximity, aStar).search(new PathfindingNode(agent, tracked, initialStep));
+		return new ActionSearch(tracked.getLocation(), to, proximity).search(new ActionNode(agent, tracked, initialStep));
 	}
 	
 	private Map<Location, Integer> distances;
 	private Location goalLocation;
 	private int 	 goalDistance;
 	
-	public PathfindingSearch(Location from, Location to, int proximity, boolean aStar)
+	public ActionSearch(Location from, Location to, int proximity)
 	{
 		distances = DistanceSearch.search(from, to);
 		
 		logger.setLevel(Level.OFF);
 		
-		if (aStar)
-		{
-			this.setStrategy(new BestFirst(new AStar(this)));
-			
-		}
-		else
-		{
-			this.setStrategy(new BestFirst(new Greedy(this)));
-			
-		}
+		this.setStrategy(new BestFirst(new AStar(this)));
 		
 		this.goalLocation = to;
 		this.goalDistance = proximity;
@@ -67,7 +58,7 @@ public class PathfindingSearch extends Search implements Heuristic {
 	@Override
 	public boolean isGoalState(Node n) 
 	{
-		PathfindingNode node = (PathfindingNode) n;
+		ActionNode node = (ActionNode) n;
 		
 		SimulationModel model = node.getModel();
 		
@@ -85,7 +76,7 @@ public class PathfindingSearch extends Search implements Heuristic {
 	@Override
 	public int h(Node n) 
 	{
-		PathfindingNode node = (PathfindingNode) n;
+		ActionNode node = (ActionNode) n;
 		SimulationModel model = node.getModel();
 		
 		int goalDist = 0;

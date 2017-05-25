@@ -20,7 +20,7 @@ import level.cell.Box;
 import level.cell.Cell;
 import level.cell.Colored;
 import logging.LoggerFactory;
-import srch.searches.PathfindingSearch;
+import srch.searches.ActionSearch;
 
 public class Executor {
 	
@@ -43,12 +43,7 @@ public class Executor {
 	{
 		int initialStep = planner.getInitialStep(agent);
 
-		List<Action> actions = PathfindingSearch.search(agent, agent, box.getLocation(), 1, initialStep, true);
-		
-		if (actions == null)
-		{
-			actions = PathfindingSearch.search(agent, agent, box.getLocation(), 1, initialStep, false);
-		}
+		List<Action> actions = ActionSearch.search(agent, agent, box.getLocation(), 1, initialStep);
 
 		if (actions == null)
 		{
@@ -76,12 +71,7 @@ public class Executor {
 	{
 		int initialStep = planner.getInitialStep(agent);
 		
-		List<Action> actions = PathfindingSearch.search(agent, tracked, location, 0, initialStep, true);
-		
-		if (actions == null)
-		{
-			actions = PathfindingSearch.search(agent, tracked, location, 0, initialStep, true);
-		}
+		List<Action> actions = ActionSearch.search(agent, tracked, location, 0, initialStep);
 
 		if (actions == null)
 		{

@@ -15,12 +15,12 @@ import srch.Node;
 import srch.interfaces.IActionNode;
 import srch.interfaces.IModelNode;
 
-public class PathfindingNode extends Node implements IActionNode, IModelNode {
+public class ActionNode extends Node implements IActionNode, IModelNode {
 
 	private Action action;
 	private SimulationModel model;
 	
-	public PathfindingNode(Agent agent, Cell tracked, int initialStep) 
+	public ActionNode(Agent agent, Cell tracked, int initialStep) 
 	{
 		super(agent.getLocation());
 
@@ -28,7 +28,7 @@ public class PathfindingNode extends Node implements IActionNode, IModelNode {
 		model 	= new SimulationModel(initialStep, agent, tracked);
 	}
 
-	public PathfindingNode(Node parent, Action action, SimulationModel model) 
+	public ActionNode(Node parent, Action action, SimulationModel model) 
 	{
 		super(parent, action.getNewAgentLocation());
 		
@@ -70,14 +70,14 @@ public class PathfindingNode extends Node implements IActionNode, IModelNode {
 		{			
 			if (model.canExecute(action))
 			{
-				expandedNodes.add(new PathfindingNode(this, action, model.run(action)));
+				expandedNodes.add(new ActionNode(this, action, model.run(action)));
 			}
 		}
 		if (this.isSkipNode())
 		{
 			Action action = new SkipAction(this.getLocation());
 			
-			expandedNodes.add(new PathfindingNode(this, action, model.run(action)));
+			expandedNodes.add(new ActionNode(this, action, model.run(action)));
 		}
 		return expandedNodes;
 	}
@@ -88,7 +88,7 @@ public class PathfindingNode extends Node implements IActionNode, IModelNode {
 	{		
 		LinkedList<Action> plan = new LinkedList<>();
 		
-		for (PathfindingNode n = this; n.getAction() != null; n = (PathfindingNode) n.getParent()) 
+		for (ActionNode n = this; n.getAction() != null; n = (ActionNode) n.getParent()) 
 		{
 			plan.addFirst(n.action);
 		}
@@ -112,7 +112,7 @@ public class PathfindingNode extends Node implements IActionNode, IModelNode {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		PathfindingNode other = (PathfindingNode) obj;
+		ActionNode other = (ActionNode) obj;
 		if (action == null) {
 			if (other.action != null)
 				return false;

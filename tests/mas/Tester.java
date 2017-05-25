@@ -1,14 +1,16 @@
 package mas;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.fail;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
+
 import logging.LoggerFactory;
 
 public class Tester {
@@ -36,14 +38,6 @@ public class Tester {
 	public static void testLevel(String level)
 	{
 		testLevel(level, MAX_TIME);
-//		benchmarkLevel(level);
-	}
-	
-	public static void benchmarkLevel(String level)
-	{
-		level = "levels\\" + level + ".lvl";
-		
-		Runner.main(new String[]{ level });
 	}
 	
 	/**
@@ -113,6 +107,10 @@ public class Tester {
 //						Runtime.getRuntime().exec("taskkill /F /IM java.exe");
 						
 						throw new UnsupportedOperationException("See command line for details");
+					}
+					else if (error.contains("Result"))
+					{						
+						System.out.println(error);
 					}
 				}
 			}

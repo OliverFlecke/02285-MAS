@@ -1,9 +1,7 @@
 package env;
 
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
+import java.util.List;
 import java.util.logging.Logger;
 
 import env.model.CellModel;
@@ -12,37 +10,26 @@ import env.planner.Planner;
 import level.Level;
 import level.action.Action;
 import level.action.SkipAction;
-import level.cell.*;
+import level.cell.Agent;
 import logging.LoggerFactory;
 
 public class WorldEnv extends ServerEnv {
 
     private static final Logger logger = LoggerFactory.getLogger(WorldEnv.class.getName());
 	
-    private static CellModel model;
+    private static CellModel model;    
+    private static WorldEnv instance;    
+    private Planner planner;
     
-    private static WorldEnv instance;
-    
-    public Planner planner;
-    
-    public WorldEnv(String[] args)
+    public WorldEnv()
     {
     	super();
     	
 		instance = this;
 
 		try 
-		{
-			if (args.length > 0)
-			{
-				serverIn = new BufferedReader(new FileReader(new File(args[0])));
-			}
-			
-			new WorldModel(Level.parse(serverIn));
-			
-			model = WorldModel.getInstance();
-
-			updateNumberOfAgents();
+		{			
+			model = new WorldModel(Level.parse(serverIn));
 			
 			planner = new Planner();
 			
@@ -54,37 +41,41 @@ public class WorldEnv extends ServerEnv {
 		}
     }
     
-    public static WorldEnv getInstance() 
-    {
-    	return instance;
+    public int getSolutionLength() {
+    	return planner.getLastStep();
     }
   
     public void executePlanner()
     {
-    	int steps = planner.getLastStep();
+    	int finalStep = getSolutionLength();
     	
-    	for (int i = 0; i < steps; i++) 
+    	// Append skip actions to incomplete action lists
+    	for (Agent agent : model.getAgents())
     	{
-			for (Agent agent : model.getAgents())
-			{
-				Action action;
-				if (i < this.planner.getActions().get(agent.getNumber()).size())
-					action = this.planner.getActions().get(agent.getNumber()).get(i);
-				else
-					action = new SkipAction(agent.getLocation());
- 				scheduleAction(action, agent.getNumber());
-			}	
-		}
+    		List<Action> actions = planner.getActions().get(agent.getNumber());
+    		
+    		while (actions.size() < finalStep)
+    		{
+    			actions.add(new SkipAction(agent.getLocation()));
+    		}
+    	}
+    	
+    	List<List<Action>> actions = planner.getActions();
+    	
+		String[] jointAction = new String[actions.size()];
+    	
+    	// Send joint action to server for each step
+    	for (int step = 0; step < finalStep; step++)
+    	{    		
+    		for (int agNumber = 0; agNumber < actions.size(); agNumber++)
+    		{
+    			jointAction[agNumber] = actions.get(agNumber).get(step).toString();
+    		}
+    		sendJointAction(jointAction);
+    	}
     }
- 
-    protected void updateNumberOfAgents() {
-		setNbAgs(model.getNbAgs());
+    
+    public static WorldEnv getInstance() {
+    	return instance;
     }
-
-	protected int getAgentIdByName(String name) {
-		for (Agent agent : model.getAgents())
-			if (agent.getName().equals(name))
-				return agent.getNumber();
-		return 0; // Default value
-	}
 }
