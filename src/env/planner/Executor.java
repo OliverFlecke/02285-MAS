@@ -43,7 +43,12 @@ public class Executor {
 	{
 		int initialStep = planner.getInitialStep(agent);
 
-		List<Action> actions = PathfindingSearch.search(agent, agent, box.getLocation(), 1, initialStep);
+		List<Action> actions = PathfindingSearch.search(agent, agent, box.getLocation(), 1, initialStep, true);
+		
+		if (actions == null)
+		{
+			actions = PathfindingSearch.search(agent, agent, box.getLocation(), 1, initialStep, false);
+		}
 
 		if (actions == null)
 		{
@@ -71,7 +76,12 @@ public class Executor {
 	{
 		int initialStep = planner.getInitialStep(agent);
 		
-		List<Action> actions = PathfindingSearch.search(agent, tracked, location, 0, initialStep);
+		List<Action> actions = PathfindingSearch.search(agent, tracked, location, 0, initialStep, true);
+		
+		if (actions == null)
+		{
+			actions = PathfindingSearch.search(agent, tracked, location, 0, initialStep, true);
+		}
 
 		if (actions == null)
 		{

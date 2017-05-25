@@ -1,6 +1,9 @@
 package env;
 
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
 import java.util.logging.Logger;
 
 import env.model.CellModel;
@@ -22,13 +25,19 @@ public class WorldEnv extends ServerEnv {
     
     public Planner planner;
     
-    public WorldEnv()
+    public WorldEnv(String[] args)
     {
     	super();
     	
 		instance = this;
 
-		try {
+		try 
+		{
+			if (args.length > 0)
+			{
+				serverIn = new BufferedReader(new FileReader(new File(args[0])));
+			}
+			
 			new WorldModel(Level.parse(serverIn));
 			
 			model = WorldModel.getInstance();
@@ -41,7 +50,6 @@ public class WorldEnv extends ServerEnv {
 		} 
 		catch (Exception e) 
 		{
-//			e.printStackTrace();
 			logger.warning("Exception: " + e + " at init: " + e.getMessage());
 		}
     }

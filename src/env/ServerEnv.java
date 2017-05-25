@@ -24,7 +24,7 @@ public class ServerEnv {
 	
     private static final Logger logger = LoggerFactory.getLogger(ServerEnv.class.getName());
     
-    public static final boolean TEST = false;
+    public static final boolean TEST = true;
 
 	private int 						nbAgs;
 	private HashMap<Integer, Action> 	requests;
@@ -43,7 +43,7 @@ public class ServerEnv {
 		if (TEST)
 		{
 			try {
-				serverIn = new BufferedReader(new FileReader(new File("competition_environment\\competition_levels\\MABronies.lvl")));
+				serverIn = new BufferedReader(new FileReader(new File("competition_environment\\competition_levels\\MABoxBunny.lvl")));
 //				serverIn = new BufferedReader(new FileReader(new File("levels\\multi_agent\\medium\\MADCN.lvl")));
 //				serverIn = new BufferedReader(new FileReader(new File("levels\\single_agent\\easy\\SARageQuit.lvl")));
 //				serverIn = new BufferedReader(new FileReader(new File("levels\\MASimple5.lvl")));

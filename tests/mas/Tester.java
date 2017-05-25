@@ -20,7 +20,7 @@ public class Tester {
 	@BeforeClass
 	public static void before()
 	{
-		logger.setLevel(Level.WARNING);
+		logger.setLevel(Level.INFO);
 	}
 	
 	@AfterClass
@@ -36,6 +36,14 @@ public class Tester {
 	public static void testLevel(String level)
 	{
 		testLevel(level, MAX_TIME);
+//		benchmarkLevel(level);
+	}
+	
+	public static void benchmarkLevel(String level)
+	{
+		level = "levels\\" + level + ".lvl";
+		
+		Runner.main(new String[]{ level });
 	}
 	
 	/**

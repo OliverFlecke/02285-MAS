@@ -34,23 +34,31 @@ public class PathfindingSearch extends Search implements Heuristic {
 	 * With proximity = 1, the solution is a path to a cell adjacent to the goal location.
 	 * @return Ordered list of directions leading to the goal.
 	 */
-	public static List<Action> search(Agent agent, Cell tracked, Location to, int proximity, int initialStep) 
+	public static List<Action> search(Agent agent, Cell tracked, Location to, int proximity, int initialStep, boolean aStar) 
 	{
-		return new PathfindingSearch(tracked.getLocation(), to, proximity).search(new PathfindingNode(agent, tracked, initialStep));
+		return new PathfindingSearch(tracked.getLocation(), to, proximity, aStar).search(new PathfindingNode(agent, tracked, initialStep));
 	}
 	
 	private Map<Location, Integer> distances;
 	private Location goalLocation;
 	private int 	 goalDistance;
 	
-	public PathfindingSearch(Location from, Location to, int proximity)
+	public PathfindingSearch(Location from, Location to, int proximity, boolean aStar)
 	{
 		distances = DistanceSearch.search(from, to);
 		
 		logger.setLevel(Level.OFF);
 		
-		this.setStrategy(new BestFirst(new AStar(this)));
-//		this.setStrategy(new BestFirst(new Greedy(this)));
+		if (aStar)
+		{
+			this.setStrategy(new BestFirst(new AStar(this)));
+			
+		}
+		else
+		{
+			this.setStrategy(new BestFirst(new Greedy(this)));
+			
+		}
 		
 		this.goalLocation = to;
 		this.goalDistance = proximity;

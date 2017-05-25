@@ -11,7 +11,7 @@ public class Runner {
 		{
 			long startTime = System.nanoTime();
 			
-			WorldEnv env = new WorldEnv();
+			WorldEnv env = new WorldEnv(args);
 			
 			long endTime = System.nanoTime();
 			
@@ -20,7 +20,9 @@ public class Runner {
 //			System.err.println("----------------------------------------------------------------------------------");
 //			System.err.println("Planning time: " + duration + " \tLength of solution: " + env.planner.getLastStep());
 //			System.err.println("----------------------------------------------------------------------------------");
-//			
+			
+			System.err.println(duration + "\t\t" + env.planner.getLastStep());
+			
 			if (!ServerEnv.TEST)
 				env.executePlanner();			
 		}
