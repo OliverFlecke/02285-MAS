@@ -20,7 +20,7 @@ public class Runner {
 			
 			String duration = df.format( (endTime - startTime) / 1000000000.0 );
 			
-			System.err.println("Result: " + duration + " " + env.getSolutionLength());
+			System.err.println("Planning time: " + duration + " seconds - Solution length: " + env.getSolutionLength());
 			
 			if (args.length == 0)
 			{
