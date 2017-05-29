@@ -94,28 +94,14 @@ public class ActionSearch extends Search implements Heuristic {
 			
 			goalDist += distances.get(closest);
 			goalDist += loc.distance(closest);
-//			goalDist += 5;
 		}
 
 		if (loc.distance(n.getLocation()) > 1)
 		{
 			goalDist += loc.distance(n.getLocation());
-//			goalDist += 5;
 		}
 		
 		goalDist += model.countUnsolvedGoals();
-//		goalDist += goalLocation.distance(loc);
-//		goalDist += n.getLocation().distance(loc);
-		
-		// Agents should prefer not to move boxes
-//		if (model.isTrackedAgent())
-//		{
-//			if (node.getAction() instanceof PullAction ||
-//				node.getAction() instanceof PushAction)
-//			{
-//				goalDist += 10;
-//			}
-//		}
 		
 		Goal nextGoal = model.getAgent().peekFirst();
 		
