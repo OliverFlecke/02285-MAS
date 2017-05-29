@@ -17,7 +17,7 @@ public class Tester {
 	
 	private static Logger logger = LoggerFactory.getLogger(Tester.class.getName());
 
-	private static final long MAX_TIME = 10;
+	private static final long MAX_TIME = 30;
 	
 	@BeforeClass
 	public static void before()

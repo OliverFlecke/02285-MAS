@@ -17,7 +17,7 @@ public class WorldEnv extends ServerEnv {
 
     private static final Logger logger = LoggerFactory.getLogger(WorldEnv.class.getName());
 	
-    private static CellModel model;    
+    private CellModel model;    
     private static WorldEnv instance;    
     private Planner planner;
     

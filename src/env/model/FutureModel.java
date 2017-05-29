@@ -10,7 +10,6 @@ import level.cell.Cell;
 
 public class FutureModel extends CellModel {
 	
-	// Cell as Object to compare by reference
 	private Map<Cell, Location> originalLocations;
 
 	public FutureModel(CellModel model)
