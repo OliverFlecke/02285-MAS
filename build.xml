@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<project default="jar" name="Create Runnable Jar for Project 02285-MAS">
+
+    <property name="dir.buildfile" value="."/>
+    <property name="dir.workspace" value="${dir.buildfile}/.."/>
+    <property name="dir.jarfile" value="${dir.buildfile}"/>
+    <property name="dir.build" value="build" />
+    <property name="dir.classpath" value="." />
+
+    <target name="clean">
+        <delete dir="${dir.build}" />
+    </target>
+
+    <target name="compile">
+        <mkdir dir="${dir.build}"/>
+        <javac srcdir="src" destdir="${dir.build}" includeantruntime="false"/>
+    </target>
+
+    <target name="jar" depends="compile">
+        <jar destfile="${dir.jarfile}/client.jar" basedir="${dir.build}">
+            <manifest>
+                <attribute name="Main-Class" value="mas.Runner"/>
+                <attribute name="Class-Path" value="${dir.classpath}"/>
+            </manifest>
+        </jar>
+    </target>
+</project>
